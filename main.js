@@ -331,6 +331,7 @@
     authAppleBtn: document.getElementById('authAppleBtn'),
     authSignUpBtn: document.getElementById('authSignUpBtn'),
     authUseStripeBtn: document.getElementById('authUseStripeBtn'),
+    authSkipBtn: document.getElementById('authSkipBtn'),
     authSignOutBtn: document.getElementById('authSignOutBtn'),
     userIdentityPill: document.getElementById('userIdentityPill'),
     openSettingsBtn: document.getElementById('openSettingsBtn'),
@@ -1068,6 +1069,34 @@
     saveProfile();
     renderProfileUi();
     appendTerminal('AUTH', 'Signed out.');
+  }
+
+  function skipAuthAndEnter() {
+    // Allow guest access without full authentication
+    state.profile.loggedIn = true; // Treat as logged in for UI purposes
+    state.profile.name = 'Guest Learner';
+    state.profile.legalAccepted = true;
+    
+    // Set a default country if not selected
+    if (!state.profile.country) {
+      state.profile.country = 'US'; // Default to US for guests
+    }
+    
+    saveProfile();
+    renderProfileUi();
+    
+    // Hide auth gate and show app
+    if (els.authGate) {
+      els.authGate.hidden = true;
+    }
+    
+    appendTerminal('AUTH', 'Entered as Guest. Some features may require full sign-up.');
+    emitAudit('AUTH_GUEST_ENTER', { country: state.profile.country }, 'INFO');
+    
+    // Start adaptive learning tracking
+    if (typeof initAdaptiveLearning === 'function') {
+      initAdaptiveLearning();
+    }
   }
 
   function applySettingsProfile() {
@@ -4198,6 +4227,7 @@
     if (els.authSignInAppleBtn) els.authSignInAppleBtn.addEventListener('click', () => socialSignUp('apple'));
     if (els.authGoogleBtn) els.authGoogleBtn.addEventListener('click', () => socialSignUp('google'));
     if (els.authAppleBtn) els.authAppleBtn.addEventListener('click', () => socialSignUp('apple'));
+    if (els.authSkipBtn) els.authSkipBtn.addEventListener('click', skipAuthAndEnter);
     if (els.authSignUpBtn) els.authSignUpBtn.addEventListener('click', signUpProfile);
     if (els.authSignOutBtn) els.authSignOutBtn.addEventListener('click', signOutProfile);
     if (els.saveSettingsBtn) els.saveSettingsBtn.addEventListener('click', applySettingsProfile);

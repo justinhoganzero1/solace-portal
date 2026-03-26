@@ -1,5 +1,1317 @@
 [
   {
+    "id": "E-1774485794204-438316",
+    "ts": 1774485794204,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: BELLA on solana · liq $0.00 · vol $16,253.73",
+      "key": "dx:solana:6o4verpumm2isexvhsrrsq7qi8hcn6hxqzxbae9pyfvz",
+      "symbol": "BELLA",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 16253.73,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774485793925-107962",
+    "ts": 1774485793925,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: ERIKAFY on solana · liq $0.00 · vol $1,069.94",
+      "key": "dx:solana:cmfspvzq4tvgytzwm8rhvtmgszpfdtbeypv23mtm5ypv",
+      "symbol": "ERIKAFY",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 1069.94,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774485793829-981375",
+    "ts": 1774485793830,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover DOWN: PIPPIN -34.37% (24h) · vol $55,629,941.00",
+      "key": "cg:pippin",
+      "symbol": "PIPPIN",
+      "chg24Pct": -34.37313,
+      "vol24Usd": 55629941,
+      "priceUsd": 0.052015,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774485793729-754148",
+    "ts": 1774485793729,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: SIREN 113.14% (24h) · vol $78,652,436.00",
+      "key": "cg:siren-2",
+      "symbol": "SIREN",
+      "chg24Pct": 113.13981,
+      "vol24Usd": 78652436,
+      "priceUsd": 2.2,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774485793625-460866",
+    "ts": 1774485793625,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: M 43.94% (24h) · vol $28,168,016.00",
+      "key": "cg:memecore",
+      "symbol": "M",
+      "chg24Pct": 43.93953,
+      "vol24Usd": 28168016,
+      "priceUsd": 2.48,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774485434053-828793",
+    "ts": 1774485434053,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: BELLA on solana · liq $0.00 · vol $16,253.73",
+      "key": "dx:solana:6o4verpumm2isexvhsrrsq7qi8hcn6hxqzxbae9pyfvz",
+      "symbol": "BELLA",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 16253.73,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774485433925-643994",
+    "ts": 1774485433925,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: ERIKAFY on solana · liq $0.00 · vol $1,069.94",
+      "key": "dx:solana:cmfspvzq4tvgytzwm8rhvtmgszpfdtbeypv23mtm5ypv",
+      "symbol": "ERIKAFY",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 1069.94,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774485433818-261537",
+    "ts": 1774485433818,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover DOWN: PIPPIN -33.65% (24h) · vol $55,380,587.00",
+      "key": "cg:pippin",
+      "symbol": "PIPPIN",
+      "chg24Pct": -33.64973,
+      "vol24Usd": 55380587,
+      "priceUsd": 0.05245,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774485433719-287772",
+    "ts": 1774485433719,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: M 43.24% (24h) · vol $28,060,188.00",
+      "key": "cg:memecore",
+      "symbol": "M",
+      "chg24Pct": 43.24235,
+      "vol24Usd": 28060188,
+      "priceUsd": 2.47,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774485433621-855535",
+    "ts": 1774485433621,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: SIREN 112.45% (24h) · vol $88,698,911.00",
+      "key": "cg:siren-2",
+      "symbol": "SIREN",
+      "chg24Pct": 112.44953,
+      "vol24Usd": 88698911,
+      "priceUsd": 2.19,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774485074080-542100",
+    "ts": 1774485074080,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: BELLA on solana · liq $0.00 · vol $16,253.73",
+      "key": "dx:solana:6o4verpumm2isexvhsrrsq7qi8hcn6hxqzxbae9pyfvz",
+      "symbol": "BELLA",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 16253.73,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774485073933-370078",
+    "ts": 1774485073933,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: ERIKAFY on solana · liq $0.00 · vol $1,069.94",
+      "key": "dx:solana:cmfspvzq4tvgytzwm8rhvtmgszpfdtbeypv23mtm5ypv",
+      "symbol": "ERIKAFY",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 1069.94,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774485073834-137489",
+    "ts": 1774485073834,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: SIREN 106.49% (24h) · vol $88,603,614.00",
+      "key": "cg:siren-2",
+      "symbol": "SIREN",
+      "chg24Pct": 106.48875,
+      "vol24Usd": 88603614,
+      "priceUsd": 2.16,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774485073733-969070",
+    "ts": 1774485073733,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: M 43.81% (24h) · vol $28,019,543.00",
+      "key": "cg:memecore",
+      "symbol": "M",
+      "chg24Pct": 43.80706,
+      "vol24Usd": 28019543,
+      "priceUsd": 2.46,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774485073639-352989",
+    "ts": 1774485073640,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover DOWN: PIPPIN -32.42% (24h) · vol $55,498,446.00",
+      "key": "cg:pippin",
+      "symbol": "PIPPIN",
+      "chg24Pct": -32.42012,
+      "vol24Usd": 55498446,
+      "priceUsd": 0.053523,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484718797-744652",
+    "ts": 1774484718797,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover DOWN: PIPPIN -32.48% (24h) · vol $55,136,614.00",
+      "key": "cg:pippin",
+      "symbol": "PIPPIN",
+      "chg24Pct": -32.47634,
+      "vol24Usd": 55136614,
+      "priceUsd": 0.053534,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484718663-481554",
+    "ts": 1774484718663,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: M 43.17% (24h) · vol $27,978,779.00",
+      "key": "cg:memecore",
+      "symbol": "M",
+      "chg24Pct": 43.17144,
+      "vol24Usd": 27978779,
+      "priceUsd": 2.45,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484718534-411104",
+    "ts": 1774484718534,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: SIREN 110.01% (24h) · vol $78,804,607.00",
+      "key": "cg:siren-2",
+      "symbol": "SIREN",
+      "chg24Pct": 110.01355,
+      "vol24Usd": 78804607,
+      "priceUsd": 2.17,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484494784-928584",
+    "ts": 1774484494784,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover DOWN: PIPPIN -33.36% (24h) · vol $55,148,912.00",
+      "key": "cg:pippin",
+      "symbol": "PIPPIN",
+      "chg24Pct": -33.36236,
+      "vol24Usd": 55148912,
+      "priceUsd": 0.052832,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484494702-856627",
+    "ts": 1774484494702,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: M 43.12% (24h) · vol $28,094,419.00",
+      "key": "cg:memecore",
+      "symbol": "M",
+      "chg24Pct": 43.12261,
+      "vol24Usd": 28094419,
+      "priceUsd": 2.45,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484494616-289227",
+    "ts": 1774484494616,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: SIREN 108.06% (24h) · vol $78,731,890.00",
+      "key": "cg:siren-2",
+      "symbol": "SIREN",
+      "chg24Pct": 108.06306,
+      "vol24Usd": 78731890,
+      "priceUsd": 2.18,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484441632-697913",
+    "ts": 1774484441632,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: BELLA on solana · liq $0.00 · vol $16,253.73",
+      "key": "dx:solana:6o4verpumm2isexvhsrrsq7qi8hcn6hxqzxbae9pyfvz",
+      "symbol": "BELLA",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 16253.73,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484431498-13816",
+    "ts": 1774484431498,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: ERIKAFY on solana · liq $0.00 · vol $1,069.94",
+      "key": "dx:solana:cmfspvzq4tvgytzwm8rhvtmgszpfdtbeypv23mtm5ypv",
+      "symbol": "ERIKAFY",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 1069.94,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484399670-19752",
+    "ts": 1774484399670,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: M 42.90% (24h) · vol $28,046,712.00",
+      "key": "cg:memecore",
+      "symbol": "M",
+      "chg24Pct": 42.89678,
+      "vol24Usd": 28046712,
+      "priceUsd": 2.45,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484399566-177845",
+    "ts": 1774484399566,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: SIREN 107.23% (24h) · vol $87,691,911.00",
+      "key": "cg:siren-2",
+      "symbol": "SIREN",
+      "chg24Pct": 107.22624,
+      "vol24Usd": 87691911,
+      "priceUsd": 2.17,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484399460-509449",
+    "ts": 1774484399460,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover DOWN: PIPPIN -33.53% (24h) · vol $55,088,239.00",
+      "key": "cg:pippin",
+      "symbol": "PIPPIN",
+      "chg24Pct": -33.53279,
+      "vol24Usd": 55088239,
+      "priceUsd": 0.052955,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484305844-122935",
+    "ts": 1774484305844,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: M 42.50% (24h) · vol $28,019,721.00",
+      "key": "cg:memecore",
+      "symbol": "M",
+      "chg24Pct": 42.50276,
+      "vol24Usd": 28019721,
+      "priceUsd": 2.44,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484305729-250298",
+    "ts": 1774484305729,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover DOWN: PIPPIN -33.93% (24h) · vol $54,815,463.00",
+      "key": "cg:pippin",
+      "symbol": "PIPPIN",
+      "chg24Pct": -33.92811,
+      "vol24Usd": 54815463,
+      "priceUsd": 0.05264,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484305631-441550",
+    "ts": 1774484305631,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: SIREN 104.27% (24h) · vol $87,808,366.00",
+      "key": "cg:siren-2",
+      "symbol": "SIREN",
+      "chg24Pct": 104.26958,
+      "vol24Usd": 87808366,
+      "priceUsd": 2.14,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484211514-184656",
+    "ts": 1774484211514,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: M 42.32% (24h) · vol $28,028,972.00",
+      "key": "cg:memecore",
+      "symbol": "M",
+      "chg24Pct": 42.31567,
+      "vol24Usd": 28028972,
+      "priceUsd": 2.44,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484211398-782338",
+    "ts": 1774484211398,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover DOWN: PIPPIN -34.44% (24h) · vol $54,708,976.00",
+      "key": "cg:pippin",
+      "symbol": "PIPPIN",
+      "chg24Pct": -34.44142,
+      "vol24Usd": 54708976,
+      "priceUsd": 0.052457,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484211261-59796",
+    "ts": 1774484211261,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: SIREN 102.00% (24h) · vol $87,279,510.00",
+      "key": "cg:siren-2",
+      "symbol": "SIREN",
+      "chg24Pct": 101.99872,
+      "vol24Usd": 87279510,
+      "priceUsd": 2.09,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484137618-564975",
+    "ts": 1774484137618,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: BELLA on solana · liq $0.00 · vol $10,207.96",
+      "key": "dx:solana:6o4verpumm2isexvhsrrsq7qi8hcn6hxqzxbae9pyfvz",
+      "symbol": "BELLA",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 10207.96,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484136724-679743",
+    "ts": 1774484136724,
+    "type": "DEX_BIRTH",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "symbol": "BELLA",
+      "chain": "solana",
+      "priceUsd": 0.000009875,
+      "liquidityUsd": 0,
+      "key": "dx:solana:6o4verpumm2isexvhsrrsq7qi8hcn6hxqzxbae9pyfvz"
+    }
+  },
+  {
+    "id": "E-1774484119925-427719",
+    "ts": 1774484119925,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: ERIKAFY on solana · liq $0.00 · vol $1,069.94",
+      "key": "dx:solana:cmfspvzq4tvgytzwm8rhvtmgszpfdtbeypv23mtm5ypv",
+      "symbol": "ERIKAFY",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 1069.94,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484119835-402010",
+    "ts": 1774484119835,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover DOWN: PIPPIN -34.44% (24h) · vol $54,708,976.00",
+      "key": "cg:pippin",
+      "symbol": "PIPPIN",
+      "chg24Pct": -34.44142,
+      "vol24Usd": 54708976,
+      "priceUsd": 0.052457,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484119731-248873",
+    "ts": 1774484119732,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: SIREN 102.00% (24h) · vol $87,279,510.00",
+      "key": "cg:siren-2",
+      "symbol": "SIREN",
+      "chg24Pct": 101.99872,
+      "vol24Usd": 87279510,
+      "priceUsd": 2.09,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484119639-69245",
+    "ts": 1774484119639,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: M 42.32% (24h) · vol $28,028,972.00",
+      "key": "cg:memecore",
+      "symbol": "M",
+      "chg24Pct": 42.31567,
+      "vol24Usd": 28028972,
+      "priceUsd": 2.44,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484109552-829575",
+    "ts": 1774484109552,
+    "type": "DEX_BIRTH",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "symbol": "ERIKAFY",
+      "chain": "solana",
+      "priceUsd": 0.000006035,
+      "liquidityUsd": 0,
+      "key": "dx:solana:cmfspvzq4tvgytzwm8rhvtmgszpfdtbeypv23mtm5ypv"
+    }
+  },
+  {
+    "id": "E-1774484108857-565401",
+    "ts": 1774484108857,
+    "type": "UI_TAB",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "tab": "home"
+    }
+  },
+  {
+    "id": "E-1774484108123-495950",
+    "ts": 1774484108123,
+    "type": "UI_TAB",
+    "email": "",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "tab": "oracle"
+    }
+  },
+  {
+    "id": "E-1774484107499-174381",
+    "ts": 1774484107499,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: WINNEBAGO on solana · liq $0.00 · vol $33,189.80",
+      "key": "dx:solana:963wmzdinv4xpdvp9ee8izmbkwai7r7o1rcg2txjs2yf",
+      "symbol": "WINNEBAGO",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 33189.8,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484107354-157666",
+    "ts": 1774484107354,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: TAXLESS on solana · liq $0.00 · vol $972.64",
+      "key": "dx:solana:5umzzyys4ied6gb63f6vuutkdkjbuszxprb24xeddpyu",
+      "symbol": "TAXLESS",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 972.64,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484107237-879954",
+    "ts": 1774484107237,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: XRP on solana · liq $0.00 · vol $6,541.68",
+      "key": "dx:solana:4wxx1m6n2nf6n3lfe4qdyl42nlqbfptwqhfbwnp8fccu",
+      "symbol": "XRP",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 6541.68,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484107112-501134",
+    "ts": 1774484107112,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: BOOMER on solana · liq $0.00 · vol $1,739.91",
+      "key": "dx:solana:9uztxtuisvrdc2wkybprmvkpdwxcqfsy9vqinxzveifb",
+      "symbol": "BOOMER",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 1739.91,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484106981-370117",
+    "ts": 1774484106981,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: EGG on solana · liq $0.00 · vol $9,698.71",
+      "key": "dx:solana:dqnp9jaf84oalyyyi61zxtsfefywtrhywzwpsmioomu9",
+      "symbol": "EGG",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 9698.71,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484106884-382418",
+    "ts": 1774484106884,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: BAGZ on solana · liq $0.00 · vol $2,012.53",
+      "key": "dx:solana:g2dnnkomizvvmdavr1kzgzu9f8fpg6k7faqgwjrqdswk",
+      "symbol": "BAGZ",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 2012.53,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484106778-403044",
+    "ts": 1774484106778,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: WEALTH on solana · liq $0.00 · vol $915.15",
+      "key": "dx:solana:bdtur9s5psmcdvbnophnavdjtxhz5evcnzdvuucxbqrn",
+      "symbol": "WEALTH",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 915.15,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484106673-591915",
+    "ts": 1774484106673,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: IP on solana · liq $0.00 · vol $14,495.35",
+      "key": "dx:solana:dseydercrrgek7uamn2sqifbcb25hxsr8pewipfdagut",
+      "symbol": "IP",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 14495.35,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484106571-962111",
+    "ts": 1774484106571,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: NESTEGG on solana · liq $0.00 · vol $3,029.14",
+      "key": "dx:solana:e6wexwslrjrco5zjqilw74zfgk2mcgqrewqsyisxmqca",
+      "symbol": "NESTEGG",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 3029.14,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484106458-606652",
+    "ts": 1774484106458,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: EGG on solana · liq $0.00 · vol $817.41",
+      "key": "dx:solana:fjj8kzpm3akvedyjatbyyo3iyz829zx1gn3uroupiypd",
+      "symbol": "EGG",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 817.41,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484106317-504273",
+    "ts": 1774484106317,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: 401K on solana · liq $0.00 · vol $932.83",
+      "key": "dx:solana:87cc96tda7yy2eftwmc7d76zkwtaty14rxxvtdhfn5k9",
+      "symbol": "401K",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 932.83,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484106207-52081",
+    "ts": 1774484106207,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: PVP on solana · liq $0.00 · vol $757.41",
+      "key": "dx:solana:hktwdshzrunye2lsqetuh3vsuqu1k5e31zclmqvvzcfa",
+      "symbol": "PVP",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 757.41,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484106098-665746",
+    "ts": 1774484106098,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: EGG on solana · liq $0.00 · vol $2,339.47",
+      "key": "dx:solana:6mco7arq2qnfkexfy7jffbbgrjprszy4qq8fksxutpgd",
+      "symbol": "EGG",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 2339.47,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484105930-803279",
+    "ts": 1774484105930,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: PATRIOT on solana · liq $0.00 · vol $4,514.95",
+      "key": "dx:solana:ew2uv1crl3twebgltx4dxnurvwddtd9dwiyvhdg2ljcu",
+      "symbol": "PATRIOT",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 4514.95,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484105793-59307",
+    "ts": 1774484105793,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover DOWN: PIPPIN -42.09% (24h) · vol $48,819,721.00",
+      "key": "cg:pippin",
+      "symbol": "PIPPIN",
+      "chg24Pct": -42.0904,
+      "vol24Usd": 48819721,
+      "priceUsd": 0.04625137,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484105654-125208",
+    "ts": 1774484105654,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: PI on solana · liq $0.00 · vol $15,686.51",
+      "key": "dx:solana:fpugqauntujkjm5wazqk4flhbjsmh3qtssbqsjaz23sf",
+      "symbol": "PI",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 15686.51,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484105550-351184",
+    "ts": 1774484105550,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: M 39.98% (24h) · vol $27,949,677.00",
+      "key": "cg:memecore",
+      "symbol": "M",
+      "chg24Pct": 39.98261,
+      "vol24Usd": 27949677,
+      "priceUsd": 2.41,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484105440-121603",
+    "ts": 1774484105440,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: 1TRADE on solana · liq $0.00 · vol $3,922.09",
+      "key": "dx:solana:ej4x7nbtqwgpjvw3muj9bnx5fcaacntbx4uqvjt78upp",
+      "symbol": "1TRADE",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 3922.09,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484105335-15643",
+    "ts": 1774484105335,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: SIREN 120.20% (24h) · vol $86,703,526.00",
+      "key": "cg:siren-2",
+      "symbol": "SIREN",
+      "chg24Pct": 120.19722,
+      "vol24Usd": 86703526,
+      "priceUsd": 2.22,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484105215-819884",
+    "ts": 1774484105215,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: DAN on solana · liq $0.00 · vol $44,463.94",
+      "key": "dx:solana:fwecj4f3qwxvds466vd53ec9zpovshpwpb9wr2hhgmq3",
+      "symbol": "DAN",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 44463.94,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484105108-793102",
+    "ts": 1774484105108,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: MAVERIC on solana · liq $0.00 · vol $911.42",
+      "key": "dx:solana:5ywnztqibegb948asoe15vwvktrmedqy6dv9qsrgmkyz",
+      "symbol": "MAVERIC",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 911.42,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484104971-869450",
+    "ts": 1774484104971,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: MAVERIC on solana · liq $0.00 · vol $4,431.37",
+      "key": "dx:solana:gpjebz6xuhxbsbsme2osktgpcabpuhl28s8a59t6yfnh",
+      "symbol": "MAVERIC",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 4431.37,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484104720-84874",
+    "ts": 1774484104720,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: MAVERICK on solana · liq $0.00 · vol $12,891.18",
+      "key": "dx:solana:7iqyi8hqrzbzfsaquiokdkmomyrwp8wiha151fw7g5rh",
+      "symbol": "MAVERICK",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 12891.18,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484104563-686852",
+    "ts": 1774484104563,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: E-200 on solana · liq $0.00 · vol $721.36",
+      "key": "dx:solana:26rbhibwufhy9rytt5b7v74gfocfsd9hyfgrx5aji7lv",
+      "symbol": "E-200",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 721.36,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484104414-96972",
+    "ts": 1774484104414,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: EAGLE on solana · liq $0.00 · vol $1,041.35",
+      "key": "dx:solana:9hct9xy8fw39n8lrh97bsqapooyndmpmcbrqhirw5zjc",
+      "symbol": "EAGLE",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 1041.35,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484104057-655358",
+    "ts": 1774484104057,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: TRUMPCHUD on solana · liq $0.00 · vol $15,426.94",
+      "key": "dx:solana:fcmnbuwwmhtppvkcayjlw8kjo6snuax61ohqu7pgxxrt",
+      "symbol": "TRUMPCHUD",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 15426.94,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484103927-555991",
+    "ts": 1774484103927,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: HONOR on solana · liq $0.00 · vol $1,268.23",
+      "key": "dx:solana:hokqztxzfmfkyvnuaob7yu3nsy8nop6mswvrecuuqnly",
+      "symbol": "HONOR",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 1268.23,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484103748-661751",
+    "ts": 1774484103748,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: WINNEBAGO on solana · liq $0.00 · vol $33,189.80",
+      "key": "dx:solana:963wmzdinv4xpdvp9ee8izmbkwai7r7o1rcg2txjs2yf",
+      "symbol": "WINNEBAGO",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 33189.8,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484103621-770115",
+    "ts": 1774484103621,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: M 39.98% (24h) · vol $27,949,677.00",
+      "key": "cg:memecore",
+      "symbol": "M",
+      "chg24Pct": 39.98261,
+      "vol24Usd": 27949677,
+      "priceUsd": 2.41,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484103492-832352",
+    "ts": 1774484103492,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: TAXLESS on solana · liq $0.00 · vol $972.64",
+      "key": "dx:solana:5umzzyys4ied6gb63f6vuutkdkjbuszxprb24xeddpyu",
+      "symbol": "TAXLESS",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 972.64,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484103361-445814",
+    "ts": 1774484103361,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "DEX",
+      "msg": "Sandbox watch: XRP on solana · liq $0.00 · vol $6,541.68",
+      "key": "dx:solana:4wxx1m6n2nf6n3lfe4qdyl42nlqbfptwqhfbwnp8fccu",
+      "symbol": "XRP",
+      "chainId": "solana",
+      "liquidityUsd": 0,
+      "vol24Usd": 6541.68,
+      "source": "dexscreener"
+    }
+  },
+  {
+    "id": "E-1774484103157-570459",
+    "ts": 1774484103157,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover DOWN: PIPPIN -42.09% (24h) · vol $48,819,721.00",
+      "key": "cg:pippin",
+      "symbol": "PIPPIN",
+      "chg24Pct": -42.0904,
+      "vol24Usd": 48819721,
+      "priceUsd": 0.04625137,
+      "source": "coingecko"
+    }
+  },
+  {
+    "id": "E-1774484103012-391405",
+    "ts": 1774484103012,
+    "type": "BRAIN_SIGNAL",
+    "email": "justinbretthogan@gmail.com",
+    "level": "INFO",
+    "source": "client",
+    "data": {
+      "level": "SCAN",
+      "msg": "Mover UP: SIREN 120.20% (24h) · vol $86,703,526.00",
+      "key": "cg:siren-2",
+      "symbol": "SIREN",
+      "chg24Pct": 120.19722,
+      "vol24Usd": 86703526,
+      "priceUsd": 2.22,
+      "source": "coingecko"
+    }
+  },
+  {
     "id": "E-1774475775628-899491",
     "ts": 1774475775628,
     "type": "BRAIN_SIGNAL",
