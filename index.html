@@ -14,7 +14,7 @@
       <div class="auth-shell">
         <div class="auth-brand">Juzzy Global</div>
         <div class="auth-title">Sign In or Create Your Account</div>
-        <div class="auth-subtitle">Professional onboarding with country-specific legal context and global language support.</div>
+        <div class="auth-subtitle">Professional onboarding with mandatory country selection, country-specific legal context, and educational-only guidance.</div>
         <div class="auth-sections">
           <div class="auth-card">
             <div class="card-title">Sign In</div>
@@ -35,14 +35,14 @@
             <select id="authLanguage" class="select"></select>
             <input id="authLanguageCustom" class="input" placeholder="Any language code (BCP-47), e.g. en, ar, zh-Hant" />
             <div id="authCountryLegal" class="muted small auth-legal"></div>
-            <label class="gate-row"><input id="authLegalAgree" type="checkbox" /> I agree to my country legal requirements.</label>
+            <label class="gate-row"><input id="authLegalAgree" type="checkbox" /> I confirm my country selection, I understand Juzzy is educational only, and I understand there are no guarantees of profit, income, or investing success.</label>
             <div class="auth-socials">
               <button id="authGoogleBtn" class="btn auth-social-btn" type="button">Continue with Google</button>
               <button id="authAppleBtn" class="btn auth-social-btn" type="button">Continue with Apple</button>
             </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap">
               <button id="authSignUpBtn" class="btn primary">Create Account</button>
-              <button id="authUseStripeBtn" class="btn">Activate Stripe</button>
+              <button id="authUseStripeBtn" class="btn">View Learning Access</button>
             </div>
           </div>
         </div>
@@ -71,15 +71,21 @@
             <div id="userIdentityPill" class="pill">Guest</div>
             <button id="openSettingsBtn" class="btn">Settings</button>
             <button id="connectBtn" class="btn">Connect wallet</button>
-            <button id="subscribeBtn" class="btn primary">Stripe Subscribe</button>
+            <button id="subscribeBtn" class="btn primary">Unlock Paid Courses</button>
             <button id="authSignOutBtn" class="btn">Sign out</button>
           </div>
+        </div>
+
+        <div class="risk-disclaimer risk-disclaimer-header">
+          Any information in this app does not guarantee any kind of return and may lead to financial loss. Any information given is for educational and entertainment purposes but does not guarantee any kind of financial gain. Any financial commitment by the user is at their own risk and does not give the user any kind of guaranteed monies.
         </div>
 
         <nav class="tabs tabs-header" aria-label="Primary">
           <button class="tab active" data-tab="home">Home</button>
           <button class="tab" data-tab="oracle">Oracle</button>
           <button class="tab" data-tab="tutorial">Tutorial</button>
+          <button class="tab" data-tab="messages">Messages <span id="messagesUnreadBadge" class="pill util-hidden">0</span></button>
+          <button class="tab" data-tab="community">Community</button>
           <button class="tab" data-tab="leaders">Leaders</button>
           <button class="tab" data-tab="charts">Charts</button>
           <button class="tab" data-tab="portfolio">Portfolio</button>
@@ -93,12 +99,18 @@
 
       <main class="layout">
         <section class="panel active" id="tab-home" role="region" aria-label="Home">
+          <!-- High-tech campus background elements -->
+          <div class="campus-right-towers"></div>
+          <div class="campus-arc-reactor"></div>
+          <div class="campus-glow-lines"></div>
+          <div class="campus-floating-lights"></div>
+          
           <div class="panel-header">
             <div>
               <div class="h1">Welcome to Juzzy Academy</div>
-              <div class="muted">Master cryptocurrency with interactive tutorials and AI-powered learning.</div>
+              <div class="muted">A world-scale crypto learning universe covering cryptocurrencies, investing pitfalls, builder literacy, creator pathways, tokenized content, and guided practice tools.</div>
             </div>
-            <div class="pill">Students: <span id="studentCount">2,847</span></div>
+            <div class="pill">Education-first platform</div>
           </div>
 
           <div class="hero-section">
@@ -107,9 +119,9 @@
                 <span class="gradient-text">Learn Crypto</span>
                 <br>Like Never Before
               </div>
-              <div class="hero-subtitle">50+ Interactive Lessons • AI Tutor • Real Examples</div>
+              <div class="hero-subtitle">Immersive global crypto university • AI tutor • creator and investor pathways • dummy buys and paper practice</div>
               <button class="btn btn-hero primary" data-jump="tutorial">
-                <span style="font-size:1.2em">🚀</span> Start Learning
+                <span style="font-size:1.2em">🚀</span> Start Learning Safely
               </button>
             </div>
             <div class="hero-visual">
@@ -126,7 +138,7 @@
             <div class="feature-card">
               <div class="feature-icon">🎓</div>
               <div class="feature-title">Expert Tutorials</div>
-              <div class="feature-desc">From basics to advanced strategies with real-world examples</div>
+              <div class="feature-desc">From crypto basics to advanced market, creator, business, and tokenized content education</div>
             </div>
             <div class="feature-card">
               <div class="feature-icon">🤖</div>
@@ -141,26 +153,26 @@
             <div class="feature-card">
               <div class="feature-icon">📈</div>
               <div class="feature-title">Practice Trading</div>
-              <div class="feature-desc">Test your skills with paper trading in a risk-free environment</div>
+              <div class="feature-desc">Practice with dummy buys, paper tools, and guided simulations for demonstration and entertainment before risking real capital</div>
             </div>
           </div>
 
           <div class="stats-section">
             <div class="stat-item">
-              <div class="stat-number">50+</div>
-              <div class="stat-label">Lessons</div>
+              <div class="stat-number">490</div>
+              <div class="stat-label">Planned Modules</div>
             </div>
             <div class="stat-item">
-              <div class="stat-number">10</div>
-              <div class="stat-label">Categories</div>
+              <div class="stat-number">13</div>
+              <div class="stat-label">Learning Paths</div>
             </div>
             <div class="stat-item">
               <div class="stat-number">24/7</div>
               <div class="stat-label">AI Support</div>
             </div>
             <div class="stat-item">
-              <div class="stat-number">100%</div>
-              <div class="stat-label">Free</div>
+              <div class="stat-number">Legal</div>
+              <div class="stat-label">Country-aware</div>
             </div>
           </div>
 
@@ -181,7 +193,7 @@
           <div class="panel-header">
             <div>
               <div class="h1">The Oracle</div>
-              <div class="muted">One action to start a monitored cycle. No profit guarantees.</div>
+              <div class="muted">Guided practice, dummy-buy demonstrations, and monitored workflows to help users learn how crypto investing works and where the pitfalls are.</div>
             </div>
             <div class="kpis">
               <div class="kpi">
@@ -205,20 +217,20 @@
 
           <div class="oracle-grid">
             <div class="card">
-              <div class="card-title">One Invest (24h Autopilot)</div>
+              <div class="card-title">One Invest Demo (24h Practice Autopilot)</div>
               <div class="slider-row">
                 <input id="fuel" type="range" min="10" max="10000" value="250" step="10" />
                 <div class="fuel-value">$<span id="fuelValue">250</span></div>
               </div>
-              <div class="muted small">We split your amount into <strong>24</strong> equal slices (hourly) for 24 hours.</div>
-              <div class="muted small">Upfront service fee: <strong>1%</strong> of your total (paid before Autopilot starts).</div>
+              <div class="muted small">We split your demonstration amount into <strong>24</strong> equal slices (hourly) for 24 hours so the user can see how a staged crypto entry would behave.</div>
+              <div class="muted small">By default this is for paper practice, dummy buys, education, and entertainment unless the user deliberately configures live execution.</div>
 
               <div class="gate">
                 <label class="gate-row"><input id="gateSub" type="checkbox" disabled /> Subscription is active.</label>
                 <label class="gate-row"><input id="gateUpfront" type="checkbox" disabled /> Upfront 1% fee is paid.</label>
-                <label class="gate-row"><input id="gateRisk" type="checkbox" /> I understand I can lose money.</label>
+                <label class="gate-row"><input id="gateRisk" type="checkbox" /> I understand crypto investing can lead to financial loss.</label>
                 <label class="gate-row"><input id="gateFee" type="checkbox" /> I agree to the 1% service fee.</label>
-                <label class="gate-row"><input id="gateTime" type="checkbox" /> I allow the system to run for 24 hours.</label>
+                <label class="gate-row"><input id="gateTime" type="checkbox" /> I allow the demonstration workflow to run for 24 hours.</label>
               </div>
 
               <div class="oracle-actions">
@@ -226,13 +238,13 @@
                   <div class="orb-core"></div>
                   <div class="orb-text">
                     <div class="orb-title">One</div>
-                    <div class="orb-sub">Invest</div>
+                    <div class="orb-sub">Demo</div>
                   </div>
                 </button>
                 <div class="oneinvest-meta">
-                  <div class="muted small">Autopilot status</div>
+                  <div class="muted small">Demo autopilot status</div>
                   <div id="autoStatus" class="auto-status">Off</div>
-                  <div class="muted small">Next slice</div>
+                  <div class="muted small">Next demonstration slice</div>
                   <div id="autoNext" class="auto-next">—</div>
                   <div class="auto-actions">
                     <button id="stopAuto" class="btn" disabled>Stop</button>
@@ -481,7 +493,7 @@
               <div id="portfolioCountryLegal" class="muted" style="line-height:1.6">Select your country to view legal guidance.</div>
               <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
                 <button id="portfolioConnectWallet" class="btn">Connect Wallet</button>
-                <button id="portfolioSubscribe" class="btn primary">Activate Stripe</button>
+                <button id="portfolioSubscribe" class="btn primary">Unlock Paid Courses</button>
               </div>
             </div>
           </div>
@@ -539,11 +551,119 @@
           </div>
         </section>
 
+        <section class="panel" id="tab-messages" role="region" aria-label="Messages">
+          <div class="panel-header">
+            <div>
+              <div class="h1">Message Center</div>
+              <div class="muted">Internal inbox for Juzzy AI Guide conversations, saved in your profile and replied to inside the app.</div>
+            </div>
+            <div class="pill">Address: <span id="messagesAgentAddress">guide@juzzy.internal.ai</span></div>
+          </div>
+
+          <div class="messages-layout">
+            <div class="card messages-sidebar-card">
+              <div class="card-title">Inbox</div>
+              <div class="messages-team-note muted small">AI service teams: Learning, Billing, Technical Support, Onboarding, and Operations.</div>
+              <div id="messagesThreadList" class="messages-thread-list"></div>
+            </div>
+
+            <div class="card messages-main-card">
+              <div class="messages-thread-head">
+                <div>
+                  <div id="messagesThreadTitle" class="card-title">Juzzy AI Guide</div>
+                  <div class="muted small">Clearly labeled AI assistant with delayed in-app replies</div>
+                </div>
+                <button id="messagesNewThreadBtn" class="btn">New message</button>
+              </div>
+              <div id="messagesThreadMessages" class="messages-thread-messages"></div>
+              <div class="messages-compose">
+                <select id="messagesCategory" class="select">
+                  <option value="learning">Learning Support</option>
+                  <option value="dean">Dean of Juzzy</option>
+                  <option value="billing">Billing & Access</option>
+                  <option value="technical">Technical Support</option>
+                  <option value="onboarding">Onboarding Help</option>
+                  <option value="operations">Operations & Admin</option>
+                </select>
+                <input id="messagesSubject" class="input" placeholder="Subject" />
+                <textarea id="messagesComposer" class="input messages-textarea" placeholder="Write your message to Juzzy AI Guide…"></textarea>
+                <div class="messages-compose-actions">
+                  <button id="messagesRefundBtn" class="btn" type="button">Generate Refund Request</button>
+                  <button id="messagesSendBtn" class="btn primary">Send to AI Guide</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="ownerRefundPanel" class="card owner-refund-panel" hidden>
+            <div class="messages-thread-head">
+              <div>
+                <div class="card-title">Owner Refund Approval Box</div>
+                <div class="muted small">Only visible to the configured owner account inside the app.</div>
+              </div>
+            </div>
+            <div id="ownerRefundList" class="messages-thread-list"></div>
+          </div>
+        </section>
+
+        <section class="panel" id="tab-community" role="region" aria-label="Community">
+          <div class="panel-header">
+            <div>
+              <div class="h1">Juzzy Campus Community</div>
+              <div class="muted">A clearly labeled simulated AI community with campus chatter, crypto talk, course discussion, and profile-style avatars.</div>
+            </div>
+            <div class="pill">Simulated AI community</div>
+          </div>
+
+          <div class="community-grid">
+            <div class="card community-feed-card">
+              <div class="community-stats">
+                <div class="stat-item"><div id="communityMemberCount" class="stat-number">0</div><div class="stat-label">AI Members</div></div>
+                <div class="stat-item"><div id="communityLiveThreads" class="stat-number">0</div><div class="stat-label">Live Threads</div></div>
+                <div class="stat-item"><div id="communityPulse" class="stat-number">0</div><div class="stat-label">Campus Pulse</div></div>
+              </div>
+              <div class="community-feed-head">
+                <div class="card-title">Campus Feed</div>
+                <div class="muted small">Profiles and posts are AI-simulated for immersion and practice.</div>
+              </div>
+              <div id="communityFeed" class="community-feed"></div>
+            </div>
+
+            <div class="community-side-column">
+              <div class="card community-profile-card">
+                <div class="card-title">Your Community Avatar</div>
+                <div id="communityUserAvatarPreview" class="community-avatar-preview"></div>
+                <div class="community-avatar-builder">
+                  <input id="communityAvatarName" class="input" placeholder="Community display name" />
+                  <select id="communityAvatarMood" class="select">
+                    <option value="curious">Curious</option>
+                    <option value="alpha">Alpha</option>
+                    <option value="builder">Builder</option>
+                    <option value="sage">Sage</option>
+                  </select>
+                  <select id="communityAvatarPalette" class="select">
+                    <option value="cyan">Cyan Glow</option>
+                    <option value="violet">Violet Pulse</option>
+                    <option value="gold">Gold Flux</option>
+                    <option value="emerald">Emerald Wave</option>
+                  </select>
+                  <button id="communityAvatarSaveBtn" class="btn primary" type="button">Save Avatar</button>
+                </div>
+              </div>
+
+              <div class="card community-profile-card">
+                <div class="card-title">AI Member Profiles</div>
+                <div id="communityProfiles" class="community-profiles"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section class="panel" id="tab-tutorial" role="region" aria-label="Tutorial">
           <div class="panel-header">
             <div>
-              <div class="h1">Tutorial</div>
-              <div class="muted">50+ lessons on crypto, markets, strategies and using Juzzy.</div>
+              <div class="h1">Juzzy Academy</div>
+              <div class="muted">A structured crypto education platform with linked modules, practice labs, AI guidance, and pathway-based progression.</div>
             </div>
             <div style="display:flex;gap:8px;align-items:center">
               <select id="tutCat" class="select" style="min-width:160px">
@@ -552,6 +672,25 @@
               <input id="tutSearch" class="input" placeholder="Search lessons…" style="width:180px" />
               <span id="tutProgress" class="muted small"></span>
             </div>
+          </div>
+
+          <div id="academyOverview" class="academy-overview"></div>
+
+          <div class="academy-grid academy-grid-immersive">
+            <div id="academyJourney" class="academy-section"></div>
+            <div id="academyProfile" class="academy-section"></div>
+          </div>
+
+          <div id="academyFocus" class="academy-section academy-focus"></div>
+
+          <div class="academy-grid">
+            <div id="academyTracks" class="academy-section"></div>
+            <div id="academyPackages" class="academy-section"></div>
+          </div>
+
+          <div class="academy-grid academy-grid-bottom">
+            <div id="academyRoadmap" class="academy-section"></div>
+            <div id="academyBuilder" class="academy-section"></div>
           </div>
 
           <!-- catalog grid -->
@@ -613,9 +752,36 @@
         </section>
       </main>
 
+      <div class="risk-disclaimer risk-disclaimer-footer">
+        Any information in this app does not guarantee any kind of return and may lead to financial loss. Any information given is for educational and entertainment purposes but does not guarantee any kind of financial gain. Any financial commitment by the user is at their own risk and does not give the user any kind of guaranteed monies.
+      </div>
+
       <footer class="footer">
-        <div class="muted small">Trading is risky. This app is a UX scaffold and does not guarantee profits. Fees are explicit and user-consented.</div>
+        <div class="muted small">Trading and digital assets are risky. Juzzy is an educational platform, not financial, legal, or tax advice. Outcomes are not guaranteed, references to potential returns are illustrative only, and users must verify the laws of their own country before acting. Fees are explicit and user-consented.</div>
       </footer>
+    </div>
+
+    <button id="globalAiToggle" class="global-ai-toggle" aria-label="Open Juzzy AI">🧠</button>
+    <div id="globalAiDock" class="global-ai-dock" hidden>
+      <div class="global-ai-head">
+        <div>
+          <div class="global-ai-title">Juzzy AI Guide</div>
+          <div class="muted small">Talk, type, explore, and jump back into your lesson</div>
+        </div>
+        <div class="global-ai-actions">
+          <button id="globalAiSpeak" class="icon-btn" title="Toggle speaker">🔊</button>
+          <button id="globalAiClose" class="icon-btn" title="Close AI">×</button>
+        </div>
+      </div>
+      <div id="globalAiMessages" class="global-ai-messages"></div>
+      <div class="global-ai-input-row">
+        <input id="globalAiInput" class="input" placeholder="Ask Juzzy AI anything…" />
+        <button id="globalAiMic" class="btn" type="button">🎙️</button>
+        <button id="globalAiSend" class="btn primary" type="button">Send</button>
+      </div>
+      <div class="global-ai-foot">
+        <button id="returnToLessonBtn" class="btn" type="button">Return to lesson</button>
+      </div>
     </div>
 
     <div id="modal" class="modal" hidden>
@@ -635,6 +801,8 @@
     <script src="tutorials.js"></script>
     <script src="tutorials2.js"></script>
     <script src="app-tutorials.js"></script>
+    <script src="academy-data.js"></script>
+    <script src="academy-lessons.js"></script>
     <script src="main.js?v=20260325fix"></script>
   </body>
 </html>

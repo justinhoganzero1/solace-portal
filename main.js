@@ -8,23 +8,170 @@
     charts: true,
     simpleMode: true,
   };
+  const COMMUNITY_MEMBER_TARGET = 5824;
+
+  function defaultCommunityAvatar() {
+    return {
+      name: state.profile.name || 'Campus Explorer',
+      mood: 'curious',
+      palette: 'cyan',
+    };
+  }
+
+  function loadCommunityAvatar() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(communityAvatarKey) || 'null');
+      return raw && typeof raw === 'object' ? { ...defaultCommunityAvatar(), ...raw } : defaultCommunityAvatar();
+    } catch {
+      return defaultCommunityAvatar();
+    }
+  }
+
+  function saveCommunityAvatar(avatar) {
+    try {
+      localStorage.setItem(communityAvatarKey, JSON.stringify(avatar));
+    } catch {
+      // ignore
+    }
+  }
+
+  function avatarGradient(palette) {
+    const map = {
+      cyan: 'linear-gradient(135deg, #00e5ff, #1488cc)',
+      violet: 'linear-gradient(135deg, #7a5cff, #b14dff)',
+      gold: 'linear-gradient(135deg, #ffcc4d, #ff8c42)',
+      emerald: 'linear-gradient(135deg, #21d19f, #11998e)',
+    };
+    return map[palette] || map.cyan;
+  }
+
+  function makeAvatarMarkup(name, mood, palette, large = false) {
+    const initials = String(name || 'JC').split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase() || '').join('') || 'JC';
+    return `<div class="community-avatar ${large ? 'large' : ''}" style="background:${avatarGradient(palette)}"><span>${initials}</span><div class="community-avatar-ring mood-${mood}"></div></div>`;
+  }
+
+  function generateCommunityMembers() {
+    if (state.community.members.length) return state.community.members;
+    const first = ['Ari', 'Nova', 'Kian', 'Mila', 'Zeke', 'Tara', 'Rex', 'Lina', 'Orin', 'Pia', 'Jett', 'Sora', 'Niko', 'Vera', 'Dax'];
+    const last = ['Wave', 'Ledger', 'Pulse', 'Chain', 'Signal', 'Mint', 'Vault', 'Mode', 'Byte', 'Flow', 'Node', 'Spark'];
+    const moods = ['curious', 'alpha', 'builder', 'sage'];
+    const palettes = ['cyan', 'violet', 'gold', 'emerald'];
+    const roles = ['AI-simulated trader', 'AI-simulated builder', 'AI-simulated creator', 'AI-simulated researcher', 'AI-simulated macro watcher'];
+    const members = [];
+    for (let i = 0; i < COMMUNITY_MEMBER_TARGET; i += 1) {
+      const name = `${first[i % first.length]} ${last[i % last.length]} ${i + 1}`;
+      members.push({
+        id: `community-member-${i + 1}`,
+        name,
+        mood: moods[i % moods.length],
+        palette: palettes[i % palettes.length],
+        role: roles[i % roles.length],
+        address: `${name.toLowerCase().replace(/[^a-z0-9]+/g, '.')}@community.ai`,
+      });
+    }
+    state.community.members = members;
+    return members;
+  }
+
+  function generateCommunityPosts() {
+    if (state.community.posts.length) return state.community.posts;
+    const topics = [
+      'Token universe module is wild, finally seeing how narratives rotate across sectors.',
+      'Anyone else using the chart tools right after the lesson hotspots? Makes the course stick better.',
+      'Builder track plus AI professor Nova is making DeFi way less intimidating.',
+      'Big chatter today around ETF flows, memecoin risk, and whether influencers are front-running attention.',
+      'Creator economy lessons are surprisingly strong. Tokenized media models feel more real after the labs.',
+      'Exchange legitimacy path should honestly be required before anybody touches a deposit button.',
+      'Community note: this campus feed is AI-simulated, but the market topics are still useful to explore.',
+      'Seeing random talk about Solana, Base, AI agents, and whether macro liquidity is the real driver again.',
+      'Influencer chatter never stops. Half the lesson is learning how not to get manipulated by it.',
+      'Risk professor Sol is ruthless in the best way possible. Every hype cycle needs that energy.',
+    ];
+    const members = generateCommunityMembers();
+    state.community.posts = Array.from({ length: 48 }, (_, idx) => {
+      const member = members[(idx * 17) % members.length];
+      return {
+        id: `community-post-${idx + 1}`,
+        memberId: member.id,
+        body: topics[idx % topics.length],
+        likes: 20 + ((idx * 13) % 420),
+        replies: 4 + ((idx * 7) % 66),
+        topic: ['Course', 'Markets', 'Influencers', 'Builders', 'DeFi'][idx % 5],
+      };
+    });
+    return state.community.posts;
+  }
+
+  function renderCommunity() {
+    const members = generateCommunityMembers();
+    const posts = generateCommunityPosts();
+    const avatar = loadCommunityAvatar();
+    if (els.communityMemberCount) els.communityMemberCount.textContent = String(COMMUNITY_MEMBER_TARGET.toLocaleString());
+    if (els.communityLiveThreads) els.communityLiveThreads.textContent = String((120 + posts.length).toLocaleString());
+    if (els.communityPulse) els.communityPulse.textContent = 'AI';
+    if (els.communityFeed) {
+      els.communityFeed.innerHTML = posts.map((post) => {
+        const member = members.find((item) => item.id === post.memberId);
+        return `<div class="community-post-card"><div class="community-post-head">${makeAvatarMarkup(member.name, member.mood, member.palette)}<div><div class="community-post-name">${member.name}</div><div class="community-post-meta">${member.role} · ${member.address} · ${post.topic}</div></div></div><div class="community-post-body">${post.body}</div><div class="community-post-links"><button class="academy-hotspot" data-community-profile="${member.id}">Open profile</button><span class="muted small">${post.likes} likes · ${post.replies} replies</span></div></div>`;
+      }).join('');
+      Array.from(els.communityFeed.querySelectorAll('[data-community-profile]')).forEach((el) => {
+        el.addEventListener('click', () => renderCommunityProfileCard(el.getAttribute('data-community-profile')));
+      });
+    }
+    if (els.communityProfiles) {
+      els.communityProfiles.innerHTML = members.slice(0, 8).map((member) => `
+        <button class="community-profile-link" data-community-profile="${member.id}">
+          ${makeAvatarMarkup(member.name, member.mood, member.palette)}
+          <div>
+            <div class="community-post-name">${member.name}</div>
+            <div class="community-post-meta">${member.role}</div>
+          </div>
+        </button>
+      `).join('');
+      Array.from(els.communityProfiles.querySelectorAll('[data-community-profile]')).forEach((el) => {
+        el.addEventListener('click', () => renderCommunityProfileCard(el.getAttribute('data-community-profile')));
+      });
+    }
+    if (els.communityUserAvatarPreview) {
+      els.communityUserAvatarPreview.innerHTML = `${makeAvatarMarkup(avatar.name, avatar.mood, avatar.palette, true)}<div class="community-user-meta"><div class="community-post-name">${avatar.name}</div><div class="community-post-meta">Your customizable campus identity</div></div>`;
+    }
+    if (els.communityAvatarName) els.communityAvatarName.value = avatar.name;
+    if (els.communityAvatarMood) els.communityAvatarMood.value = avatar.mood;
+    if (els.communityAvatarPalette) els.communityAvatarPalette.value = avatar.palette;
+  }
+
+  function renderCommunityProfileCard(memberId) {
+    const member = generateCommunityMembers().find((item) => item.id === memberId);
+    if (!member || !els.communityProfiles) return;
+    els.communityProfiles.innerHTML = `<div class="community-profile-expanded">${makeAvatarMarkup(member.name, member.mood, member.palette, true)}<div class="community-post-name">${member.name}</div><div class="community-post-meta">${member.role}</div><div class="community-profile-copy">This is an AI-simulated campus member profile used to create immersive community chatter inside Juzzy.</div><div class="community-post-meta">${member.address}</div></div>`;
+  }
+
+  function saveCommunityAvatarFromInputs() {
+    const avatar = {
+      name: String(els.communityAvatarName?.value || '').trim() || defaultCommunityAvatar().name,
+      mood: String(els.communityAvatarMood?.value || 'curious').trim() || 'curious',
+      palette: String(els.communityAvatarPalette?.value || 'cyan').trim() || 'cyan',
+    };
+    saveCommunityAvatar(avatar);
+    renderCommunity();
+  }
 
   const COUNTRY_PROFILES = [
-    { code: 'US', name: 'United States', currency: 'USD', legal: 'Crypto rules vary by state. Tax reporting may apply to disposals and income events.' },
-    { code: 'GB', name: 'United Kingdom', currency: 'GBP', legal: 'Cryptoassets can fall under FCA/HMRC rules depending on activity and reporting obligations.' },
-    { code: 'AU', name: 'Australia', currency: 'AUD', legal: 'Digital assets may be taxable and subject to consumer, licensing, and AML obligations.' },
-    { code: 'CA', name: 'Canada', currency: 'CAD', legal: 'Crypto gains and business activity may be taxable and subject to provincial guidance.' },
-    { code: 'DE', name: 'Germany', currency: 'EUR', legal: 'Tax and regulatory treatment depends on holding period, product structure, and use case.' },
-    { code: 'FR', name: 'France', currency: 'EUR', legal: 'French registration, tax, and investor protection requirements may apply.' },
-    { code: 'ES', name: 'Spain', currency: 'EUR', legal: 'Spanish tax reporting and local compliance requirements may apply to crypto holdings.' },
-    { code: 'SG', name: 'Singapore', currency: 'SGD', legal: 'Digital payment token activity may fall within MAS frameworks depending on the service.' },
-    { code: 'JP', name: 'Japan', currency: 'JPY', legal: 'Japanese financial regulation can apply to exchange and token-related activity.' },
-    { code: 'KR', name: 'South Korea', currency: 'KRW', legal: 'Virtual asset activity may require compliance with local exchange and reporting frameworks.' },
-    { code: 'BR', name: 'Brazil', currency: 'BRL', legal: 'Brazilian tax and reporting obligations may apply to crypto transactions and holdings.' },
-    { code: 'IN', name: 'India', currency: 'INR', legal: 'Indian crypto taxation and reporting obligations may apply under current policy settings.' },
-    { code: 'AE', name: 'United Arab Emirates', currency: 'AED', legal: 'Rules vary by emirate and free-zone regulator depending on the product and service.' },
-    { code: 'ZA', name: 'South Africa', currency: 'ZAR', legal: 'Crypto may be taxable and subject to evolving FSCA and exchange-control related guidance.' },
-    { code: 'NG', name: 'Nigeria', currency: 'NGN', legal: 'Rules are evolving; review current SEC and CBN guidance before regulated activity.' },
+    { code: 'US', name: 'United States', currency: 'USD', legal: 'Educational content only. Crypto rules vary by state. Securities, tax, money transmission, consumer protection, and disclosure rules may apply. Users must verify current federal and state requirements before acting.' },
+    { code: 'GB', name: 'United Kingdom', currency: 'GBP', legal: 'Educational content only. Cryptoassets can fall under FCA, promotions, AML, and HMRC rules depending on activity. Users must verify current UK requirements before acting.' },
+    { code: 'AU', name: 'Australia', currency: 'AUD', legal: 'Educational content only. Digital assets may involve tax, AML/CTF, licensing, and consumer law obligations. Users must verify current Australian requirements before acting.' },
+    { code: 'CA', name: 'Canada', currency: 'CAD', legal: 'Educational content only. Crypto activity may involve securities, derivatives, tax, and provincial compliance obligations. Users must verify current Canadian requirements before acting.' },
+    { code: 'DE', name: 'Germany', currency: 'EUR', legal: 'Educational content only. Tax and regulatory treatment depends on holding period, product structure, and use case. Users must verify current German and EU requirements before acting.' },
+    { code: 'FR', name: 'France', currency: 'EUR', legal: 'Educational content only. Registration, tax, AML, and investor protection requirements may apply. Users must verify current French and EU requirements before acting.' },
+    { code: 'ES', name: 'Spain', currency: 'EUR', legal: 'Educational content only. Spanish tax reporting and local compliance requirements may apply to crypto holdings and transactions. Users must verify current requirements before acting.' },
+    { code: 'SG', name: 'Singapore', currency: 'SGD', legal: 'Educational content only. Digital payment token activity may fall within MAS frameworks depending on the service. Users must verify current Singapore requirements before acting.' },
+    { code: 'JP', name: 'Japan', currency: 'JPY', legal: 'Educational content only. Japanese financial regulation can apply to exchange and token-related activity. Users must verify current Japanese requirements before acting.' },
+    { code: 'KR', name: 'South Korea', currency: 'KRW', legal: 'Educational content only. Virtual asset activity may require compliance with exchange, tax, and reporting frameworks. Users must verify current Korean requirements before acting.' },
+    { code: 'BR', name: 'Brazil', currency: 'BRL', legal: 'Educational content only. Brazilian tax and reporting obligations may apply to crypto transactions and holdings. Users must verify current Brazilian requirements before acting.' },
+    { code: 'IN', name: 'India', currency: 'INR', legal: 'Educational content only. Indian crypto taxation and reporting obligations may apply under current policy settings. Users must verify current Indian requirements before acting.' },
+    { code: 'AE', name: 'United Arab Emirates', currency: 'AED', legal: 'Educational content only. Rules vary by emirate and free-zone regulator depending on the product and service. Users must verify current UAE requirements before acting.' },
+    { code: 'ZA', name: 'South Africa', currency: 'ZAR', legal: 'Educational content only. Crypto may be taxable and subject to evolving FSCA and exchange-control guidance. Users must verify current South African requirements before acting.' },
+    { code: 'NG', name: 'Nigeria', currency: 'NGN', legal: 'Educational content only. Rules are evolving; users should review current SEC, CBN, tax, and local guidance before acting.' },
   ];
 
   const COMMON_LANGUAGES = [
@@ -102,11 +249,18 @@
     tutSearch: document.getElementById('tutSearch'),
     tutProgress: document.getElementById('tutProgress'),
     tutCatalog: document.getElementById('tutCatalog'),
+    academyOverview: document.getElementById('academyOverview'),
+    academyJourney: document.getElementById('academyJourney'),
+    academyProfile: document.getElementById('academyProfile'),
+    academyFocus: document.getElementById('academyFocus'),
+    academyTracks: document.getElementById('academyTracks'),
+    academyPackages: document.getElementById('academyPackages'),
+    academyRoadmap: document.getElementById('academyRoadmap'),
+    academyBuilder: document.getElementById('academyBuilder'),
     tutModeChooser: document.getElementById('tutModeChooser'),
     tutModeTitle: document.getElementById('tutModeTitle'),
     tutModeDesc: document.getElementById('tutModeDesc'),
-    tutModeRead: document.getElementById('tutModeRead'),
-    tutModeAI: document.getElementById('tutModeAI'),
+    tutModeQuick: document.getElementById('tutModeQuick'),
     tutModeDeep: document.getElementById('tutModeDeep'),
     tutReader: document.getElementById('tutReader'),
     tutTitle: document.getElementById('tutTitle'),
@@ -114,9 +268,12 @@
     tutBody: document.getElementById('tutBody'),
     tutPrev: document.getElementById('tutPrev'),
     tutNext: document.getElementById('tutNext'),
+    tutProgressText: document.getElementById('tutProgressText'),
+    tutProgressFill: document.getElementById('tutProgressFill'),
     tutChatMessages: document.getElementById('tutChatMessages'),
     tutChatInput: document.getElementById('tutChatInput'),
     tutChatSend: document.getElementById('tutChatSend'),
+    tutTtsToggle: document.getElementById('tutTtsToggle'),
     modal: document.getElementById('modal'),
     modalTitle: document.getElementById('modalTitle'),
     modalBody: document.getElementById('modalBody'),
@@ -124,6 +281,38 @@
     modalClose: document.getElementById('modalClose'),
     modalPrimary: document.getElementById('modalPrimary'),
     modalSecondary: document.getElementById('modalSecondary'),
+    globalAiToggle: document.getElementById('globalAiToggle'),
+    globalAiDock: document.getElementById('globalAiDock'),
+    globalAiClose: document.getElementById('globalAiClose'),
+    globalAiMessages: document.getElementById('globalAiMessages'),
+    globalAiInput: document.getElementById('globalAiInput'),
+    globalAiSend: document.getElementById('globalAiSend'),
+    globalAiMic: document.getElementById('globalAiMic'),
+    globalAiSpeak: document.getElementById('globalAiSpeak'),
+    returnToLessonBtn: document.getElementById('returnToLessonBtn'),
+    messagesUnreadBadge: document.getElementById('messagesUnreadBadge'),
+    messagesAgentAddress: document.getElementById('messagesAgentAddress'),
+    messagesThreadList: document.getElementById('messagesThreadList'),
+    messagesThreadTitle: document.getElementById('messagesThreadTitle'),
+    messagesThreadMessages: document.getElementById('messagesThreadMessages'),
+    messagesCategory: document.getElementById('messagesCategory'),
+    messagesSubject: document.getElementById('messagesSubject'),
+    messagesComposer: document.getElementById('messagesComposer'),
+    messagesRefundBtn: document.getElementById('messagesRefundBtn'),
+    messagesSendBtn: document.getElementById('messagesSendBtn'),
+    messagesNewThreadBtn: document.getElementById('messagesNewThreadBtn'),
+    ownerRefundPanel: document.getElementById('ownerRefundPanel'),
+    ownerRefundList: document.getElementById('ownerRefundList'),
+    communityMemberCount: document.getElementById('communityMemberCount'),
+    communityLiveThreads: document.getElementById('communityLiveThreads'),
+    communityPulse: document.getElementById('communityPulse'),
+    communityFeed: document.getElementById('communityFeed'),
+    communityProfiles: document.getElementById('communityProfiles'),
+    communityUserAvatarPreview: document.getElementById('communityUserAvatarPreview'),
+    communityAvatarName: document.getElementById('communityAvatarName'),
+    communityAvatarMood: document.getElementById('communityAvatarMood'),
+    communityAvatarPalette: document.getElementById('communityAvatarPalette'),
+    communityAvatarSaveBtn: document.getElementById('communityAvatarSaveBtn'),
     authGate: document.getElementById('authGate'),
     authSignInEmail: document.getElementById('authSignInEmail'),
     authSignInPassword: document.getElementById('authSignInPassword'),
@@ -244,9 +433,10 @@
     profile: {
       loggedIn: false,
       name: '',
-      country: 'US',
+      country: '',
       language: 'en',
       languageCustom: '',
+      legalAccepted: false,
     },
     ui: {
       simpleMode: false,
@@ -268,8 +458,434 @@
     reportsRendered: 0,
     reportsLastRenderedId: null,
     reportsNewPending: 0,
-    
+    messages: {
+      threads: [],
+      activeThreadId: null,
+      unreadCount: 0,
+    },
+    community: {
+      members: [],
+      posts: [],
+    },
   };
+
+  const messageCenterKey = 'juzzy_message_center';
+  const ownerRefundQueueKey = 'juzzy_owner_refund_queue';
+  const communityAvatarKey = 'juzzy_community_avatar';
+  const AI_GUIDE_NAME = 'Mira — Juzzy AI Guide';
+  const AI_GUIDE_ADDRESS = 'guide@juzzy.internal.ai';
+  const lessonProfessorKey = 'juzzy_lesson_professor';
+  const OWNER_APPROVER_EMAILS = ['owner@juzzy.local'];
+  const AI_SERVICE_TEAMS = {
+    learning: { name: 'Mira — Learning Support AI', address: 'learning@juzzy.internal.ai' },
+    dean: { name: 'Dean Aurelius — Juzzy AI Dean', address: 'dean@juzzy.internal.ai' },
+    billing: { name: 'Alden — Billing Access AI', address: 'billing@juzzy.internal.ai' },
+    technical: { name: 'Nova — Technical Support AI', address: 'support@juzzy.internal.ai' },
+    onboarding: { name: 'Sera — Onboarding AI', address: 'onboarding@juzzy.internal.ai' },
+    operations: { name: 'Orin — Operations AI', address: 'ops@juzzy.internal.ai' },
+  };
+  const AI_PROFESSORS = {
+    atlas: {
+      name: 'Professor Atlas',
+      title: 'AI Professor of Crypto Foundations',
+      specialty: 'Foundations, token models, and first-principles teaching',
+      tone: 'clear, structured, foundational',
+      avatar: '🧭',
+    },
+    vega: {
+      name: 'Professor Vega',
+      title: 'AI Professor of Markets and Chartcraft',
+      specialty: 'Charts, market structure, and practice-based analysis',
+      tone: 'analytical, tactical, market-focused',
+      avatar: '📈',
+    },
+    lyra: {
+      name: 'Professor Lyra',
+      title: 'AI Professor of Creator and Media Systems',
+      specialty: 'Creator economy, products, audience trust, and media strategy',
+      tone: 'creative, persuasive, product-minded',
+      avatar: '🎬',
+    },
+    sol: {
+      name: 'Professor Sol',
+      title: 'AI Professor of Risk and Legitimacy',
+      specialty: 'Risk controls, exchange legitimacy, safety, and due diligence',
+      tone: 'careful, skeptical, safety-first',
+      avatar: '🛡️',
+    },
+    nova: {
+      name: 'Professor Nova',
+      title: 'AI Professor of Builder and AI Systems',
+      specialty: 'DeFi, smart-contract thinking, AI workflows, and technical literacy',
+      tone: 'technical, systems-oriented, exploratory',
+      avatar: '🤖',
+    },
+  };
+
+  function defaultMessageCenter() {
+    return {
+      unreadCount: 0,
+      activeThreadId: 'thread-welcome',
+      threads: [
+        {
+          id: 'thread-welcome',
+          subject: 'Welcome to Juzzy Message Center',
+          category: 'learning',
+          updatedAt: Date.now(),
+          unread: false,
+          messages: [
+            {
+              id: `msg-${Date.now()}`,
+              senderName: AI_GUIDE_NAME,
+              senderAddress: AI_GUIDE_ADDRESS,
+              role: 'ai',
+              body: 'Hi. I am Juzzy AI Guide, clearly labeled as an internal AI assistant. You can message me here about lessons, app features, or what to study next, and I will reply inside this inbox.',
+              ts: Date.now(),
+            },
+          ],
+        },
+      ],
+    };
+  }
+
+  function createRefundRequest() {
+    const reason = String(els.messagesComposer?.value || '').trim() || 'User requested a refund review.';
+    const subject = String(els.messagesSubject?.value || '').trim() || 'Refund request';
+    const userEmail = String(state.user.email || 'user@juzzy.local').trim();
+    const queue = loadOwnerRefundQueue();
+    const request = {
+      id: `refund-${Date.now()}`,
+      subject,
+      reason,
+      userEmail,
+      status: 'pending',
+      createdAt: Date.now(),
+    };
+    queue.unshift(request);
+    saveOwnerRefundQueue(queue);
+    if (els.messagesCategory) els.messagesCategory.value = 'billing';
+    if (els.messagesSubject) els.messagesSubject.value = subject;
+    if (els.messagesComposer) {
+      els.messagesComposer.value = `${reason}\n\nRefund request prepared for owner approval. Billing links: Subscription, Settings, and Portfolio access controls inside Juzzy.`;
+    }
+    sendMessageToAiInbox();
+    renderOwnerRefundQueue();
+  }
+
+  function getActiveLessonContext() {
+    const tut = allTutorials.find(t => t.id === activeTutId);
+    const step = tut ? tut.steps[activeTutStep] : null;
+    return { tut, step };
+  }
+
+  function getSelectedProfessorId() {
+    try {
+      const saved = String(localStorage.getItem(lessonProfessorKey) || 'atlas').trim();
+      return AI_PROFESSORS[saved] ? saved : 'atlas';
+    } catch {
+      return 'atlas';
+    }
+  }
+
+  function getSelectedProfessor() {
+    return AI_PROFESSORS[getSelectedProfessorId()] || AI_PROFESSORS.atlas;
+  }
+
+  function setSelectedProfessor(id) {
+    if (!AI_PROFESSORS[id]) return;
+    try {
+      localStorage.setItem(lessonProfessorKey, id);
+    } catch {
+      // ignore
+    }
+  }
+
+  function renderProfessorFaculty() {
+    const activeId = getSelectedProfessorId();
+    return `<div class="academy-professor-panel"><div class="academy-professor-head"><div class="academy-ai-tools-title">AI Faculty</div><div class="muted small">Professor-style AI instructors, clearly presented as AI guides</div></div><div class="academy-professor-grid">${Object.entries(AI_PROFESSORS).map(([id, professor]) => `<button class="academy-professor-card ${id === activeId ? 'active' : ''}" data-professor-id="${id}"><div class="academy-professor-avatar">${professor.avatar}</div><div><div class="academy-professor-name">${professor.name}</div><div class="academy-professor-role">${professor.title}</div><div class="academy-professor-copy">${professor.specialty}</div></div></button>`).join('')}</div></div>`;
+  }
+
+  function bindProfessorFaculty() {
+    if (!els.tutBody) return;
+    Array.from(els.tutBody.querySelectorAll('[data-professor-id]')).forEach((el) => {
+      el.addEventListener('click', () => {
+        const id = el.getAttribute('data-professor-id');
+        setSelectedProfessor(id);
+        renderTutStep();
+      });
+    });
+  }
+
+  function buildAiLessonFeatureOutput(action) {
+    const { tut, step } = getActiveLessonContext();
+    if (!tut || !step) return '<p>Open a lesson to activate AI lesson tools.</p>';
+    const professor = getSelectedProfessor();
+    const plain = tutStripHtml(step.html);
+    const short = plain.split('. ').slice(0, 2).join('. ');
+    const title = step.title;
+    const outputs = {
+      simplify: `<p><strong>${professor.name}:</strong> In a ${professor.tone} way, ${title} means: ${short || 'This step explains one core idea in a safer, simpler way.'}</p>`,
+      deeper: `<p><strong>${professor.name} deep dive:</strong> This step connects <strong>${title}</strong> to the broader lesson <strong>${tut.title}</strong>. ${professor.title} would teach this through ${professor.specialty.toLowerCase()}.</p>`,
+      analogy: `<p><strong>${professor.name} analogy:</strong> Think of this topic like a training simulator: you learn the rules, practice the sequence, and only then decide whether the real-world version makes sense for you.</p>`,
+      quiz: `<p><strong>${professor.name} quiz:</strong> 1) What is the main idea of this step? 2) What is one risk or mistake to avoid? 3) What would you do inside Juzzy to practice it safely?</p>`,
+      recap: `<p><strong>${professor.name} recap:</strong> ${short || 'This step teaches a key concept.'}</p><p>Main takeaway from ${professor.title}: understand the idea, practice it safely, and avoid acting on hype alone.</p>`,
+      next: `<p><strong>${professor.name} next step:</strong> Finish this step, then use one of the lesson hotspots like Charts, Leaders, Brain, or Reports to reinforce the concept through interaction.</p>`,
+      challenge: `<p><strong>${professor.name} challenge:</strong> Explain <strong>${title}</strong> in one sentence, name one risk, and connect it to one action you could take inside Juzzy.</p>`,
+      glossary: `<p><strong>${professor.name} glossary note:</strong> This step likely includes core terms tied to <strong>${tut.cat}</strong>. Focus on the keywords in the heading and ask the AI to define any term you don’t recognize.</p>`,
+      reflect: `<p><strong>${professor.name} reflection prompt:</strong> What part of this lesson still feels unclear, and what app feature would help you understand it better?</p>`,
+      coach: `<p><strong>${professor.name} coaching note:</strong> Use the clickable hotspots, AI inbox, and practice labs to let this lesson become active rather than passive.</p>`,
+    };
+    return outputs[action] || '<p>The AI lesson tool is ready. Pick another action to keep exploring.</p>';
+  }
+
+  function renderAiLessonTools() {
+    return `<div class="academy-ai-tools"><div class="academy-ai-tools-title">AI Lesson Tools</div><div class="academy-ai-tool-grid"><button class="academy-ai-tool" data-ai-tool="simplify">Simplify</button><button class="academy-ai-tool" data-ai-tool="deeper">Deep Dive</button><button class="academy-ai-tool" data-ai-tool="analogy">Analogy</button><button class="academy-ai-tool" data-ai-tool="quiz">Quiz Me</button><button class="academy-ai-tool" data-ai-tool="recap">Recap</button><button class="academy-ai-tool" data-ai-tool="next">Next Step</button><button class="academy-ai-tool" data-ai-tool="challenge">Challenge Me</button><button class="academy-ai-tool" data-ai-tool="glossary">Glossary</button><button class="academy-ai-tool" data-ai-tool="reflect">Reflect</button><button class="academy-ai-tool" data-ai-tool="coach">Coach</button></div><div id="lessonAiFeatureOutput" class="academy-ai-output">Tap an AI tool to generate an in-lesson assist.</div></div>`;
+  }
+
+  function bindAiLessonTools() {
+    if (!els.tutBody) return;
+    const output = els.tutBody.querySelector('#lessonAiFeatureOutput');
+    Array.from(els.tutBody.querySelectorAll('[data-ai-tool]')).forEach((el) => {
+      el.addEventListener('click', () => {
+        const action = el.getAttribute('data-ai-tool');
+        if (output) output.innerHTML = buildAiLessonFeatureOutput(action);
+        updateLearnerProfile((profile) => {
+          profile.interactionCount += 1;
+          return profile;
+        });
+      });
+    });
+  }
+
+  function loadMessageCenter() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(messageCenterKey) || 'null');
+      const data = raw && Array.isArray(raw.threads) ? raw : defaultMessageCenter();
+      state.messages.threads = data.threads;
+      state.messages.activeThreadId = data.activeThreadId || data.threads[0]?.id || null;
+      state.messages.unreadCount = Number(data.unreadCount || 0);
+    } catch {
+      const data = defaultMessageCenter();
+      state.messages.threads = data.threads;
+      state.messages.activeThreadId = data.activeThreadId;
+      state.messages.unreadCount = data.unreadCount;
+    }
+  }
+
+  function saveMessageCenter() {
+    try {
+      localStorage.setItem(messageCenterKey, JSON.stringify({
+        threads: state.messages.threads,
+        activeThreadId: state.messages.activeThreadId,
+        unreadCount: state.messages.unreadCount,
+      }));
+    } catch {
+      // ignore
+    }
+  }
+
+  function getActiveThread() {
+    return state.messages.threads.find((thread) => thread.id === state.messages.activeThreadId) || state.messages.threads[0] || null;
+  }
+
+  function isOwnerApprover() {
+    const email = String(state.user.email || '').trim().toLowerCase();
+    return OWNER_APPROVER_EMAILS.includes(email);
+  }
+
+  function loadOwnerRefundQueue() {
+    try {
+      return JSON.parse(localStorage.getItem(ownerRefundQueueKey) || '[]');
+    } catch {
+      return [];
+    }
+  }
+
+  function saveOwnerRefundQueue(items) {
+    try {
+      localStorage.setItem(ownerRefundQueueKey, JSON.stringify(items || []));
+    } catch {
+      // ignore
+    }
+  }
+
+  function renderOwnerRefundQueue() {
+    if (!els.ownerRefundPanel || !els.ownerRefundList) return;
+    const visible = isOwnerApprover();
+    els.ownerRefundPanel.hidden = !visible;
+    if (!visible) return;
+    const queue = loadOwnerRefundQueue();
+    els.ownerRefundList.innerHTML = queue.length
+      ? queue.map((item) => `
+        <div class="owner-refund-item">
+          <div class="messages-thread-subject">${item.subject}</div>
+          <div class="messages-thread-meta">${item.userEmail} · ${item.status} · ${new Date(item.createdAt).toLocaleString()}</div>
+          <div class="owner-refund-copy">${item.reason}</div>
+          <div class="messages-compose-actions">
+            <button class="btn" data-owner-refund-action="approve" data-owner-refund-id="${item.id}">Approve</button>
+            <button class="btn" data-owner-refund-action="reject" data-owner-refund-id="${item.id}">Reject</button>
+          </div>
+        </div>
+      `).join('')
+      : '<div class="muted small">No pending refund requests.</div>';
+    Array.from(els.ownerRefundList.querySelectorAll('[data-owner-refund-action]')).forEach((el) => {
+      el.addEventListener('click', () => {
+        const id = el.getAttribute('data-owner-refund-id');
+        const action = el.getAttribute('data-owner-refund-action');
+        const next = loadOwnerRefundQueue().map((item) => item.id === id ? { ...item, status: action === 'approve' ? 'approved' : 'rejected', reviewedAt: Date.now() } : item);
+        saveOwnerRefundQueue(next);
+        renderOwnerRefundQueue();
+      });
+    });
+  }
+
+  function updateMessagesUnreadBadge() {
+    if (!els.messagesUnreadBadge) return;
+    const count = Number(state.messages.unreadCount || 0);
+    els.messagesUnreadBadge.textContent = String(count);
+    els.messagesUnreadBadge.classList.toggle('util-hidden', count <= 0);
+  }
+
+  function renderMessageCenter() {
+    const activeThread = getActiveThread();
+    const team = AI_SERVICE_TEAMS[activeThread?.category || 'learning'] || { name: AI_GUIDE_NAME, address: AI_GUIDE_ADDRESS };
+    if (els.messagesAgentAddress) els.messagesAgentAddress.textContent = team.address;
+    if (els.messagesThreadList) {
+      els.messagesThreadList.innerHTML = state.messages.threads.map((thread) => `
+        <button class="messages-thread-item ${thread.id === state.messages.activeThreadId ? 'active' : ''}" data-thread-id="${thread.id}">
+          <div class="messages-thread-subject">${thread.subject}</div>
+          <div class="messages-thread-meta">${thread.unread ? 'New reply' : 'Open thread'} · ${thread.category || 'learning'} · ${new Date(thread.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+        </button>
+      `).join('');
+      Array.from(els.messagesThreadList.querySelectorAll('[data-thread-id]')).forEach((el) => {
+        el.addEventListener('click', () => {
+          state.messages.activeThreadId = el.getAttribute('data-thread-id');
+          const thread = getActiveThread();
+          if (thread?.unread) {
+            thread.unread = false;
+            state.messages.unreadCount = Math.max(0, state.messages.unreadCount - 1);
+            saveMessageCenter();
+            updateMessagesUnreadBadge();
+          }
+          renderMessageCenter();
+        });
+      });
+    }
+
+    if (els.messagesThreadTitle) els.messagesThreadTitle.textContent = activeThread?.subject || team.name;
+    if (els.messagesCategory) els.messagesCategory.value = activeThread?.category || 'learning';
+    if (els.messagesThreadMessages) {
+      els.messagesThreadMessages.innerHTML = (activeThread?.messages || []).map((message) => `
+        <div class="messages-bubble ${message.role === 'user' ? 'user' : 'ai'}">
+          <div class="messages-bubble-head">${message.senderName} · ${message.senderAddress}</div>
+          <div>${message.body}</div>
+        </div>
+      `).join('');
+      els.messagesThreadMessages.scrollTop = els.messagesThreadMessages.scrollHeight;
+    }
+    renderOwnerRefundQueue();
+  }
+
+  function buildDelayedAiReply(userText, category) {
+    const key = category || 'learning';
+    const catalog = {
+      learning: [
+        'I reviewed your learning request. The best next move is to continue your current module, then open Charts or Leaders for guided practice.',
+        'I can support that topic. Use the lesson AI, animated hotspots, and the next recommended module to deepen your understanding.',
+      ],
+      dean: [
+        'The Dean of Juzzy reviewed your university-style message. The recommendation is to stay focused on guided learning, use the AI faculty, and build mastery step by step.',
+        'From the Dean desk: your progress matters more than speed. Continue the pathway, use the professor team, and keep asking for support when needed.',
+      ],
+      billing: [
+        'I checked the billing help path. Review your subscription status, upfront fee state, and learning access buttons inside the app before retrying. You can also generate a refund request here for owner review if needed.',
+        'For access and billing guidance, check your email field, subscription state, and package eligibility inside Juzzy first. If you need a refund request, use the refund button in this inbox.',
+      ],
+      technical: [
+        'I reviewed the technical support context. The best first step is to refresh the affected tab, review live status indicators, and retry the workflow.',
+        'For technical support, I recommend checking wallet connection state, chart refresh, and report logs before escalating the issue.',
+      ],
+      onboarding: [
+        'I checked your onboarding request. The clearest next step is to confirm country selection, legal acknowledgement, and then start with the recommended beginner pathway.',
+        'For onboarding support, begin with the Foundations pathway and use the message center any time you want a simpler explanation.',
+      ],
+      operations: [
+        'I reviewed the operations/admin request. The best next action is to inspect reports, ops health, and platform settings to verify app state internally.',
+        'For internal operations guidance, use the Reports, Ops, Settings, and Message Center together to review the running state of the app.',
+      ],
+    };
+    const options = catalog[key] || catalog.learning;
+    return `${options[Math.floor(Math.random() * options.length)]} Your message was: ${String(userText || '').trim()}`;
+  }
+
+  function sendMessageToAiInbox() {
+    const category = String(els.messagesCategory?.value || 'learning').trim() || 'learning';
+    const team = AI_SERVICE_TEAMS[category] || { name: AI_GUIDE_NAME, address: AI_GUIDE_ADDRESS };
+    const subject = String(els.messagesSubject?.value || '').trim() || 'New learning question';
+    const body = String(els.messagesComposer?.value || '').trim();
+    if (!body) return;
+    let thread = getActiveThread();
+    if (!thread || thread.subject === 'Welcome to Juzzy Message Center') {
+      thread = {
+        id: `thread-${Date.now()}`,
+        subject,
+        category,
+        updatedAt: Date.now(),
+        unread: false,
+        messages: [],
+      };
+      state.messages.threads.unshift(thread);
+      state.messages.activeThreadId = thread.id;
+    }
+    thread.subject = subject;
+    thread.category = category;
+    thread.updatedAt = Date.now();
+    thread.messages.push({
+      id: `msg-${Date.now()}`,
+      senderName: state.profile.name || 'You',
+      senderAddress: state.user.email || 'user@juzzy.local',
+      role: 'user',
+      body,
+      ts: Date.now(),
+    });
+    if (els.messagesComposer) els.messagesComposer.value = '';
+    saveMessageCenter();
+    renderMessageCenter();
+
+    const delayMs = 3000 + Math.floor(Math.random() * 9000);
+    window.setTimeout(() => {
+      thread.messages.push({
+        id: `msg-${Date.now()}-ai`,
+        senderName: team.name,
+        senderAddress: team.address,
+        role: 'ai',
+        body: buildDelayedAiReply(body, category),
+        ts: Date.now(),
+      });
+      thread.updatedAt = Date.now();
+      thread.unread = !Boolean(document.querySelector('#tab-messages.panel.active'));
+      if (thread.unread) state.messages.unreadCount += 1;
+      saveMessageCenter();
+      updateMessagesUnreadBadge();
+      renderMessageCenter();
+    }, delayMs);
+  }
+
+  function createNewMessageThread() {
+    state.messages.activeThreadId = `thread-${Date.now()}`;
+    state.messages.threads.unshift({
+      id: state.messages.activeThreadId,
+      subject: 'New learning question',
+      category: String(els.messagesCategory?.value || 'learning').trim() || 'learning',
+      updatedAt: Date.now(),
+      unread: false,
+      messages: [],
+    });
+    if (els.messagesSubject) els.messagesSubject.value = 'New learning question';
+    if (els.messagesComposer) els.messagesComposer.value = '';
+    saveMessageCenter();
+    renderMessageCenter();
+  }
 
   function isReportsActive() {
     return Boolean(document.querySelector('#tab-reports.panel.active'));
@@ -323,10 +939,11 @@
 
   function saveAuthProfile({ name, email, country, language, languageCustom, loggedIn }) {
     state.profile.name = String(name || '').trim();
-    state.profile.country = String(country || 'US').toUpperCase();
+    state.profile.country = String(country || '').toUpperCase();
     state.profile.language = String(language || 'en').trim() || 'en';
     state.profile.languageCustom = String(languageCustom || '').trim();
     state.profile.loggedIn = Boolean(loggedIn);
+    state.profile.legalAccepted = true;
     state.user.email = String(email || '').trim();
     if (els.email) els.email.value = state.user.email;
     saveProfile();
@@ -344,6 +961,9 @@
   function signInProfile() {
     const email = String(els.authSignInEmail?.value || '').trim();
     const password = String(els.authSignInPassword?.value || '').trim();
+    const country = String(els.authCountry?.value || '').toUpperCase();
+    const language = String(els.authLanguage?.value || state.profile.language || 'en').trim();
+    const languageCustom = String(els.authLanguageCustom?.value || '').trim();
     if (!validateEmail(email)) {
       appendTerminal('WARN', 'Sign-in requires a valid email.');
       return;
@@ -352,13 +972,21 @@
       appendTerminal('WARN', 'Sign-in requires a password.');
       return;
     }
+    if (!country) {
+      appendTerminal('WARN', 'Please select your country before using Juzzy.');
+      return;
+    }
+    if (!els.authLegalAgree?.checked) {
+      appendTerminal('WARN', 'Please accept your country legal requirements before signing in.');
+      return;
+    }
     const fallbackName = state.profile.name || email.split('@')[0] || 'User';
     saveAuthProfile({
       name: fallbackName,
       email,
-      country: state.profile.country,
-      language: state.profile.language,
-      languageCustom: state.profile.languageCustom,
+      country,
+      language: language === 'custom' ? 'custom' : language,
+      languageCustom,
       loggedIn: true,
     });
     appendTerminal('AUTH', `Signed in as ${email}.`);
@@ -369,7 +997,7 @@
     const name = String(els.authName?.value || '').trim();
     const email = String(els.authEmail?.value || '').trim();
     const password = String(els.authPassword?.value || '').trim();
-    const country = String(els.authCountry?.value || 'US').toUpperCase();
+    const country = String(els.authCountry?.value || '').toUpperCase();
     const language = String(els.authLanguage?.value || 'en').trim();
     const languageCustom = String(els.authLanguageCustom?.value || '').trim();
     if (!name) {
@@ -382,6 +1010,10 @@
     }
     if (password.length < 6) {
       appendTerminal('WARN', 'Create account requires a password with at least 6 characters.');
+      return;
+    }
+    if (!country) {
+      appendTerminal('WARN', 'Please select your country before using Juzzy.');
       return;
     }
     if (!els.authLegalAgree?.checked) {
@@ -402,7 +1034,7 @@
 
   function socialSignUp(provider) {
     const source = String(provider || '').toLowerCase() === 'apple' ? 'Apple' : 'Google';
-    const country = String(els.authCountry?.value || state.profile.country || 'US').toUpperCase();
+    const country = String(els.authCountry?.value || state.profile.country || '').toUpperCase();
     const language = String(els.authLanguage?.value || state.profile.language || 'en').trim();
     const languageCustom = String(els.authLanguageCustom?.value || '').trim();
     const fallbackName = source === 'Apple' ? 'Apple User' : 'Google User';
@@ -410,6 +1042,10 @@
     const email = validateEmail(existingEmail)
       ? existingEmail
       : `${source.toLowerCase()}.user.${Date.now()}@juzzy.local`;
+    if (!country) {
+      appendTerminal('WARN', 'Please select your country before using Juzzy.');
+      return;
+    }
     if (!els.authLegalAgree?.checked) {
       appendTerminal('WARN', `Please accept your country legal requirements before continuing with ${source}.`);
       return;
@@ -428,15 +1064,20 @@
 
   function signOutProfile() {
     state.profile.loggedIn = false;
+    state.profile.legalAccepted = false;
     saveProfile();
     renderProfileUi();
     appendTerminal('AUTH', 'Signed out.');
   }
 
   function applySettingsProfile() {
-    const country = String(els.settingsCountry?.value || state.profile.country || 'US').toUpperCase();
+    const country = String(els.settingsCountry?.value || state.profile.country || '').toUpperCase();
     const language = String(els.settingsLanguage?.value || state.profile.language || 'en').trim();
     const languageCustom = String(els.settingsLanguageCustom?.value || '').trim();
+    if (!country) {
+      appendTerminal('WARN', 'Please select your country before saving profile settings.');
+      return;
+    }
     state.profile.country = country;
     state.profile.language = language === 'custom' ? 'custom' : language;
     state.profile.languageCustom = languageCustom;
@@ -495,9 +1136,9 @@
     const key = String(code || '').toUpperCase();
     return COUNTRY_PROFILES.find((c) => c.code === key) || {
       code: key || 'GLOBAL',
-      name: key || 'Global',
+      name: key || 'Country not selected',
       currency: 'USD',
-      legal: 'Local laws differ by jurisdiction. Verify crypto, tax, wallet, and trading obligations in your country.',
+      legal: 'Select your country before use. Juzzy provides educational content only and does not guarantee earnings, outcomes, or legal suitability in your jurisdiction.',
     };
   }
 
@@ -520,15 +1161,19 @@
 
   function populateCountryOptions() {
     [els.authCountry, els.settingsCountry].filter(Boolean).forEach((sel) => {
-      const prev = String(sel.value || state.profile.country || 'US');
+      const prev = String(sel.value || state.profile.country || '');
       sel.innerHTML = '';
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = 'Select your country';
+      sel.appendChild(placeholder);
       for (const item of COUNTRY_PROFILES) {
         const opt = document.createElement('option');
         opt.value = item.code;
         opt.textContent = `${item.name} (${item.code})`;
         sel.appendChild(opt);
       }
-      sel.value = COUNTRY_PROFILES.some((item) => item.code === prev) ? prev : 'US';
+      sel.value = COUNTRY_PROFILES.some((item) => item.code === prev) ? prev : '';
     });
   }
 
@@ -564,9 +1209,10 @@
       if (raw && typeof raw === 'object') {
         state.profile.loggedIn = Boolean(raw.loggedIn);
         state.profile.name = String(raw.name || '');
-        state.profile.country = String(raw.country || 'US');
+        state.profile.country = String(raw.country || '');
         state.profile.language = String(raw.language || 'en');
         state.profile.languageCustom = String(raw.languageCustom || '');
+        state.profile.legalAccepted = Boolean(raw.legalAccepted);
       }
     } catch {
       // ignore
@@ -575,7 +1221,7 @@
 
   function renderCountryLegal() {
     const p = getCountryProfile(state.profile.country);
-    const text = `${p.name}: ${p.legal}`;
+    const text = `${p.name}: ${p.legal} Educational content only. Nothing in Juzzy is a promise, guarantee, or assurance of profit, income, or investment success.`;
     if (els.authCountryLegal) els.authCountryLegal.textContent = text;
     if (els.settingsLegalText) els.settingsLegalText.textContent = text;
     if (els.portfolioCountryLegal) els.portfolioCountryLegal.textContent = text;
@@ -585,6 +1231,7 @@
   function renderProfileUi() {
     const lang = state.profile.languageCustom || state.profile.language || 'en';
     const country = getCountryProfile(state.profile.country);
+    const selectedCountryCode = COUNTRY_PROFILES.some((item) => item.code === state.profile.country) ? state.profile.country : '';
     if (els.userIdentityPill) {
       els.userIdentityPill.textContent = state.profile.loggedIn
         ? `${state.profile.name || state.user.email || 'User'} • ${country.code}`
@@ -592,13 +1239,14 @@
     }
     if (els.portfolioCountry) els.portfolioCountry.textContent = country.name;
     if (els.portfolioLanguage) els.portfolioLanguage.textContent = formatLanguage(lang);
-    if (els.settingsCountry) els.settingsCountry.value = country.code;
+    if (els.settingsCountry) els.settingsCountry.value = selectedCountryCode;
     if (els.settingsLanguage) els.settingsLanguage.value = COMMON_LANGUAGES.includes(state.profile.language) ? state.profile.language : 'custom';
     if (els.settingsLanguageCustom) els.settingsLanguageCustom.value = state.profile.languageCustom || '';
-    if (els.authCountry) els.authCountry.value = country.code;
+    if (els.authCountry) els.authCountry.value = selectedCountryCode;
     if (els.authLanguage) els.authLanguage.value = COMMON_LANGUAGES.includes(state.profile.language) ? state.profile.language : 'custom';
     if (els.authLanguageCustom) els.authLanguageCustom.value = state.profile.languageCustom || '';
-    if (els.authGate) els.authGate.hidden = state.profile.loggedIn;
+    if (els.authLegalAgree) els.authLegalAgree.checked = Boolean(state.profile.legalAccepted);
+    if (els.authGate) els.authGate.hidden = state.profile.loggedIn && Boolean(state.profile.country) && Boolean(state.profile.legalAccepted);
     renderCountryLegal();
   }
 
@@ -1530,6 +2178,7 @@
     qsAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabId));
     qsAll('.panel').forEach(p => p.classList.toggle('active', p.id === `tab-${tabId}`));
     if (tabId === 'learn' || tabId === 'tutorial') {
+      renderAcademyHub();
       initTutCategoryOptions();
       renderTutorialCatalog();
       // Initialize particles when tutorial tab opens
@@ -1553,6 +2202,19 @@
 
     if (tabId === 'ops') {
       renderOps();
+    }
+
+    if (tabId === 'messages') {
+      state.messages.unreadCount = 0;
+      state.messages.threads.forEach((thread) => { thread.unread = false; });
+      saveMessageCenter();
+      updateMessagesUnreadBadge();
+      renderMessageCenter();
+      renderOwnerRefundQueue();
+    }
+
+    if (tabId === 'community') {
+      renderCommunity();
     }
 
     if (tabId === 'portfolio' || tabId === 'settings') {
@@ -2098,6 +2760,8 @@
       }
 
       setStatus('Creating per-trade checkout…');
+      localStorage.setItem('pos_pending_trade_notional', String(tradeNotionalUsd));
+      localStorage.setItem('pos_pending_trade_fee', String(tradeNotionalUsd * 0.01));
       const payload = await postJson('/api/stripe/trade-fee', { tradeNotional: tradeNotionalUsd, email });
       if (payload?.url) window.location.href = payload.url;
       setStatus('Idle');
@@ -2622,6 +3286,29 @@
   const allTutorials = [].concat(window.JUZZY_TUTORIALS || [], window.JUZZY_TUTORIALS_2 || []);
   const tutCategories = [...new Set(allTutorials.map(t => t.cat))];
   const tutCompletedKey = 'juzzy_tut_completed';
+  const learnerProfileKey = 'juzzy_learner_profile';
+  const learnerSessionKey = 'juzzy_learner_session';
+  const academy = window.JUZZY_ACADEMY || { totalModules: allTutorials.length, liveModules: allTutorials.length, tracks: [], packages: [], monthlyBuilder: null, roadmap: [] };
+  const lessonMetaById = new Map(allTutorials.map((lesson, index) => {
+    const track = academy.tracks.find((item) => Array.isArray(item.categories) && item.categories.includes(lesson.cat)) || null;
+    return [lesson.id, {
+      moduleNumber: index + 1,
+      trackTitle: track?.title || 'Juzzy Academy',
+      tier: track?.tier || 'Free',
+      totalModules: academy.totalModules || allTutorials.length,
+    }];
+  }));
+  const tutState = {
+    cat: 'all',
+    search: '',
+    completed: [...getTutCompleted()],
+    particles: [],
+    achievements: JSON.parse(localStorage.getItem('juzzy_tutorial_achievements') || '[]'),
+  };
+  let activeTutId = null;
+  let lastLessonReturn = { tabId: 'tutorial', lessonId: null, step: 0 };
+  let globalAiVoiceEnabled = true;
+  let globalAiRecognizer = null;
 
   function getTutCompleted() {
     try { return new Set(JSON.parse(localStorage.getItem(tutCompletedKey) || '[]')); } catch { return new Set(); }
@@ -2629,6 +3316,175 @@
   function setTutCompleted(id) {
     const s = getTutCompleted(); s.add(id);
     localStorage.setItem(tutCompletedKey, JSON.stringify([...s]));
+    tutState.completed = [...s];
+    const tut = allTutorials.find((item) => item.id === id);
+    updateLearnerProfile((profile) => {
+      const ability = classifyLessonAbility(tut);
+      profile.strengths[ability] = Number(profile.strengths[ability] || 1) + 0.6;
+      profile.completedLessons = Array.from(new Set([...(profile.completedLessons || []), id]));
+      profile.focusAreas = [
+        `Build deeper ${ability} skill`,
+        'Stay active with guided exploration',
+        'Use AI for interactive revision',
+      ];
+      return profile;
+    });
+  }
+
+  function defaultLearnerProfile() {
+    return {
+      strengths: { foundations: 1, safety: 1, investing: 1, analysis: 1, creator: 1, builder: 1 },
+      focusAreas: ['Foundations', 'Risk awareness', 'Guided practice'],
+      preferredMode: 'interactive',
+      completedLessons: [],
+      currentLessonId: null,
+      currentStep: 0,
+      lastActiveTab: 'tutorial',
+      interactionCount: 0,
+    };
+  }
+
+  function getLearnerProfile() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(learnerProfileKey) || 'null');
+      return raw && typeof raw === 'object'
+        ? { ...defaultLearnerProfile(), ...raw, strengths: { ...defaultLearnerProfile().strengths, ...(raw.strengths || {}) } }
+        : defaultLearnerProfile();
+    } catch {
+      return defaultLearnerProfile();
+    }
+  }
+
+  function saveLearnerProfile(profile) {
+    try {
+      localStorage.setItem(learnerProfileKey, JSON.stringify(profile));
+    } catch {
+      // ignore
+    }
+  }
+
+  function updateLearnerProfile(mutator) {
+    const profile = getLearnerProfile();
+    const next = mutator ? mutator(profile) || profile : profile;
+    saveLearnerProfile(next);
+    return next;
+  }
+
+  function classifyLessonAbility(tut) {
+    const cat = String(tut?.cat || '').toLowerCase();
+    if (cat.includes('risk')) return 'safety';
+    if (cat.includes('trading')) return 'investing';
+    if (cat.includes('advanced') || cat.includes('defi')) return 'builder';
+    if (cat.includes('app')) return 'analysis';
+    if (cat.includes('using')) return 'analysis';
+    return 'foundations';
+  }
+
+  function getNextRecommendedLesson() {
+    const completed = getTutCompleted();
+    const firstIncomplete = allTutorials.find((lesson) => !completed.has(lesson.id));
+    return firstIncomplete || allTutorials[0] || null;
+  }
+
+  function rememberLessonReturn() {
+    const payload = {
+      tabId: document.querySelector('.tab.active')?.dataset.tab || 'tutorial',
+      lessonId: activeTutId,
+      step: activeTutStep,
+    };
+    lastLessonReturn = payload;
+    try {
+      localStorage.setItem(learnerSessionKey, JSON.stringify(payload));
+    } catch {
+      // ignore
+    }
+  }
+
+  function restoreLessonReturn() {
+    const session = (() => {
+      try { return JSON.parse(localStorage.getItem(learnerSessionKey) || 'null'); } catch { return null; }
+    })() || lastLessonReturn;
+    if (session?.lessonId) {
+      setActiveTab('tutorial');
+      openTutLesson(session.lessonId);
+      startTutLesson(true);
+      activeTutStep = Math.max(0, Number(session.step || 0));
+      renderTutStep();
+      return;
+    }
+    setActiveTab(session?.tabId || 'tutorial');
+  }
+
+  function renderLearnerDashboard() {
+    const profile = getLearnerProfile();
+    const nextLesson = getNextRecommendedLesson();
+    const strengths = Object.entries(profile.strengths).sort((a, b) => b[1] - a[1]);
+    if (els.academyJourney) {
+      els.academyJourney.innerHTML = `
+        <div class="card-title">Continue Learning</div>
+        <div class="academy-journey-card">
+          <div>
+            <div class="academy-journey-title">${nextLesson ? nextLesson.title : 'Your academy is ready'}</div>
+            <div class="academy-card-copy">${nextLesson ? nextLesson.desc : 'Start your first module to begin building your personalized pathway.'}</div>
+            <div class="academy-chip-row">
+              <span class="academy-chip">${nextLesson ? getLessonMeta(nextLesson.id).trackTitle : 'Foundations'}</span>
+              <span class="academy-chip">${nextLesson ? `${nextLesson.steps.length} lesson steps` : 'New learner path'}</span>
+            </div>
+          </div>
+          <div class="academy-journey-actions">
+            <button class="btn primary" data-academy-open="${nextLesson ? nextLesson.id : ''}">Continue</button>
+            <button class="btn" data-academy-action="open-ai">Ask AI Guide</button>
+          </div>
+        </div>
+      `;
+    }
+    if (els.academyProfile) {
+      els.academyProfile.innerHTML = `
+        <div class="card-title">Learner Ability Snapshot</div>
+        <div class="academy-profile-grid">
+          ${strengths.slice(0, 4).map(([key, value]) => `
+            <div class="academy-profile-stat">
+              <div class="academy-profile-label">${key}</div>
+              <div class="academy-profile-value">${Math.min(100, Math.round(value * 10))}%</div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="muted small" style="margin-top:10px">This adaptive profile is stored per user in the app now and can be connected to Supabase later for persistent cloud memory.</div>
+      `;
+    }
+    if (els.academyFocus) {
+      els.academyFocus.innerHTML = `
+        <div class="card-title">Personalized Focus Areas</div>
+        <div class="academy-chip-row">${profile.focusAreas.map((item) => `<span class="academy-chip">${item}</span>`).join('')}</div>
+        <div class="academy-focus-links">
+          <button class="btn" data-academy-jump="leaders">Explore live market examples</button>
+          <button class="btn" data-academy-jump="charts">Open guided charts</button>
+          <button class="btn" data-academy-jump="brain">See AI activity</button>
+          <button class="btn" data-academy-action="return">Return to active lesson</button>
+        </div>
+      `;
+    }
+
+    Array.from(document.querySelectorAll('[data-academy-open]')).forEach((el) => {
+      el.addEventListener('click', () => {
+        const id = el.getAttribute('data-academy-open');
+        if (!id) return;
+        openTutLesson(id);
+      });
+    });
+    Array.from(document.querySelectorAll('[data-academy-jump]')).forEach((el) => {
+      el.addEventListener('click', () => {
+        rememberLessonReturn();
+        setActiveTab(el.getAttribute('data-academy-jump'));
+      });
+    });
+    Array.from(document.querySelectorAll('[data-academy-action]')).forEach((el) => {
+      el.addEventListener('click', () => {
+        const action = el.getAttribute('data-academy-action');
+        if (action === 'open-ai') openGlobalAiDock();
+        if (action === 'return') restoreLessonReturn();
+      });
+    });
   }
 
   function initTutCategoryOptions() {
@@ -2641,8 +3497,109 @@
     }
   }
 
+  function getLessonMeta(id) {
+    return lessonMetaById.get(id) || { moduleNumber: 0, trackTitle: 'Juzzy Academy', tier: 'Free', totalModules: academy.totalModules || allTutorials.length };
+  }
+
+  function sanitizeTutorialHtml(html) {
+    return String(html || '')
+      .replace(/<iframe[^>]*youtube[^>]*>[\s\S]*?<\/iframe>/gi, '<div class="academy-inline-visual"><strong>Visual lesson note:</strong> This module now uses Juzzy-native visuals and guided reading instead of external YouTube video embeds.</div>')
+      .replace(/<iframe[^>]*youtu\.be[^>]*>[\s\S]*?<\/iframe>/gi, '<div class="academy-inline-visual"><strong>Visual lesson note:</strong> This module now uses Juzzy-native visuals and guided reading instead of external YouTube video embeds.</div>');
+  }
+
+  function renderAcademyHub() {
+    if (els.academyOverview) {
+      const country = getCountryProfile(state.profile.country);
+      els.academyOverview.innerHTML = `
+        <div class="academy-hero card">
+          <div>
+            <div class="academy-eyebrow">${academy.totalModules}-module immersive crypto university</div>
+            <div class="academy-title">From crypto beginner to global crypto strategist, builder, and creator</div>
+            <div class="academy-copy">Juzzy Academy now frames the app as an immersive learning universe spanning crypto foundations, safety, investing, technical analysis, DeFi, AI workflows, global regulation, builder literacy, creator education, tokenized content, and crypto business systems. Users practice concepts directly in Juzzy using charts, paper trading, reports, live market tools, guided demos, and simulation workflows. All content is educational only, not a promise of earnings, and should be reviewed against the laws of ${country.name}.</div>
+          </div>
+          <div class="academy-stats">
+            <div class="academy-stat"><span class="academy-stat-value">${academy.totalModules}</span><span class="academy-stat-label">Total modules</span></div>
+            <div class="academy-stat"><span class="academy-stat-value">${academy.liveModules}</span><span class="academy-stat-label">Live now</span></div>
+            <div class="academy-stat"><span class="academy-stat-value">${academy.packages.length}</span><span class="academy-stat-label">Packages</span></div>
+          </div>
+        </div>
+      `;
+    }
+
+    if (els.academyTracks) {
+      els.academyTracks.innerHTML = `
+        <div class="card-title">Program Pathways</div>
+        <div class="academy-card-list">
+          ${academy.tracks.map((track) => `
+            <div class="academy-card">
+              <div class="academy-card-head">
+                <div>
+                  <div class="academy-card-title">${track.title}</div>
+                  <div class="academy-card-tier">${track.tier}</div>
+                </div>
+                <div class="academy-card-count">${track.totalModules} modules</div>
+              </div>
+              <div class="academy-card-copy">${track.summary}</div>
+              <div class="academy-chip-row">${track.outcomes.map((item) => `<span class="academy-chip">${item}</span>`).join('')}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    if (els.academyPackages) {
+      els.academyPackages.innerHTML = `
+        <div class="card-title">Membership Packages</div>
+        <div class="academy-card-list">
+          ${academy.packages.map((pkg) => `
+            <div class="academy-card academy-package-card">
+              <div class="academy-card-head">
+                <div>
+                  <div class="academy-card-title">${pkg.name}</div>
+                  <div class="academy-card-tier">${pkg.audience}</div>
+                </div>
+                <div class="academy-package-price">${pkg.price}</div>
+              </div>
+              <div class="academy-chip-row">${pkg.includes.map((item) => `<span class="academy-chip">${item}</span>`).join('')}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    if (els.academyRoadmap) {
+      const roadmapPreview = academy.roadmap.slice(0, 12);
+      els.academyRoadmap.innerHTML = `
+        <div class="card-title">Global Academy Roadmap</div>
+        <div class="academy-roadmap-list">
+          ${roadmapPreview.map((item) => `
+            <div class="academy-roadmap-item">
+              <div class="academy-roadmap-number">${item.number}</div>
+              <div>
+                <div class="academy-roadmap-title">${item.trackTitle}</div>
+                <div class="academy-roadmap-meta">${item.tier} · ${item.status}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="muted small" style="margin-top:10px">The first ${academy.liveModules} modules are live through the current academy lessons. The remaining roadmap modules are staged for rollout.</div>
+      `;
+    }
+
+    if (els.academyBuilder && academy.monthlyBuilder) {
+      els.academyBuilder.innerHTML = `
+        <div class="card-title">${academy.monthlyBuilder.title}</div>
+        <div class="academy-card-copy">${academy.monthlyBuilder.summary}</div>
+        <div class="academy-builder-cadence">${academy.monthlyBuilder.cadence}</div>
+        <div class="academy-chip-row">${academy.monthlyBuilder.pipeline.map((item) => `<span class="academy-chip">${item}</span>`).join('')}</div>
+      `;
+    }
+    renderLearnerDashboard();
+  }
+
   function renderTutorialCatalog() {
     if (!els.tutCatalog) return;
+    tutState.completed = [...getTutCompleted()];
     const filtered = allTutorials.filter(t => {
       if (tutState.cat !== 'all' && t.cat !== tutState.cat) return false;
       if (tutState.search) {
@@ -2651,12 +3608,18 @@
       }
       return true;
     });
+    if (els.tutProgress) {
+      const completedCount = getTutCompleted().size;
+      els.tutProgress.textContent = `${completedCount}/${academy.liveModules || allTutorials.length} live modules completed`;
+    }
     els.tutCatalog.innerHTML = filtered.map(t => `
       <div class="tut-card ${tutState.completed.includes(t.id) ? 'completed' : ''}" data-tut-id="${t.id}">
+        <div class="tut-card-cat">Module ${getLessonMeta(t.id).moduleNumber} · ${getLessonMeta(t.id).trackTitle}</div>
         <div class="tut-card-title">${t.title}</div>
         <div class="tut-card-desc">${t.desc}</div>
         <div class="tut-card-meta">
-          <span class="tut-card-badge ${tutState.completed.includes(t.id) ? 'done' : ''}">${tutState.completed.includes(t.id) ? '✓ Done' : t.cat}</span>
+          <span class="tut-card-badge ${tutState.completed.includes(t.id) ? 'done' : ''}">${tutState.completed.includes(t.id) ? '✓ Done' : getLessonMeta(t.id).tier}</span>
+          <span>${t.cat}</span>
           <span>${t.steps.length} steps</span>
         </div>
       </div>
@@ -2761,6 +3724,75 @@
     tutChatAddMsg('ai', `Hi! I\'m your AI assistant for <strong>${tut.title}</strong>. Ask me anything about this topic and I\'ll help explain it.`);
   }
 
+  function globalAiAddMsg(role, html) {
+    if (!els.globalAiMessages) return null;
+    const d = document.createElement('div');
+    d.className = 'tut-chat-msg ' + role;
+    d.innerHTML = html;
+    els.globalAiMessages.appendChild(d);
+    els.globalAiMessages.scrollTop = els.globalAiMessages.scrollHeight;
+    return d;
+  }
+
+  function openGlobalAiDock() {
+    if (!els.globalAiDock) return;
+    els.globalAiDock.hidden = false;
+    if (els.globalAiMessages && !els.globalAiMessages.children.length) {
+      globalAiAddMsg('ai', '<p>I\'m Juzzy AI. Ask about your lesson, explore the app, or use the microphone to talk.</p>');
+    }
+  }
+
+  function closeGlobalAiDock() {
+    if (els.globalAiDock) els.globalAiDock.hidden = true;
+  }
+
+  function toggleGlobalAiVoice() {
+    globalAiVoiceEnabled = !globalAiVoiceEnabled;
+    if (els.globalAiSpeak) els.globalAiSpeak.textContent = globalAiVoiceEnabled ? '🔊' : '🔇';
+    if (!globalAiVoiceEnabled) tutTtsStop();
+  }
+
+  async function globalAiAnswer(question) {
+    const q = String(question || '').trim();
+    if (!q) return;
+    openGlobalAiDock();
+    globalAiAddMsg('user', tutEscapeHtml(q));
+    const thinking = globalAiAddMsg('ai', '<span class="ai-thinking">Thinking…</span>');
+    const answer = await generateTutAnswer(q, q.toLowerCase());
+    if (thinking) thinking.innerHTML = answer;
+    if (globalAiVoiceEnabled) tutTtsSpeak(answer);
+    updateLearnerProfile((profile) => {
+      profile.interactionCount += 1;
+      return profile;
+    });
+  }
+
+  function setupGlobalAiVoiceInput() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition || globalAiRecognizer) return;
+    globalAiRecognizer = new SpeechRecognition();
+    globalAiRecognizer.lang = 'en-US';
+    globalAiRecognizer.interimResults = false;
+    globalAiRecognizer.maxAlternatives = 1;
+    globalAiRecognizer.onresult = (event) => {
+      const transcript = event.results?.[0]?.[0]?.transcript || '';
+      if (els.globalAiInput) els.globalAiInput.value = transcript;
+      if (transcript) void globalAiAnswer(transcript);
+    };
+    globalAiRecognizer.onerror = () => {
+      globalAiAddMsg('ai', '<p>Microphone input is unavailable right now. You can still type to chat.</p>');
+    };
+  }
+
+  function startGlobalAiListening() {
+    setupGlobalAiVoiceInput();
+    if (!globalAiRecognizer) {
+      globalAiAddMsg('ai', '<p>Your browser does not currently support microphone dictation here. Please type your question.</p>');
+      return;
+    }
+    globalAiRecognizer.start();
+  }
+
   function tutAIAnswer(question) {
     const q = String(question || '').toLowerCase().trim();
     if (!q) return;
@@ -2810,7 +3842,7 @@
           messages: [
             {
               role: 'system',
-              content: `You are Juzzy's tutorial AI assistant. You are helpful, concise, and knowledgeable about crypto, trading, finance, programming, science, history, writing, business, and general knowledge. When the user asks about the current lesson, prioritize explaining that content. Avoid giving financial advice; suggest risk management instead.`,
+              content: `You are Juzzy's tutorial AI assistant. You are helpful, concise, and knowledgeable about crypto, trading, finance, programming, science, history, writing, business, and general knowledge. When the user asks about the current lesson, prioritize explaining that content. Do not provide financial, legal, or tax advice. Do not promise earnings or likely profits. Remind the user to verify local laws and use risk management instead.`,
             },
             {
               role: 'user',
@@ -2975,13 +4007,21 @@
   function openTutLesson(id) {
     const tut = allTutorials.find(t => t.id === id);
     if (!tut) return;
+    const meta = getLessonMeta(id);
     activeTutId = id;
     activeTutStep = 0;
+    rememberLessonReturn();
+    updateLearnerProfile((profile) => {
+      profile.currentLessonId = id;
+      profile.currentStep = 0;
+      profile.lastActiveTab = 'tutorial';
+      return profile;
+    });
     els.tutCatalog.hidden = true;
     els.tutModeChooser.hidden = false;
     els.tutReader.hidden = true;
     els.tutModeTitle.textContent = tut.title;
-    els.tutModeDesc.textContent = tut.desc;
+    els.tutModeDesc.textContent = `Module ${meta.moduleNumber} of ${meta.totalModules} · ${meta.trackTitle} · ${meta.tier}. ${tut.desc}`;
     tutChatClear();
     initTutorialParticles();
   }
@@ -3012,8 +4052,10 @@
     if (!tut) return;
     const step = tut.steps[activeTutStep];
     if (!step) return;
+    const meta = getLessonMeta(tut.id);
+    const country = getCountryProfile(state.profile.country);
     if (els.tutTitle) els.tutTitle.textContent = tut.title;
-    if (els.tutLessonCat) els.tutLessonCat.textContent = tut.cat;
+    if (els.tutLessonCat) els.tutLessonCat.textContent = `${tut.cat} · ${meta.trackTitle} · ${meta.tier}`;
     if (els.tutProgressText) els.tutProgressText.textContent = `Step ${activeTutStep + 1} of ${tut.steps.length}`;
     if (els.tutProgressFill) {
       const progress = ((activeTutStep + 1) / tut.steps.length) * 100;
@@ -3023,11 +4065,31 @@
       els.tutBody.style.animation = 'none';
       void els.tutBody.offsetHeight;
       els.tutBody.style.animation = '';
-      els.tutBody.innerHTML = `<h3>${step.title}</h3>${step.html}`;
+      els.tutBody.innerHTML = `<div class="academy-module-banner">Module ${meta.moduleNumber} · ${meta.trackTitle} · ${meta.tier}</div><div class="academy-inline-visual"><strong>${country.name} compliance note:</strong> This lesson is educational only. It is not financial, legal, or tax advice, and nothing in Juzzy guarantees profit, income, or investing success. You must verify the laws and requirements of your country before acting.</div>${renderProfessorFaculty()}<div class="academy-lesson-actions"><button class="btn" data-lesson-jump="leaders">Live examples</button><button class="btn" data-lesson-jump="charts">Open charts</button><button class="btn" data-lesson-jump="brain">See AI signals</button><button class="btn" data-lesson-action="ask-ai">Ask AI</button><button class="btn" data-lesson-action="return">Back to module</button></div>${renderAiLessonTools()}<h3>${step.title}</h3>${sanitizeTutorialHtml(step.html)}`;
+      bindLessonInteractiveActions();
+      bindProfessorFaculty();
+      bindAiLessonTools();
     }
     if (els.tutPrev) els.tutPrev.disabled = activeTutStep === 0;
     if (els.tutNext) els.tutNext.textContent = activeTutStep === tut.steps.length - 1 ? 'Finish ✓' : 'Next →';
     if (tutTtsEnabled) tutTtsSpeak(step.title + '. ' + step.html);
+  }
+
+  function bindLessonInteractiveActions() {
+    if (!els.tutBody) return;
+    Array.from(els.tutBody.querySelectorAll('[data-lesson-jump]')).forEach((el) => {
+      el.addEventListener('click', () => {
+        rememberLessonReturn();
+        setActiveTab(el.getAttribute('data-lesson-jump'));
+      });
+    });
+    Array.from(els.tutBody.querySelectorAll('[data-lesson-action]')).forEach((el) => {
+      el.addEventListener('click', () => {
+        const action = el.getAttribute('data-lesson-action');
+        if (action === 'ask-ai') openGlobalAiDock();
+        if (action === 'return') restoreLessonReturn();
+      });
+    });
   }
 
   function tutStepNav(delta) {
@@ -3054,6 +4116,12 @@
       return;
     }
     activeTutStep = Math.max(0, Math.min(tut.steps.length - 1, activeTutStep + delta));
+    rememberLessonReturn();
+    updateLearnerProfile((profile) => {
+      profile.currentLessonId = activeTutId;
+      profile.currentStep = activeTutStep;
+      return profile;
+    });
     renderTutStep();
   }
 
@@ -3064,6 +4132,37 @@
 
     qsAll('[data-jump]').forEach((b) => {
       b.addEventListener('click', () => setActiveTab(b.dataset.jump));
+    });
+
+    if (els.globalAiToggle) els.globalAiToggle.addEventListener('click', openGlobalAiDock);
+    if (els.globalAiClose) els.globalAiClose.addEventListener('click', closeGlobalAiDock);
+    if (els.globalAiSpeak) els.globalAiSpeak.addEventListener('click', toggleGlobalAiVoice);
+    if (els.globalAiMic) els.globalAiMic.addEventListener('click', startGlobalAiListening);
+    if (els.globalAiSend) els.globalAiSend.addEventListener('click', () => {
+      const q = String(els.globalAiInput?.value || '').trim();
+      if (!q) return;
+      els.globalAiInput.value = '';
+      void globalAiAnswer(q);
+    });
+    if (els.globalAiInput) els.globalAiInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const q = String(els.globalAiInput.value || '').trim();
+        if (!q) return;
+        els.globalAiInput.value = '';
+        void globalAiAnswer(q);
+      }
+    });
+    if (els.returnToLessonBtn) els.returnToLessonBtn.addEventListener('click', restoreLessonReturn);
+    if (els.messagesRefundBtn) els.messagesRefundBtn.addEventListener('click', createRefundRequest);
+    if (els.messagesSendBtn) els.messagesSendBtn.addEventListener('click', sendMessageToAiInbox);
+    if (els.messagesNewThreadBtn) els.messagesNewThreadBtn.addEventListener('click', createNewMessageThread);
+    if (els.communityAvatarSaveBtn) els.communityAvatarSaveBtn.addEventListener('click', saveCommunityAvatarFromInputs);
+    if (els.messagesComposer) els.messagesComposer.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        sendMessageToAiInbox();
+      }
     });
 
     if (els.openSettingsBtn) els.openSettingsBtn.addEventListener('click', () => setActiveTab('settings'));
@@ -3446,6 +4545,30 @@
         localStorage.removeItem('pos_pending_upfront_total');
         localStorage.removeItem('pos_pending_upfront_fee');
       }
+
+      if (flow === 'trade') {
+        const tradeRaw = localStorage.getItem('pos_pending_trade_notional');
+        const feeRaw = localStorage.getItem('pos_pending_trade_fee');
+        const tradeNotional = tradeRaw != null ? Number(tradeRaw) : 0;
+        const fee = feeRaw != null ? Number(feeRaw) : 0;
+        if (Number.isFinite(tradeNotional) && tradeNotional > 0) {
+          appendTerminal('BILL', `Per-trade fee paid for trade $${formatMoney(tradeNotional)}.`);
+        }
+
+        state.reports.unshift({
+          id: `B-${String(Date.now())}`,
+          asset: 'USD',
+          status: 'TRADE_FEE_PAID',
+          notional: Number.isFinite(tradeNotional) ? tradeNotional : 0,
+          fee: Number.isFinite(fee) ? fee : 0,
+          ts: Date.now(),
+          detail: { safeguards: 1000, reason: 'Per-trade 1% service fee paid via Stripe.' },
+        });
+        resetReportsRender();
+
+        localStorage.removeItem('pos_pending_trade_notional');
+        localStorage.removeItem('pos_pending_trade_fee');
+      }
     }
 
     // Refresh server-side billing state after returning from Stripe.
@@ -3510,9 +4633,16 @@
     validateYouTubeLinks();
 
     safe('seedReports', () => seedReports());
+    safe('loadMessageCenter', () => loadMessageCenter());
     safe('resetReportsRender', () => resetReportsRender());
+    safe('renderAcademyHub', () => renderAcademyHub());
     safe('initTutCategoryOptions', () => initTutCategoryOptions());
     safe('renderTutorialCatalog', () => renderTutorialCatalog());
+    safe('updateMessagesUnreadBadge', () => updateMessagesUnreadBadge());
+    safe('renderMessageCenter', () => renderMessageCenter());
+    safe('renderOwnerRefundQueue', () => renderOwnerRefundQueue());
+    safe('renderCommunity', () => renderCommunity());
+    safe('setupGlobalAiVoiceInput', () => setupGlobalAiVoiceInput());
     safe('fetchLeaders', () => fetchLeaders());
 
     safe('handleStripeReturn', () => handleStripeReturn());

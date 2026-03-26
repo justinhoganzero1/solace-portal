@@ -82,6 +82,10 @@ function writeAuditDb(arr) {
   fs.writeFileSync(auditDbPath, JSON.stringify(arr, null, 2));
 }
 
+function createBillingRow() {
+  return { subscribed: false, upfrontPaid: false, upfrontForTotal: 0, feesTotal: 0 };
+}
+
 function appendAudit(evt) {
   const e = {
     id: `E-${String(Date.now())}-${Math.floor(Math.random() * 1e6)}`,
@@ -418,19 +422,28 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), (req,
       const session = event.data.object;
       const email = String(session.customer_email || session.client_reference_id || '').trim().toLowerCase();
       if (isValidEmail(email)) {
-        db[email] = db[email] || { subscribed: false, upfrontPaid: false, upfrontForTotal: 0, feesTotal: 0 };
+        db[email] = db[email] || createBillingRow();
 
         if (session.mode === 'subscription') {
           db[email].subscribed = true;
         }
 
         if (session.mode === 'payment') {
+          const feeKind = String(session.metadata?.feeKind || '').trim().toLowerCase();
           const totalAmount = Number(session.metadata?.totalAmount);
+          const tradeNotional = Number(session.metadata?.tradeNotional);
           const feeUsd = Number(session.metadata?.feeUsd);
-          if (Number.isFinite(totalAmount) && totalAmount > 0) {
+
+          if (feeKind === 'upfront' && Number.isFinite(totalAmount) && totalAmount > 0) {
             db[email].upfrontPaid = true;
             db[email].upfrontForTotal = totalAmount;
           }
+
+          if (feeKind === 'trade' && Number.isFinite(tradeNotional) && tradeNotional > 0) {
+            db[email].upfrontPaid = false;
+            db[email].upfrontForTotal = 0;
+          }
+
           if (Number.isFinite(feeUsd) && feeUsd > 0) {
             db[email].feesTotal = Number(db[email].feesTotal || 0) + feeUsd;
           }
@@ -687,7 +700,7 @@ app.get('/api/billing/status', (req, res) => {
     return;
   }
   const db = readBillingDb();
-  const row = db[email] || { subscribed: false, upfrontPaid: false, upfrontForTotal: 0, feesTotal: 0 };
+  const row = db[email] || createBillingRow();
   res.json(row);
 });
 
@@ -759,6 +772,7 @@ app.post('/api/stripe/upfront-fee', async (req, res) => {
         },
       ],
       metadata: {
+        feeKind: 'upfront',
         totalAmount: String(totalAmount),
         feeUsd: String(feeUsd),
       },
@@ -766,6 +780,60 @@ app.post('/api/stripe/upfront-fee', async (req, res) => {
       client_reference_id: email,
       success_url: withQuery(successUrl, { flow: 'upfront' }),
       cancel_url: withQuery(cancelUrl, { flow: 'upfront' }),
+    });
+
+    res.json({ url: session.url, feeUsd });
+  } catch (e) {
+    res.status(500).json({ error: e?.message || String(e) });
+  }
+});
+
+app.post('/api/stripe/trade-fee', async (req, res) => {
+  try {
+    if (!requireStripe(res)) return;
+
+    const email = getEmailFromReq(req);
+    if (!isValidEmail(email)) {
+      res.status(400).json({ error: 'Invalid email.' });
+      return;
+    }
+
+    const tradeNotional = Number(req.body?.tradeNotional);
+    if (!Number.isFinite(tradeNotional) || tradeNotional <= 0) {
+      res.status(400).json({ error: 'Invalid tradeNotional.' });
+      return;
+    }
+
+    const feeUsd = tradeNotional * 0.01;
+    const unitAmount = Math.round(feeUsd * 100);
+    if (unitAmount < 1) {
+      res.status(400).json({ error: 'Fee too small to charge.' });
+      return;
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: 'Per-trade service fee (1%)',
+            },
+            unit_amount: unitAmount,
+          },
+          quantity: 1,
+        },
+      ],
+      metadata: {
+        feeKind: 'trade',
+        tradeNotional: String(tradeNotional),
+        feeUsd: String(feeUsd),
+      },
+      customer_email: email,
+      client_reference_id: email,
+      success_url: withQuery(successUrl, { flow: 'trade' }),
+      cancel_url: withQuery(cancelUrl, { flow: 'trade' }),
     });
 
     res.json({ url: session.url, feeUsd });
