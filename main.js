@@ -1,6 +1,6 @@
 (() => {
-  document.title = 'Juzzy: IIFE entered';
-  console.log('[BOOT] IIFE entered');
+  document.title = '3 Amigos Academy: Crypto Education Platform';
+  console.log('[BOOT] 3 Amigos Academy IIFE entered');
   const HEARTBEAT_MS = 444;
   const COINGECKO_IDS = ['bitcoin', 'ethereum', 'solana', 'ripple', 'cardano', 'dogecoin', 'polygon', 'chainlink', 'uniswap', 'litecoin'];
 
@@ -9,10 +9,12 @@
     simpleMode: true,
   };
   const COMMUNITY_MEMBER_TARGET = 5824;
+  const localAuthAccountsKey = 'juzzy_auth_accounts';
+  let deferredInstallPrompt = null;
 
   function defaultCommunityAvatar() {
     return {
-      name: state.profile.name || 'Campus Explorer',
+      name: state.profile.name || '3 Amigos Explorer',
       mood: 'curious',
       palette: 'cyan',
     };
@@ -50,6 +52,111 @@
     return `<div class="community-avatar ${large ? 'large' : ''}" style="background:${avatarGradient(palette)}"><span>${initials}</span><div class="community-avatar-ring mood-${mood}"></div></div>`;
   }
 
+  function escapeCommunityHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function communityResourceCatalog() {
+    return {
+      foundations: [
+        { label: 'Crypto basics explainer', url: 'https://www.youtube.com/watch?v=SSo_EIwHSd4', meta: 'Whiteboard Crypto' },
+        { label: 'CoinGecko market overview', url: 'https://www.coingecko.com/', meta: 'CoinGecko' },
+        { label: 'Beginner crypto guides', url: 'https://www.coinbase.com/learn/crypto-basics', meta: 'Coinbase Learn' },
+      ],
+      bitcoin: [
+        { label: 'Bitcoin lesson path', url: 'https://www.youtube.com/watch?v=bBC-nXj3Ng4', meta: '3Blue1Brown' },
+        { label: 'Bitcoin treasury news', url: 'https://www.coindesk.com/tag/bitcoin/', meta: 'CoinDesk' },
+        { label: 'BTC market data', url: 'https://www.coingecko.com/en/coins/bitcoin', meta: 'CoinGecko' },
+      ],
+      defi: [
+        { label: 'DeFi walkthrough', url: 'https://www.youtube.com/watch?v=xeaDE8wgVVQ', meta: 'Finematics' },
+        { label: 'DeFi protocol data', url: 'https://defillama.com/', meta: 'DefiLlama' },
+        { label: 'DeFi research', url: 'https://messari.io/', meta: 'Messari' },
+      ],
+      trading: [
+        { label: 'Trading structure guide', url: 'https://www.youtube.com/results?search_query=The+Trading+Channel+market+structure+trading', meta: 'YouTube search' },
+        { label: 'TradingView charts', url: 'https://www.tradingview.com/', meta: 'TradingView' },
+        { label: 'Fear & Greed index', url: 'https://alternative.me/crypto/fear-and-greed-index/', meta: 'Alternative.me' },
+      ],
+      security: [
+        { label: 'Wallet safety guide', url: 'https://www.youtube.com/watch?v=aUBid1zJC-U', meta: 'Coin Bureau' },
+        { label: 'Security trends', url: 'https://blog.chainalysis.com/', meta: 'Chainalysis' },
+        { label: 'Scam alerts', url: 'https://www.cisa.gov/news-events/cybersecurity-advisories', meta: 'CISA' },
+      ],
+      risk: [
+        { label: 'Crypto risk management', url: 'https://www.binance.com/en/blog/all/crypto-risk-management-strategies-421499824684903792', meta: 'Binance Learn' },
+        { label: 'Investor alerts', url: 'https://www.sec.gov/investor/alerts', meta: 'SEC' },
+        { label: 'Scam and rug-pull awareness', url: 'https://www.chainalysis.com/blog/', meta: 'Chainalysis' },
+      ],
+      scams: [
+        { label: 'Fraud red flags', url: 'https://consumer.ftc.gov/articles/what-know-about-cryptocurrency-and-scams', meta: 'FTC' },
+        { label: 'Cybersecurity advisories', url: 'https://www.cisa.gov/news-events/cybersecurity-advisories', meta: 'CISA' },
+        { label: 'Wallet compromise response', url: 'https://support.metamask.io/stay-safe/protect-yourself/', meta: 'MetaMask Support' },
+      ],
+      ai: [
+        { label: 'AI x crypto overview', url: 'https://www.youtube.com/results?search_query=AI+crypto+education', meta: 'YouTube search' },
+        { label: 'AI research workflows', url: 'https://openai.com/index/', meta: 'OpenAI' },
+        { label: 'Crypto AI news', url: 'https://www.theblock.co/', meta: 'The Block' },
+      ],
+      builder: [
+        { label: 'Developer docs', url: 'https://ethereum.org/en/developers/docs/', meta: 'Ethereum.org' },
+        { label: 'Smart contract patterns', url: 'https://docs.openzeppelin.com/contracts', meta: 'OpenZeppelin' },
+        { label: 'Onchain analytics', url: 'https://dune.com/', meta: 'Dune' },
+      ],
+      regulation: [
+        { label: 'Policy coverage', url: 'https://www.coindesk.com/policy/', meta: 'CoinDesk Policy' },
+        { label: 'Global crypto rules', url: 'https://www.fatf-gafi.org/en/topics/virtual-assets.html', meta: 'FATF' },
+        { label: 'Market supervision', url: 'https://www.esma.europa.eu/', meta: 'ESMA' },
+      ],
+      default: [
+        { label: 'Juzzy learning module', url: 'https://www.youtube.com/results?search_query=crypto+education+module', meta: 'YouTube search' },
+        { label: 'Market overview', url: 'https://www.coingecko.com/', meta: 'CoinGecko' },
+        { label: 'Crypto news', url: 'https://www.coindesk.com/', meta: 'CoinDesk' },
+      ],
+    };
+  }
+
+  function getCommunityResourceSet(topic) {
+    const text = String(topic || '').toLowerCase();
+    const catalog = communityResourceCatalog();
+    if (text.includes('beginner') || text.includes('foundation') || text.includes('basics') || text.includes('intro')) return catalog.foundations;
+    if (text.includes('bitcoin') || text.includes('btc')) return catalog.bitcoin;
+    if (text.includes('defi') || text.includes('yield')) return catalog.defi;
+    if (text.includes('trade') || text.includes('chart') || text.includes('market')) return catalog.trading;
+    if (text.includes('risk') || text.includes('volatile') || text.includes('loss')) return catalog.risk;
+    if (text.includes('security') || text.includes('wallet') || text.includes('scam')) return catalog.security;
+    if (text.includes('rug') || text.includes('fraud') || text.includes('phish') || text.includes('hack')) return catalog.scams;
+    if (text.includes('ai')) return catalog.ai;
+    if (text.includes('builder') || text.includes('contract') || text.includes('developer') || text.includes('onchain')) return catalog.builder;
+    if (text.includes('regulation') || text.includes('policy')) return catalog.regulation;
+    return catalog.default;
+  }
+
+  function renderResourceChips(resources) {
+    return `<div class="community-resource-row">${resources.map((item) => `<a class="community-resource-chip" href="${escapeCommunityHtml(item.url)}" data-in-app-link="true" data-in-app-label="${escapeCommunityHtml(item.label)}" data-in-app-provider="${escapeCommunityHtml(item.meta)}"><span>${escapeCommunityHtml(item.label)}</span><small>${escapeCommunityHtml(item.meta)}</small></a>`).join('')}</div>`;
+  }
+
+  function buildCommunityPostMarkup(post) {
+    const resources = getCommunityResourceSet(`${post.topic} ${post.body}`).slice(0, 3);
+    const summary = escapeCommunityHtml(post.summary || post.topic || 'Community insight');
+    return `<div class="community-post-summary">${summary}</div><div class="community-post-body">${post.body}</div>${renderResourceChips(resources)}`;
+  }
+
+  function buildAiResourceReply(userText, category) {
+    const resources = getCommunityResourceSet(`${category} ${userText}`);
+    const intro = category === 'technical'
+      ? 'I pulled together a quick support pack with live references you can actually use right now.'
+      : category === 'learning'
+        ? 'Here is a stronger learning reply with live links you can use after the in-app lesson.'
+        : 'Here is a curated reply with useful live links for the community.';
+    return `${intro}${renderResourceChips(resources)}`;
+  }
+
   function generateCommunityMembers() {
     if (state.community.members.length) return state.community.members;
     const first = ['Ari', 'Nova', 'Kian', 'Mila', 'Zeke', 'Tara', 'Rex', 'Lina', 'Orin', 'Pia', 'Jett', 'Sora', 'Niko', 'Vera', 'Dax'];
@@ -76,16 +183,21 @@
   function generateCommunityPosts() {
     if (state.community.posts.length) return state.community.posts;
     const topics = [
-      'Token universe module is wild, finally seeing how narratives rotate across sectors.',
-      'Anyone else using the chart tools right after the lesson hotspots? Makes the course stick better.',
-      'Builder track plus AI professor Nova is making DeFi way less intimidating.',
-      'Big chatter today around ETF flows, memecoin risk, and whether influencers are front-running attention.',
-      'Creator economy lessons are surprisingly strong. Tokenized media models feel more real after the labs.',
-      'Exchange legitimacy path should honestly be required before anybody touches a deposit button.',
-      'Community note: this campus feed is AI-simulated, but the market topics are still useful to explore.',
-      'Seeing random talk about Solana, Base, AI agents, and whether macro liquidity is the real driver again.',
-      'Influencer chatter never stops. Half the lesson is learning how not to get manipulated by it.',
-      'Risk professor Sol is ruthless in the best way possible. Every hype cycle needs that energy.',
+      'Just watched this amazing Bitcoin explainer: <a href="https://www.youtube.com/watch?v=SSo_EIwHSd4" data-in-app-link="true" data-in-app-label="Bitcoin Whitepaper Explained" data-in-app-provider="YouTube">Bitcoin Whitepaper Explained</a> - finally understanding why it matters!',
+      'The DeFi course is 🔥! This video on <a href="https://www.youtube.com/watch?v=bBC-nXj3gV4" data-in-app-link="true" data-in-app-label="How DeFi Works" data-in-app-provider="YouTube">How DeFi Works</a> complements the lessons perfectly.',
+      'Anyone else following the ETF flows? Check out <a href="https://www.youtube.com/watch?v=YIVAluSL9SU" data-in-app-link="true" data-in-app-label="ETF Flow Analysis" data-in-app-provider="YouTube">this analysis</a> - institutional adoption is real.',
+      'Solana ecosystem is exploding! This <a href="https://www.youtube.com/watch?v=5oy1Q2p5yW8" data-in-app-link="true" data-in-app-label="Solana Deep Dive" data-in-app-provider="YouTube">Solana deep dive</a> explains why developers are flocking there.',
+      'Great article on crypto regulations: <a href="https://www.coindesk.com/policy/2024/03/15/crypto-regulation-updates" data-in-app-link="true" data-in-app-label="Latest Policy Updates" data-in-app-provider="CoinDesk">Latest Policy Updates</a> - affects everyone in the space.',
+      'Base chain is gaining traction! Watch <a href="https://www.youtube.com/watch?v=gyMwXuJrbJQ" data-in-app-link="true" data-in-app-label="Base Ecosystem Overview" data-in-app-provider="YouTube">this Base ecosystem overview</a> to understand the L2 landscape.',
+      'AI agents + crypto = future! This <a href="https://www.youtube.com/watch?v=WfKU2n2aF3o" data-in-app-link="true" data-in-app-label="AI & Crypto Video" data-in-app-provider="YouTube">AI & Crypto video</a> blew my mind.',
+      'Security is crucial! Just read <a href="https://blog.chainalysis.com/reports/crypto-security-trends-2024" data-in-app-link="true" data-in-app-label="Chainalysis Security Report" data-in-app-provider="Chainalysis">Chainalysis Security Report</a> - scary stats.',
+      'Ethereum upgrades explained well: <a href="https://www.youtube.com/watch?v=RVMk5Mq8p7E" data-in-app-link="true" data-in-app-label="Dencun Upgrade Breakdown" data-in-app-provider="YouTube">Dencun Upgrade Breakdown</a> - layer 2s getting cheaper!',
+      'Memecoin risks are real! Check out <a href="https://www.theblock.co/post/285471/memecoin-risks-analysis" data-in-app-link="true" data-in-app-label="Memecoin Risk Analysis" data-in-app-provider="The Block">this memecoin risk analysis</a> before apeing.',
+      'NFT market analysis: <a href="https://www.youtube.com/watch?v=9xkNpQY9q6I" data-in-app-link="true" data-in-app-label="State of NFTs 2024" data-in-app-provider="YouTube">State of NFTs 2024</a> - not dead, just evolving!',
+      'Yield farming strategies: <a href="https://www.youtube.com/watch?v=4M0QK3I9z6c" data-in-app-link="true" data-in-app-label="DeFi Yield Guide" data-in-app-provider="YouTube">DeFi Yield Guide</a> - be careful with impermanent loss!',
+      'Tokenomics deep dive: <a href="https://messari.io/report/tokenomics-101" data-in-app-link="true" data-in-app-label="Messari Tokenomics Report" data-in-app-provider="Messari">Messari Tokenomics Report</a> - essential for investors.',
+      'Crypto market cycles: <a href="https://www.youtube.com/watch?v=prv6T3j0a1k" data-in-app-link="true" data-in-app-label="Understanding Market Cycles" data-in-app-provider="YouTube">Understanding Market Cycles</a> - we might be early!',
+      'Stablecoin risks exposed: <a href="https://www.bloomberg.com/crypto/articles/2024-03-10/stablecoin-risks-analysis" data-in-app-link="true" data-in-app-label="Bloomberg Stablecoin Analysis" data-in-app-provider="Bloomberg">Bloomberg Stablecoin Analysis</a> - not all are equal!',
     ];
     const members = generateCommunityMembers();
     state.community.posts = Array.from({ length: 48 }, (_, idx) => {
@@ -94,6 +206,7 @@
         id: `community-post-${idx + 1}`,
         memberId: member.id,
         body: topics[idx % topics.length],
+        summary: ['Live learning resource', 'Market pulse thread', 'Useful research drop', 'Builder insight', 'Community watchlist'][idx % 5],
         likes: 20 + ((idx * 13) % 420),
         replies: 4 + ((idx * 7) % 66),
         topic: ['Course', 'Markets', 'Influencers', 'Builders', 'DeFi'][idx % 5],
@@ -112,7 +225,7 @@
     if (els.communityFeed) {
       els.communityFeed.innerHTML = posts.map((post) => {
         const member = members.find((item) => item.id === post.memberId);
-        return `<div class="community-post-card"><div class="community-post-head">${makeAvatarMarkup(member.name, member.mood, member.palette)}<div><div class="community-post-name">${member.name}</div><div class="community-post-meta">${member.role} · ${member.address} · ${post.topic}</div></div></div><div class="community-post-body">${post.body}</div><div class="community-post-links"><button class="academy-hotspot" data-community-profile="${member.id}">Open profile</button><span class="muted small">${post.likes} likes · ${post.replies} replies</span></div></div>`;
+        return `<div class="community-post-card"><div class="community-post-head">${makeAvatarMarkup(member.name, member.mood, member.palette)}<div><div class="community-post-name">${member.name}</div><div class="community-post-meta">${member.role} · ${member.address} · ${post.topic}</div></div><div class="community-post-badge">LIVE</div></div>${buildCommunityPostMarkup(post)}<div class="community-post-links"><button class="academy-hotspot" data-community-profile="${member.id}">Open profile</button><span class="muted small">${post.likes} likes · ${post.replies} replies</span></div></div>`;
       }).join('');
       Array.from(els.communityFeed.querySelectorAll('[data-community-profile]')).forEach((el) => {
         el.addEventListener('click', () => renderCommunityProfileCard(el.getAttribute('data-community-profile')));
@@ -133,7 +246,7 @@
       });
     }
     if (els.communityUserAvatarPreview) {
-      els.communityUserAvatarPreview.innerHTML = `${makeAvatarMarkup(avatar.name, avatar.mood, avatar.palette, true)}<div class="community-user-meta"><div class="community-post-name">${avatar.name}</div><div class="community-post-meta">Your customizable campus identity</div></div>`;
+      els.communityUserAvatarPreview.innerHTML = `${makeAvatarMarkup(avatar.name, avatar.mood, avatar.palette, true)}<div class="community-user-meta"><div class="community-post-name">${avatar.name}</div><div class="community-post-meta">Your 3 Amigos Academy identity</div></div>`;
     }
     if (els.communityAvatarName) els.communityAvatarName.value = avatar.name;
     if (els.communityAvatarMood) els.communityAvatarMood.value = avatar.mood;
@@ -143,7 +256,7 @@
   function renderCommunityProfileCard(memberId) {
     const member = generateCommunityMembers().find((item) => item.id === memberId);
     if (!member || !els.communityProfiles) return;
-    els.communityProfiles.innerHTML = `<div class="community-profile-expanded">${makeAvatarMarkup(member.name, member.mood, member.palette, true)}<div class="community-post-name">${member.name}</div><div class="community-post-meta">${member.role}</div><div class="community-profile-copy">This is an AI-simulated campus member profile used to create immersive community chatter inside Juzzy.</div><div class="community-post-meta">${member.address}</div></div>`;
+    els.communityProfiles.innerHTML = `<div class="community-profile-expanded">${makeAvatarMarkup(member.name, member.mood, member.palette, true)}<div class="community-post-name">${member.name}</div><div class="community-post-meta">${member.role}</div><div class="community-profile-copy">This is an AI-simulated member profile used to create immersive community chatter inside 3 Amigos Academy.</div><div class="community-post-meta">${member.address}</div></div>`;
   }
 
   function saveCommunityAvatarFromInputs() {
@@ -183,7 +296,9 @@
     hbMs: document.getElementById('hbMs'),
     statusText: document.getElementById('statusText'),
     email: document.getElementById('email'),
+    navHomeBtn: document.getElementById('navHomeBtn'),
     simpleModeBtn: document.getElementById('simpleModeBtn'),
+    ownerPlaque: document.getElementById('ownerPlaque'),
     connectBtn: document.getElementById('connectBtn'),
     subscribeBtn: document.getElementById('subscribeBtn'),
     fuel: document.getElementById('fuel'),
@@ -266,6 +381,12 @@
     tutTitle: document.getElementById('tutTitle'),
     tutLessonCat: document.getElementById('tutLessonCat'),
     tutBody: document.getElementById('tutBody'),
+    tutExternalViewer: document.getElementById('tutExternalViewer'),
+    tutExternalTitle: document.getElementById('tutExternalTitle'),
+    tutExternalMeta: document.getElementById('tutExternalMeta'),
+    tutExternalFrame: document.getElementById('tutExternalFrame'),
+    tutExternalOpenNew: document.getElementById('tutExternalOpenNew'),
+    tutExternalReturn: document.getElementById('tutExternalReturn'),
     tutPrev: document.getElementById('tutPrev'),
     tutNext: document.getElementById('tutNext'),
     tutProgressText: document.getElementById('tutProgressText'),
@@ -289,6 +410,7 @@
     globalAiSend: document.getElementById('globalAiSend'),
     globalAiMic: document.getElementById('globalAiMic'),
     globalAiSpeak: document.getElementById('globalAiSpeak'),
+    globalAiQuickActions: document.getElementById('globalAiQuickActions'),
     returnToLessonBtn: document.getElementById('returnToLessonBtn'),
     messagesUnreadBadge: document.getElementById('messagesUnreadBadge'),
     messagesAgentAddress: document.getElementById('messagesAgentAddress'),
@@ -308,6 +430,32 @@
     communityPulse: document.getElementById('communityPulse'),
     communityFeed: document.getElementById('communityFeed'),
     communityProfiles: document.getElementById('communityProfiles'),
+    ideaFeedbackInput: document.getElementById('ideaFeedbackInput'),
+    ideaFeedbackSubmit: document.getElementById('ideaFeedbackSubmit'),
+    ideaFeedbackClear: document.getElementById('ideaFeedbackClear'),
+    ideaFeedbackOutput: document.getElementById('ideaFeedbackOutput'),
+    rewardStatusOutput: document.getElementById('rewardStatusOutput'),
+    referralCodeDisplay: document.getElementById('referralCodeDisplay'),
+    referralFriendEmail: document.getElementById('referralFriendEmail'),
+    registerReferralBtn: document.getElementById('registerReferralBtn'),
+    claimIdeaRewardBtn: document.getElementById('claimIdeaRewardBtn'),
+    shareTierSummary: document.getElementById('shareTierSummary'),
+    shareInviteLink: document.getElementById('shareInviteLink'),
+    shareCopyInviteBtn: document.getElementById('shareCopyInviteBtn'),
+    shareFamilyPassBtn: document.getElementById('shareFamilyPassBtn'),
+    shareOpenOwnerAccessBtn: document.getElementById('shareOpenOwnerAccessBtn'),
+    sharePreviewOutput: document.getElementById('sharePreviewOutput'),
+    ownerAccessTab: document.getElementById('ownerAccessTab'),
+    ownerAccessPanel: document.getElementById('ownerAccessPanel'),
+    ownerGrantEmail: document.getElementById('ownerGrantEmail'),
+    ownerGrantLifetimeBtn: document.getElementById('ownerGrantLifetimeBtn'),
+    ownerFamilyShareEmail: document.getElementById('ownerFamilyShareEmail'),
+    ownerFamilyShareBtn: document.getElementById('ownerFamilyShareBtn'),
+    ownerSharePreview: document.getElementById('ownerSharePreview'),
+    ownerAccessList: document.getElementById('ownerAccessList'),
+    familyPlaque: document.getElementById('familyPlaque'),
+    oracleTab: document.getElementById('oracleTab'),
+    hallOfFameContainer: document.getElementById('hallOfFameContainer'),
     communityUserAvatarPreview: document.getElementById('communityUserAvatarPreview'),
     communityAvatarName: document.getElementById('communityAvatarName'),
     communityAvatarMood: document.getElementById('communityAvatarMood'),
@@ -331,6 +479,9 @@
     authAppleBtn: document.getElementById('authAppleBtn'),
     authSignUpBtn: document.getElementById('authSignUpBtn'),
     authUseStripeBtn: document.getElementById('authUseStripeBtn'),
+    installAppBtn: document.getElementById('installAppBtn'),
+    downloadDesktopBtn: document.getElementById('downloadDesktopBtn'),
+    authStatusMessage: document.getElementById('authStatusMessage'),
     authSkipBtn: document.getElementById('authSkipBtn'),
     authSignOutBtn: document.getElementById('authSignOutBtn'),
     userIdentityPill: document.getElementById('userIdentityPill'),
@@ -442,6 +593,8 @@
     ui: {
       simpleMode: false,
       actionStatus: 'Idle',
+      navHistory: ['home'],
+      navHistoryIndex: 0,
     },
     charts: {
       chart: null,
@@ -473,8 +626,10 @@
   const messageCenterKey = 'juzzy_message_center';
   const ownerRefundQueueKey = 'juzzy_owner_refund_queue';
   const communityAvatarKey = 'juzzy_community_avatar';
+  const growthRewardsKey = 'juzzy_growth_rewards';
+  const refundAccessFlag = 'refund-admin';
   const AI_GUIDE_NAME = 'Mira — Juzzy AI Guide';
-  const AI_GUIDE_ADDRESS = 'guide@juzzy.internal.ai';
+  const AI_GUIDE_ADDRESS = 'ai.guide@juzzy.local';
   const lessonProfessorKey = 'juzzy_lesson_professor';
   const OWNER_APPROVER_EMAILS = ['owner@juzzy.local'];
   const AI_SERVICE_TEAMS = {
@@ -571,6 +726,11 @@
     }
     sendMessageToAiInbox();
     renderOwnerRefundQueue();
+  }
+
+  function canAccessHiddenRefundArea() {
+    const params = new URLSearchParams(window.location.search);
+    return isOwnerApprover() && String(params.get('admin') || '').trim().toLowerCase() === refundAccessFlag;
   }
 
   function getActiveLessonContext() {
@@ -712,7 +872,7 @@
 
   function renderOwnerRefundQueue() {
     if (!els.ownerRefundPanel || !els.ownerRefundList) return;
-    const visible = isOwnerApprover();
+    const visible = canAccessHiddenRefundArea();
     els.ownerRefundPanel.hidden = !visible;
     if (!visible) return;
     const queue = loadOwnerRefundQueue();
@@ -740,6 +900,116 @@
     });
   }
 
+  function renderOwnerAccessPanel() {
+    if (els.ownerAccessTab) els.ownerAccessTab.hidden = !isOwnerApprover();
+    if (els.oracleTab) els.oracleTab.hidden = !isOwnerApprover();
+    if (!els.ownerAccessPanel || !els.ownerAccessList) return;
+    const visible = isOwnerApprover();
+    els.ownerAccessPanel.hidden = !visible;
+    if (!visible) return;
+    const rewards = loadGrowthRewards();
+    const grants = Array.isArray(rewards.ownerLifetimeAccess) ? rewards.ownerLifetimeAccess : [];
+    const familyGrants = Array.isArray(rewards.familyLifetimeAccess) ? rewards.familyLifetimeAccess : [];
+    const allEntries = [
+      ...grants.map((email) => ({ email, meta: 'Lifetime free access granted' })),
+      ...familyGrants.map((email) => ({ email, meta: 'Amego Family · Lifetime free access' })),
+    ];
+    els.ownerAccessList.innerHTML = allEntries.length
+      ? allEntries.map((entry) => `
+        <div class="owner-access-entry">
+          <div class="messages-thread-subject">${escapeHtml(String(entry.email))}</div>
+          <div class="messages-thread-meta">${escapeHtml(String(entry.meta))}</div>
+        </div>
+      `).join('')
+      : '<div class="muted small">No lifetime access grants yet.</div>';
+  }
+
+  function isAmegoFamilyUser() {
+    const rewards = loadGrowthRewards();
+    const email = String(state.user.email || '').trim().toLowerCase();
+    return Array.isArray(rewards.familyLifetimeAccess) && rewards.familyLifetimeAccess.includes(email);
+  }
+
+  function loadTradingSimulator() {
+    const frame = document.getElementById('trading-simulator-frame');
+    if (frame) {
+      frame.innerHTML = `
+        <iframe src="trading-simulator.html?embedded=1"
+                title="Juzzy Trading Simulator"
+                style="width: 100%; min-height: 980px; border: none; border-radius: 18px; background: #0D0D0D; box-shadow: 0 20px 48px rgba(0,0,0,0.28);"
+                allow="clipboard-read; clipboard-write"
+                onload="this.style.opacity='1'; this.style.transition='opacity 0.5s ease';"
+                onerror="this.innerHTML='<div style=\'text-align: center; padding: 40px; color: #ff6b6b;\'>❌ Failed to load trading simulator</div>'">
+        </iframe>
+      `;
+    }
+  }
+
+  function renderHallOfFame() {
+  if (!els.hallOfFameContainer) return;
+  
+  const fakeAchievements = [
+    { name: "Alex Chen", avatar: "🎓", achievement: "Completed 50 Modules", date: "2024-03-15" },
+    { name: "Sarah Miller", avatar: "🏆", achievement: "Top Trader 30-Day Streak", date: "2024-03-14" },
+    { name: "Mike Johnson", avatar: "💎", achievement: "DeFi Expert Certification", date: "2024-03-13" },
+    { name: "Emma Davis", avatar: "🚀", achievement: "100 Lessons Completed", date: "2024-03-12" },
+    { name: "Chris Wilson", avatar: "⭐", achievement: "Community Leader Award", date: "2024-03-11" },
+    { name: "Lisa Anderson", avatar: "🎯", achievement: "Perfect Quiz Score Master", date: "2024-03-10" },
+    { name: "Tom Martinez", avatar: "🔥", achievement: "30-Day Learning Streak", date: "2024-03-09" },
+    { name: "Nina Patel", avatar: "💰", achievement: "Investment Strategy Pro", date: "2024-03-08" }
+  ];
+
+  const scrollContainer = els.hallOfFameContainer.querySelector('.hall-of-fame-scroll');
+  if (!scrollContainer) return;
+
+  scrollContainer.innerHTML = fakeAchievements.map(entry => `
+    <div class="hall-of-fame-entry">
+      <div class="hall-of-fame-avatar">${entry.avatar}</div>
+      <div class="hall-of-fame-name">${escapeHtml(entry.name)}</div>
+      <div class="hall-of-fame-achievement">${escapeHtml(entry.achievement)}</div>
+      <div class="hall-of-fame-date">${new Date(entry.date).toLocaleDateString()}</div>
+    </div>
+  `).join('');
+}
+
+function grantOwnerLifetimeAccess() {
+    if (!isOwnerApprover()) return;
+    const email = String(els.ownerGrantEmail?.value || '').trim().toLowerCase();
+    if (!validateEmail(email)) {
+      openModal({ title: 'Valid email required', bodyHtml: '<div class="muted">Enter a valid email address to grant lifetime free access.</div>', primaryText: 'OK', secondaryText: 'Close' });
+      return;
+    }
+    const rewards = loadGrowthRewards();
+    const grants = Array.isArray(rewards.ownerLifetimeAccess) ? rewards.ownerLifetimeAccess : [];
+    if (!grants.includes(email)) {
+      rewards.ownerLifetimeAccess = [email, ...grants];
+      saveGrowthRewards(rewards);
+    }
+    if (els.ownerGrantEmail) els.ownerGrantEmail.value = '';
+    renderOwnerAccessPanel();
+    renderGrowthRewards();
+  }
+
+  function createOwnerFamilyShareInvite() {
+    if (!isOwnerApprover()) return;
+    const email = String(els.ownerFamilyShareEmail?.value || '').trim().toLowerCase();
+    if (!validateEmail(email)) {
+      openModal({ title: 'Valid family email required', bodyHtml: '<div class="muted">Enter a valid family email to prepare a starter invite.</div>', primaryText: 'OK', secondaryText: 'Close' });
+      return;
+    }
+    const rewards = loadGrowthRewards();
+    const grants = Array.isArray(rewards.familyLifetimeAccess) ? rewards.familyLifetimeAccess : [];
+    if (!grants.includes(email)) {
+      rewards.familyLifetimeAccess = [email, ...grants];
+      saveGrowthRewards(rewards);
+    }
+    const copy = buildShareCopy('family', email);
+    if (els.ownerSharePreview) els.ownerSharePreview.textContent = copy;
+    if (els.ownerFamilyShareEmail) els.ownerFamilyShareEmail.value = '';
+    renderOwnerAccessPanel();
+    renderGrowthRewards();
+  }
+
   function updateMessagesUnreadBadge() {
     if (!els.messagesUnreadBadge) return;
     const count = Number(state.messages.unreadCount || 0);
@@ -754,8 +1024,8 @@
     if (els.messagesThreadList) {
       els.messagesThreadList.innerHTML = state.messages.threads.map((thread) => `
         <button class="messages-thread-item ${thread.id === state.messages.activeThreadId ? 'active' : ''}" data-thread-id="${thread.id}">
-          <div class="messages-thread-subject">${thread.subject}</div>
-          <div class="messages-thread-meta">${thread.unread ? 'New reply' : 'Open thread'} · ${thread.category || 'learning'} · ${new Date(thread.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+          <div class="messages-thread-subject">${escapeCommunityHtml(thread.subject)}</div>
+          <div class="messages-thread-meta">${thread.unread ? 'New reply' : 'Open thread'} · ${escapeCommunityHtml(thread.category || 'learning')} · ${new Date(thread.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
         </button>
       `).join('');
       Array.from(els.messagesThreadList.querySelectorAll('[data-thread-id]')).forEach((el) => {
@@ -778,8 +1048,8 @@
     if (els.messagesThreadMessages) {
       els.messagesThreadMessages.innerHTML = (activeThread?.messages || []).map((message) => `
         <div class="messages-bubble ${message.role === 'user' ? 'user' : 'ai'}">
-          <div class="messages-bubble-head">${message.senderName} · ${message.senderAddress}</div>
-          <div>${message.body}</div>
+          <div class="messages-bubble-head">${escapeCommunityHtml(message.senderName)} · ${escapeCommunityHtml(message.senderAddress)}</div>
+          <div>${message.role === 'ai' ? message.body : escapeCommunityHtml(message.body)}</div>
         </div>
       `).join('');
       els.messagesThreadMessages.scrollTop = els.messagesThreadMessages.scrollHeight;
@@ -799,8 +1069,8 @@
         'From the Dean desk: your progress matters more than speed. Continue the pathway, use the professor team, and keep asking for support when needed.',
       ],
       billing: [
-        'I checked the billing help path. Review your subscription status, upfront fee state, and learning access buttons inside the app before retrying. You can also generate a refund request here for owner review if needed.',
-        'For access and billing guidance, check your email field, subscription state, and package eligibility inside Juzzy first. If you need a refund request, use the refund button in this inbox.',
+        'I checked the billing help path. Review your subscription status, upfront fee state, and learning access buttons inside the app before retrying.',
+        'For access and billing guidance, check your email field, subscription state, and package eligibility inside Juzzy first. If billing still needs manual review, contact support through the normal billing help path.',
       ],
       technical: [
         'I reviewed the technical support context. The best first step is to refresh the affected tab, review live status indicators, and retry the workflow.',
@@ -816,7 +1086,7 @@
       ],
     };
     const options = catalog[key] || catalog.learning;
-    return `${options[Math.floor(Math.random() * options.length)]} Your message was: ${String(userText || '').trim()}`;
+    return `${options[Math.floor(Math.random() * options.length)]} Your message was: ${escapeCommunityHtml(String(userText || '').trim())}<div class="messages-ai-links">${buildAiResourceReply(userText, key)}</div>`;
   }
 
   function sendMessageToAiInbox() {
@@ -959,38 +1229,128 @@
     fetchBillingStatus();
   }
 
+  function setAuthStatus(message, type = 'info') {
+    if (!els.authStatusMessage) return;
+    els.authStatusMessage.textContent = String(message || '');
+    els.authStatusMessage.style.color = type === 'error'
+      ? '#ff8f9f'
+      : type === 'success'
+        ? '#8ff6c1'
+        : 'rgba(234,240,255,0.78)';
+  }
+
+  function loadLocalAuthAccounts() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(localAuthAccountsKey) || '[]');
+      return Array.isArray(raw) ? raw : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveLocalAuthAccounts(accounts) {
+    try {
+      localStorage.setItem(localAuthAccountsKey, JSON.stringify(accounts || []));
+    } catch {
+      // ignore
+    }
+  }
+
+  function findLocalAccountByEmail(email) {
+    const normalized = String(email || '').trim().toLowerCase();
+    return loadLocalAuthAccounts().find((item) => String(item.email || '').trim().toLowerCase() === normalized) || null;
+  }
+
+  function upsertLocalAccount(account) {
+    const accounts = loadLocalAuthAccounts();
+    const normalized = String(account.email || '').trim().toLowerCase();
+    const next = accounts.filter((item) => String(item.email || '').trim().toLowerCase() !== normalized);
+    next.unshift({ ...account, email: normalized });
+    saveLocalAuthAccounts(next);
+  }
+
+  function buildDesktopShortcutContent() {
+    const target = window.location.href;
+    return `[InternetShortcut]\r\nURL=${target}\r\nIconFile=${target.replace(/[^/]*$/, '')}favicon.ico\r\nIconIndex=0\r\n`;
+  }
+
+  function downloadDesktopShortcut() {
+    const blob = new Blob([buildDesktopShortcutContent()], { type: 'application/internet-shortcut' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'Juzzy Desktop.url';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setAuthStatus('Desktop shortcut downloaded. Save it to your Desktop and double-click it to open Juzzy.', 'success');
+  }
+
+  async function promptDesktopInstall() {
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      try {
+        await deferredInstallPrompt.userChoice;
+      } catch {
+        // ignore
+      }
+      deferredInstallPrompt = null;
+      setAuthStatus('Install prompt opened. If your browser supports app install, you can add Juzzy to your desktop.', 'success');
+      return;
+    }
+    setAuthStatus('Direct install is not available in this browser context. Use "Download Desktop Shortcut" instead.', 'info');
+  }
+
   function signInProfile() {
     const email = String(els.authSignInEmail?.value || '').trim();
     const password = String(els.authSignInPassword?.value || '').trim();
-    const country = String(els.authCountry?.value || '').toUpperCase();
+    const selectedCountry = String(els.authCountry?.value || '').toUpperCase();
     const language = String(els.authLanguage?.value || state.profile.language || 'en').trim();
     const languageCustom = String(els.authLanguageCustom?.value || '').trim();
     if (!validateEmail(email)) {
       appendTerminal('WARN', 'Sign-in requires a valid email.');
+      setAuthStatus('Enter a valid email address to sign in.', 'error');
       return;
     }
     if (password.length < 4) {
       appendTerminal('WARN', 'Sign-in requires a password.');
+      setAuthStatus('Enter your password to sign in.', 'error');
       return;
     }
+    const account = findLocalAccountByEmail(email);
+    if (!account) {
+      appendTerminal('WARN', 'No local account found for that email.');
+      setAuthStatus('No account found for that email. Create an account first.', 'error');
+      return;
+    }
+    if (String(account.password || '') !== password) {
+      appendTerminal('WARN', 'Incorrect password.');
+      setAuthStatus('Incorrect password. Please try again.', 'error');
+      return;
+    }
+    const country = selectedCountry || String(account.country || state.profile.country || '').toUpperCase();
     if (!country) {
-      appendTerminal('WARN', 'Please select your country before using Juzzy.');
+      appendTerminal('WARN', 'Sign-in account is missing a saved country.');
+      setAuthStatus('Select your country before signing in.', 'error');
       return;
     }
     if (!els.authLegalAgree?.checked) {
       appendTerminal('WARN', 'Please accept your country legal requirements before signing in.');
+      setAuthStatus('Accept the legal confirmation before signing in.', 'error');
       return;
     }
-    const fallbackName = state.profile.name || email.split('@')[0] || 'User';
+    const fallbackName = account.name || state.profile.name || email.split('@')[0] || 'User';
     saveAuthProfile({
       name: fallbackName,
       email,
-      country,
-      language: language === 'custom' ? 'custom' : language,
-      languageCustom,
+      country: country || account.country,
+      language: language === 'custom' ? 'custom' : (language || account.language || 'en'),
+      languageCustom: languageCustom || account.languageCustom || '',
       loggedIn: true,
     });
     appendTerminal('AUTH', `Signed in as ${email}.`);
+    setAuthStatus(`Signed in as ${email}.`, 'success');
     setActiveTab('home');
   }
 
@@ -1003,24 +1363,43 @@
     const languageCustom = String(els.authLanguageCustom?.value || '').trim();
     if (!name) {
       appendTerminal('WARN', 'Create account requires your name.');
+      setAuthStatus('Enter your full name to create an account.', 'error');
       return;
     }
     if (!validateEmail(email)) {
       appendTerminal('WARN', 'Create account requires a valid email.');
+      setAuthStatus('Enter a valid email address to create an account.', 'error');
       return;
     }
     if (password.length < 6) {
       appendTerminal('WARN', 'Create account requires a password with at least 6 characters.');
+      setAuthStatus('Use a password with at least 6 characters.', 'error');
       return;
     }
     if (!country) {
       appendTerminal('WARN', 'Please select your country before using Juzzy.');
+      setAuthStatus('Select your country before creating an account.', 'error');
       return;
     }
     if (!els.authLegalAgree?.checked) {
       appendTerminal('WARN', 'Please accept your country legal requirements to continue.');
+      setAuthStatus('Accept the legal confirmation before creating an account.', 'error');
       return;
     }
+    if (findLocalAccountByEmail(email)) {
+      appendTerminal('WARN', 'An account with that email already exists.');
+      setAuthStatus('An account with that email already exists. Sign in instead.', 'error');
+      return;
+    }
+    upsertLocalAccount({
+      name,
+      email,
+      password,
+      country,
+      language: language === 'custom' ? 'custom' : language,
+      languageCustom,
+      createdAt: Date.now(),
+    });
     saveAuthProfile({
       name,
       email,
@@ -1030,6 +1409,7 @@
       loggedIn: true,
     });
     appendTerminal('AUTH', `Account ready for ${email}.`);
+    setAuthStatus(`Account created for ${email}.`, 'success');
     setActiveTab('portfolio');
   }
 
@@ -1045,12 +1425,24 @@
       : `${source.toLowerCase()}.user.${Date.now()}@juzzy.local`;
     if (!country) {
       appendTerminal('WARN', 'Please select your country before using Juzzy.');
+      setAuthStatus('Select your country before continuing.', 'error');
       return;
     }
     if (!els.authLegalAgree?.checked) {
       appendTerminal('WARN', `Please accept your country legal requirements before continuing with ${source}.`);
+      setAuthStatus(`Accept the legal confirmation before continuing with ${source}.`, 'error');
       return;
     }
+    upsertLocalAccount({
+      name: String(els.authName?.value || '').trim() || fallbackName,
+      email,
+      password: `${source.toLowerCase()}-oauth`,
+      country,
+      language: language === 'custom' ? 'custom' : language,
+      languageCustom,
+      createdAt: Date.now(),
+      provider: source,
+    });
     saveAuthProfile({
       name: String(els.authName?.value || '').trim() || fallbackName,
       email,
@@ -1059,6 +1451,7 @@
       languageCustom,
       loggedIn: true,
     });
+    setAuthStatus(`${source} sign-in is ready for ${email}.`, 'success');
     appendTerminal('AUTH', `${source} quick signup ready.`);
     setActiveTab('portfolio');
   }
@@ -1068,6 +1461,7 @@
     state.profile.legalAccepted = false;
     saveProfile();
     renderProfileUi();
+    setAuthStatus('Signed out. You can sign in again or create a new account.', 'info');
     appendTerminal('AUTH', 'Signed out.');
   }
 
@@ -1224,6 +1618,20 @@
     });
   }
 
+  function registerInstallSupport() {
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      setAuthStatus('Install is available. Use the Install App button to add Juzzy to your desktop.', 'success');
+    });
+
+    if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+      navigator.serviceWorker.register('service-worker.js').catch(() => {
+        // ignore registration failures
+      });
+    }
+  }
+
   function saveProfile() {
     try {
       localStorage.setItem('juzzy_profile', JSON.stringify(state.profile));
@@ -1261,10 +1669,27 @@
     const lang = state.profile.languageCustom || state.profile.language || 'en';
     const country = getCountryProfile(state.profile.country);
     const selectedCountryCode = COUNTRY_PROFILES.some((item) => item.code === state.profile.country) ? state.profile.country : '';
+    const isFamily = isAmegoFamilyUser();
+    
+    // Update owner plaque visibility
+    if (els.ownerPlaque) {
+      const isOwner = isOwnerApprover();
+      els.ownerPlaque.classList.toggle('util-hidden', !isOwner);
+      
+      if (isOwner) {
+        console.log('👑 Owner access detected - Displaying owner plaque');
+      }
+    }
+    if (els.familyPlaque) {
+      els.familyPlaque.classList.toggle('util-hidden', !isFamily || isOwnerApprover());
+    }
+    
     if (els.userIdentityPill) {
-      els.userIdentityPill.textContent = state.profile.loggedIn
+      const isOwner = isOwnerApprover();
+      const baseText = state.profile.loggedIn
         ? `${state.profile.name || state.user.email || 'User'} • ${country.code}`
         : 'Guest';
+      els.userIdentityPill.textContent = isOwner ? `👑 ${baseText}` : isFamily ? `💎 Amego Family • ${baseText}` : baseText;
     }
     if (els.portfolioCountry) els.portfolioCountry.textContent = country.name;
     if (els.portfolioLanguage) els.portfolioLanguage.textContent = formatLanguage(lang);
@@ -1277,6 +1702,8 @@
     if (els.authLegalAgree) els.authLegalAgree.checked = Boolean(state.profile.legalAccepted);
     if (els.authGate) els.authGate.hidden = state.profile.loggedIn && Boolean(state.profile.country) && Boolean(state.profile.legalAccepted);
     renderCountryLegal();
+    renderGrowthRewards();
+    renderOwnerAccessPanel();
   }
 
   function computePortfolioValue() {
@@ -2203,9 +2630,453 @@
     return Array.from(document.querySelectorAll(sel));
   }
 
-  function setActiveTab(tabId) {
+  function getCurrentActiveTabId() {
+    const activeTabBtn = document.querySelector('.tab.active');
+    return activeTabBtn?.dataset?.tab || 'home';
+  }
+
+  function defaultGrowthRewards() {
+    return {
+      referralCode: '',
+      referrals: [],
+      suggestions: [],
+      freeModuleCredits: 0,
+      fullAccessUntil: 0,
+      ownerLifetimeAccess: [],
+      familyLifetimeAccess: [],
+      starterTrialUsed: false,
+      starterTrialEndsAt: 0,
+      starterTrialCredits: 0,
+      previewUnlockedLessons: [],
+    };
+  }
+
+  function getStarterTierConfig() {
+    return {
+      name: 'Starter Trial',
+      freeLessons: 6,
+      premiumPreviewModules: 2,
+      durationDays: 21,
+      communityMode: 'read + guided prompts',
+      includes: ['Freebies tab', 'selected community/resource links', 'limited academy lessons', 'share invitations'],
+      upgradeHook: 'Unlock full pathways, deeper modules, premium boards, and paid course stacks with Stripe.',
+    };
+  }
+
+  function isStarterTrialActive(rewards = loadGrowthRewards()) {
+    return Number(rewards.starterTrialEndsAt || 0) > Date.now();
+  }
+
+  function getPreviewUnlockedLessons(rewards = loadGrowthRewards()) {
+    return Array.isArray(rewards.previewUnlockedLessons) ? rewards.previewUnlockedLessons : [];
+  }
+
+  function hasLessonPreviewUnlock(id, rewards = loadGrowthRewards()) {
+    return getPreviewUnlockedLessons(rewards).includes(String(id || '').trim());
+  }
+
+  function canAccessPaidLesson(id) {
+    const rewards = loadGrowthRewards();
+    const ownerGranted = Array.isArray(rewards.ownerLifetimeAccess)
+      && rewards.ownerLifetimeAccess.includes(String(state.user.email || '').trim().toLowerCase());
+    const familyGranted = Array.isArray(rewards.familyLifetimeAccess)
+      && rewards.familyLifetimeAccess.includes(String(state.user.email || '').trim().toLowerCase());
+    if (isOwnerApprover()) return true;
+    if (state.billing.subscribed || ownerGranted || familyGranted || Number(rewards.fullAccessUntil || 0) > Date.now()) return true;
+    return hasLessonPreviewUnlock(id, rewards);
+  }
+
+  function getShareBaseUrl() {
+    return `${window.location.origin}${window.location.pathname}`;
+  }
+
+  function buildInviteLink(kind = 'starter', recipientEmail = '', recipientName = '') {
+    const code = ensureReferralCode();
+    const url = new URL(getShareBaseUrl(), window.location.href);
+    url.searchParams.set('ref', code);
+    url.searchParams.set('share', kind);
+    if (recipientEmail) url.searchParams.set('familyEmail', String(recipientEmail || '').trim().toLowerCase());
+    if (recipientName) url.searchParams.set('familyName', String(recipientName || '').trim());
+    return url.toString();
+  }
+
+  function buildShareCopy(kind = 'starter', email = '') {
+    const starter = getStarterTierConfig();
+    const fallbackName = email ? String(email).split('@')[0] : '';
+    const inviteLink = buildInviteLink(kind, email, fallbackName);
+    const targetLine = email ? `I set this aside for ${email}. ` : '';
+    return `${targetLine}Try Juzzy free with a guided ${starter.name.toLowerCase()} — ${starter.freeLessons} free lessons, curated freebies, selected community access, and premium previews without full unlocks. ${starter.upgradeHook} ${inviteLink}`;
+  }
+
+  function formatInviteDisplayName(raw) {
+    const normalized = String(raw || '').trim();
+    if (!normalized) return 'Amego Family Member';
+    return normalized
+      .replace(/[._-]+/g, ' ')
+      .split(' ')
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+  }
+
+  function provisionFamilyAccessFromInvite(email, nameHint = '') {
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+    if (!validateEmail(normalizedEmail)) return false;
+    const rewards = loadGrowthRewards();
+    const familyGrants = Array.isArray(rewards.familyLifetimeAccess) ? rewards.familyLifetimeAccess : [];
+    if (!familyGrants.includes(normalizedEmail)) return false;
+    const existing = findLocalAccountByEmail(normalizedEmail);
+    const displayName = formatInviteDisplayName(nameHint || normalizedEmail.split('@')[0]);
+    const country = String(state.profile.country || 'US').toUpperCase() || 'US';
+    const language = String(state.profile.language || 'en').trim() || 'en';
+    upsertLocalAccount({
+      name: existing?.name || displayName,
+      email: normalizedEmail,
+      password: existing?.password || '__family_link_access__',
+      country: existing?.country || country,
+      language: existing?.language || language,
+      languageCustom: existing?.languageCustom || '',
+      createdAt: existing?.createdAt || Date.now(),
+      provider: existing?.provider || 'family-link',
+    });
+    saveAuthProfile({
+      name: existing?.name || displayName,
+      email: normalizedEmail,
+      country: existing?.country || country,
+      language: existing?.language || language,
+      languageCustom: existing?.languageCustom || '',
+      loggedIn: true,
+    });
+    if (els.authGate) els.authGate.hidden = true;
+    setActiveTab('home');
+    setAuthStatus(`Signed in automatically with Amego Family access for ${normalizedEmail}.`, 'success');
+    return true;
+  }
+
+  async function copyTextValue(value, successTitle = 'Copied') {
+    const text = String(value || '').trim();
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+      openModal({ title: successTitle, bodyHtml: `<div class="muted">${escapeHtml(text)}</div>`, primaryText: 'OK', secondaryText: 'Close' });
+    } catch {
+      openModal({ title: successTitle, bodyHtml: `<div class="muted">${escapeHtml(text)}</div><div class="muted small" style="margin-top:10px">Clipboard access was unavailable, so your share text is shown here for manual copy.</div>`, primaryText: 'OK', secondaryText: 'Close' });
+    }
+  }
+
+  function buildPlatformShareUrl(platform, text, link) {
+    const encodedText = encodeURIComponent(text);
+    const encodedLink = encodeURIComponent(link);
+    if (platform === 'twitter') return `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedLink}`;
+    if (platform === 'facebook') return `https://www.facebook.com/sharer/sharer.php?u=${encodedLink}`;
+    if (platform === 'linkedin') return `https://www.linkedin.com/sharing/share-offsite/?url=${encodedLink}`;
+    if (platform === 'reddit') return `https://www.reddit.com/submit?url=${encodedLink}&title=${encodedText}`;
+    if (platform === 'whatsapp') return `https://wa.me/?text=${encodeURIComponent(`${text} ${link}`)}`;
+    if (platform === 'telegram') return `https://t.me/share/url?url=${encodedLink}&text=${encodedText}`;
+    if (platform === 'messenger') return `https://www.facebook.com/dialog/send?link=${encodedLink}&app_id=123456789`;
+    if (platform === 'email') return `mailto:?subject=${encodeURIComponent('Try Juzzy')}&body=${encodeURIComponent(`${text}\n\n${link}`)}`;
+    if (platform === 'sms') return `sms:?&body=${encodeURIComponent(`${text} ${link}`)}`;
+    if (platform === 'discord') return '';
+    return link;
+  }
+
+  function openSharePlatform(platform) {
+    const text = buildShareCopy(platform === 'family' ? 'family' : 'starter');
+    const link = buildInviteLink(platform === 'family' ? 'family' : 'starter');
+    const targetUrl = buildPlatformShareUrl(platform, text, link);
+    if (els.sharePreviewOutput) {
+      els.sharePreviewOutput.textContent = `${text}`;
+    }
+    if (platform === 'discord') {
+      void copyTextValue(`${text}\n\n${link}`, 'Discord share copy ready');
+      return;
+    }
+    if (platform === 'email' || platform === 'sms') {
+      window.location.href = targetUrl;
+      return;
+    }
+    if (targetUrl) {
+      openExternalResourceInApp({
+        url: targetUrl,
+        label: `Share via ${platform}`,
+        provider: 'Juzzy Share'
+      });
+    }
+  }
+
+  function renderShareTab() {
+    const starter = getStarterTierConfig();
+    const inviteLink = buildInviteLink('starter');
+    if (els.shareTierSummary) {
+      els.shareTierSummary.textContent = `${starter.name}: ${starter.freeLessons} free lessons, ${starter.premiumPreviewModules} premium preview unlocks, ${starter.communityMode}, freebies access, and a strong upgrade path into paid academy access.`;
+    }
+    if (els.shareInviteLink) els.shareInviteLink.value = inviteLink;
+    if (els.sharePreviewOutput) els.sharePreviewOutput.textContent = buildShareCopy('starter');
+  }
+
+  function applySharedEntryContext() {
+    const params = new URLSearchParams(window.location.search);
+    const shareMode = String(params.get('share') || '').trim().toLowerCase();
+    const requestedTab = String(params.get('tab') || '').trim().toLowerCase();
+    const refCode = String(params.get('ref') || '').trim();
+    const familyEmail = String(params.get('familyEmail') || '').trim().toLowerCase();
+    const familyName = String(params.get('familyName') || '').trim();
+    if (shareMode === 'family' && familyEmail) {
+      const autoProvisioned = provisionFamilyAccessFromInvite(familyEmail, familyName);
+      if (autoProvisioned) return;
+    }
+    if (shareMode && els.sharePreviewOutput) {
+      const copy = buildShareCopy(shareMode === 'family' ? 'family' : 'starter');
+      els.sharePreviewOutput.textContent = refCode ? `${copy} Referral code: ${refCode}` : copy;
+    }
+    if (requestedTab === 'share' || shareMode) {
+      setActiveTab('share');
+      return;
+    }
+    if (requestedTab === 'owner-access' && isOwnerApprover()) {
+      setActiveTab('owner-access');
+    }
+  }
+
+  function loadGrowthRewards() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(growthRewardsKey) || 'null');
+      return raw && typeof raw === 'object'
+        ? { ...defaultGrowthRewards(), ...raw, referrals: Array.isArray(raw.referrals) ? raw.referrals : [], suggestions: Array.isArray(raw.suggestions) ? raw.suggestions : [] }
+        : defaultGrowthRewards();
+    } catch {
+      return defaultGrowthRewards();
+    }
+  }
+
+  function saveGrowthRewards(data) {
+    try {
+      localStorage.setItem(growthRewardsKey, JSON.stringify(data));
+    } catch {
+      // ignore
+    }
+  }
+
+  function ensureReferralCode() {
+    const rewards = loadGrowthRewards();
+    if (!rewards.referralCode) {
+      const seed = String(state.user.email || state.profile.name || 'guest').replace(/[^a-z0-9]/gi, '').slice(0, 8).toUpperCase() || 'JUZZY';
+      rewards.referralCode = `${seed}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+      saveGrowthRewards(rewards);
+    }
+    return rewards.referralCode;
+  }
+
+  function syncGrowthRewards() {
+    const rewards = loadGrowthRewards();
+    const currentEmail = String(state.user.email || '').trim().toLowerCase();
+    if (currentEmail && state.billing.subscribed) {
+      let changed = false;
+      rewards.referrals = rewards.referrals.map((item) => {
+        if (String(item.friendEmail || '').trim().toLowerCase() === currentEmail && !item.converted) {
+          changed = true;
+          return { ...item, converted: true, convertedAt: Date.now() };
+        }
+        return item;
+      });
+      if (changed) {
+        const ownCode = rewards.referralCode;
+        const earned = rewards.referrals.filter((item) => item.code === ownCode && item.converted && !item.rewarded).length;
+        if (earned > 0) {
+          rewards.freeModuleCredits += earned;
+          rewards.referrals = rewards.referrals.map((item) => item.code === ownCode && item.converted ? { ...item, rewarded: true } : item);
+        }
+        saveGrowthRewards(rewards);
+      }
+    }
+    renderGrowthRewards();
+  }
+
+  function renderGrowthRewards() {
+    const rewards = loadGrowthRewards();
+    const code = ensureReferralCode();
+    const starter = getStarterTierConfig();
+    if (!rewards.starterTrialUsed) {
+      rewards.starterTrialUsed = true;
+      rewards.starterTrialCredits = Math.max(Number(rewards.starterTrialCredits || 0), starter.premiumPreviewModules);
+      rewards.starterTrialEndsAt = Math.max(Number(rewards.starterTrialEndsAt || 0), Date.now() + (starter.durationDays * 24 * 60 * 60 * 1000));
+      saveGrowthRewards(rewards);
+    }
+    if (els.referralCodeDisplay) els.referralCodeDisplay.value = code;
+    const activeUntil = Number(rewards.fullAccessUntil || 0);
+    const starterEndsAt = Number(rewards.starterTrialEndsAt || 0);
+    const starterTrialActive = isStarterTrialActive(rewards);
+    const ownerGranted = Array.isArray(rewards.ownerLifetimeAccess)
+      && rewards.ownerLifetimeAccess.includes(String(state.user.email || '').trim().toLowerCase());
+    const familyGranted = Array.isArray(rewards.familyLifetimeAccess)
+      && rewards.familyLifetimeAccess.includes(String(state.user.email || '').trim().toLowerCase());
+    const hasFullAccess = activeUntil > Date.now();
+    if (els.rewardStatusOutput) {
+      els.rewardStatusOutput.innerHTML = `
+        <div><strong>Referral code:</strong> ${escapeHtml(code)}</div>
+        <div><strong>Free module credits:</strong> ${Number(rewards.freeModuleCredits || 0)}</div>
+        <div><strong>Starter preview credits:</strong> ${Number(rewards.starterTrialCredits || 0)} of ${starter.premiumPreviewModules}</div>
+        <div><strong>Starter trial window:</strong> ${starterTrialActive ? `Active until ${new Date(starterEndsAt).toLocaleDateString()}` : starterEndsAt ? `Expired on ${new Date(starterEndsAt).toLocaleDateString()}` : `Available for ${starter.durationDays} days from first use`}</div>
+        <div><strong>Preview-unlocked premium lessons:</strong> ${getPreviewUnlockedLessons(rewards).length}</div>
+        <div><strong>Full access reward:</strong> ${ownerGranted ? 'Lifetime owner-granted access active' : familyGranted ? 'Amego Family lifetime access active' : hasFullAccess ? `Active until ${new Date(activeUntil).toLocaleDateString()}` : 'Not currently active'}</div>
+        <div><strong>Tracked referrals:</strong> ${rewards.referrals.length}</div>
+        <div><strong>AI-approved ideas:</strong> ${rewards.suggestions.filter((item) => item.approved).length}</div>
+      `;
+    }
+    renderShareTab();
+    renderOwnerAccessPanel();
+  }
+
+  function registerReferral() {
+    const friendEmail = String(els.referralFriendEmail?.value || '').trim().toLowerCase();
+    if (!validateEmail(friendEmail)) {
+      openModal({ title: 'Referral email required', bodyHtml: '<div class="muted">Enter a valid friend email to register the referral.</div>', primaryText: 'OK', secondaryText: 'Close' });
+      return;
+    }
+    const ownEmail = String(state.user.email || '').trim().toLowerCase();
+    if (friendEmail && ownEmail && friendEmail === ownEmail) {
+      openModal({ title: 'Invalid referral', bodyHtml: '<div class="muted">You cannot refer your own email address.</div>', primaryText: 'OK', secondaryText: 'Close' });
+      return;
+    }
+    const rewards = loadGrowthRewards();
+    const code = ensureReferralCode();
+    const exists = rewards.referrals.some((item) => item.friendEmail === friendEmail);
+    if (!exists) {
+      rewards.referrals.unshift({ code, friendEmail, createdAt: Date.now(), converted: false, rewarded: false });
+      saveGrowthRewards(rewards);
+    }
+    if (els.referralFriendEmail) els.referralFriendEmail.value = '';
+    renderGrowthRewards();
+  }
+
+  function claimIdeaReward() {
+    const rewards = loadGrowthRewards();
+    const ownEmail = String(state.user.email || '').trim().toLowerCase();
+    const approved = rewards.suggestions.find((item) => item.ownerEmail === ownEmail && item.approved && !item.rewardClaimed);
+    if (!approved) {
+      renderGrowthRewards();
+      return;
+    }
+    rewards.fullAccessUntil = Math.max(Date.now(), Number(rewards.fullAccessUntil || 0)) + (90 * 24 * 60 * 60 * 1000);
+    rewards.suggestions = rewards.suggestions.map((item) => item.id === approved.id ? { ...item, rewardClaimed: true } : item);
+    saveGrowthRewards(rewards);
+    renderGrowthRewards();
+  }
+
+  function isPaidLesson(id) {
+    const meta = getLessonMeta(id);
+    const isOwner = isOwnerApprover();
+    
+    // Owner gets free access to all lessons
+    if (isOwner) {
+      console.log(`👑 Owner accessing lesson ${id} - Free access granted`);
+      return false; // Return false so it's treated as free
+    }
+    
+    return String(meta?.tier || 'Free').toLowerCase() !== 'free';
+  }
+
+  function canUsePaidModules() {
+    const rewards = loadGrowthRewards();
+    const ownerGranted = Array.isArray(rewards.ownerLifetimeAccess)
+      && rewards.ownerLifetimeAccess.includes(String(state.user.email || '').trim().toLowerCase());
+    const familyGranted = Array.isArray(rewards.familyLifetimeAccess)
+      && rewards.familyLifetimeAccess.includes(String(state.user.email || '').trim().toLowerCase());
+    
+    // Owner gets full access to ALL levels and features
+    const isOwner = isOwnerApprover();
+    if (isOwner) {
+      console.log('👑 Owner accessing all modules - Full access granted');
+      return true;
+    }
+    
+    return Boolean(state.billing.subscribed || ownerGranted || familyGranted || Number(rewards.fullAccessUntil || 0) > Date.now());
+  }
+
+  function promptStripeForModule(id) {
+    const meta = getLessonMeta(id);
+    const rewards = loadGrowthRewards();
+    const availableCredits = Number(rewards.freeModuleCredits || 0);
+    const starterCredits = Number(rewards.starterTrialCredits || 0);
+    const starterTrialActive = isStarterTrialActive(rewards);
+    if (hasLessonPreviewUnlock(id, rewards)) {
+      openModal({ title: 'Preview already unlocked', bodyHtml: `<div class="muted"><strong>${escapeHtml(meta.trackTitle)}</strong> already has a starter preview unlock applied. Open it anytime during your current access state.</div>`, primaryText: 'OK', secondaryText: 'Close' });
+      return;
+    }
+    if (starterTrialActive && starterCredits > 0) {
+      openModal({
+        title: 'Use starter preview unlock?',
+        bodyHtml: `<div class="muted">Your hooked free tier includes <strong>${starterCredits}</strong> premium preview unlock${starterCredits === 1 ? '' : 's'} during a <strong>three-week starter window</strong>. Apply one preview unlock specifically to <strong>${escapeHtml(meta.title || meta.trackTitle)}</strong> now, or continue to Stripe for full access.</div>`,
+        primaryText: 'Use 1 Preview Unlock',
+        secondaryText: 'Go Premium',
+        onPrimary: () => {
+          const next = loadGrowthRewards();
+          next.starterTrialCredits = Math.max(0, Number(next.starterTrialCredits || 0) - 1);
+          next.previewUnlockedLessons = Array.from(new Set([String(id || '').trim(), ...getPreviewUnlockedLessons(next)]));
+          saveGrowthRewards(next);
+          renderGrowthRewards();
+          openModal({ title: 'Preview unlocked', bodyHtml: `<div class="muted">A starter preview unlock was applied only to <strong>${escapeHtml(meta.title || meta.trackTitle)}</strong>. Other premium lessons remain locked unless they are individually unlocked or fully upgraded.</div>`, primaryText: 'OK', secondaryText: 'Close' });
+        },
+        onSecondary: () => { void startSubscriptionCheckout(); },
+      });
+      return;
+    }
+    if (availableCredits > 0) {
+      openModal({
+        title: 'Use free module credit?',
+        bodyHtml: `<div class="muted">You have <strong>${availableCredits}</strong> free module credit${availableCredits === 1 ? '' : 's'}. You can use one credit to unlock <strong>${escapeHtml(meta.trackTitle)}</strong> now, or continue to Stripe.</div>`,
+        primaryText: 'Use 1 Credit',
+        secondaryText: 'Use Stripe',
+        onPrimary: () => {
+          const next = loadGrowthRewards();
+          next.freeModuleCredits = Math.max(0, Number(next.freeModuleCredits || 0) - 1);
+          next.previewUnlockedLessons = Array.from(new Set([String(id || '').trim(), ...getPreviewUnlockedLessons(next)]));
+          saveGrowthRewards(next);
+          renderGrowthRewards();
+          openModal({ title: 'Module unlocked', bodyHtml: `<div class="muted">A free module credit was applied specifically to <strong>${escapeHtml(meta.title || meta.trackTitle)}</strong>.</div>`, primaryText: 'OK', secondaryText: 'Close' });
+        },
+        onSecondary: () => { void startSubscriptionCheckout(); },
+      });
+      return;
+    }
+    openModal({
+      title: 'Unlock paid module',
+      bodyHtml: `<div class="muted">${escapeHtml(meta.trackTitle)} is part of the <strong>${escapeHtml(meta.tier)}</strong> pathway. Continue to Stripe to unlock paid course access.</div>`,
+      primaryText: 'Open Stripe Checkout',
+      secondaryText: 'Close',
+      onPrimary: () => { void startSubscriptionCheckout(); },
+    });
+  }
+
+  function pushNavHistory(tabId) {
+    const current = String(tabId || 'home');
+    const hist = Array.isArray(state.ui.navHistory) ? state.ui.navHistory : ['home'];
+    const index = Number(state.ui.navHistoryIndex || 0);
+    if (hist[index] === current) return;
+    const next = hist.slice(0, index + 1);
+    next.push(current);
+    state.ui.navHistory = next.slice(-40);
+    state.ui.navHistoryIndex = state.ui.navHistory.length - 1;
+  }
+
+  function navigateHistory(direction) {
+    const nextIndex = Number(state.ui.navHistoryIndex || 0) + Number(direction || 0);
+    if (nextIndex < 0 || nextIndex >= state.ui.navHistory.length) return;
+    state.ui.navHistoryIndex = nextIndex;
+    const tabId = state.ui.navHistory[nextIndex] || 'home';
+    setActiveTab(tabId, { skipHistoryPush: true });
+  }
+
+  function setActiveTab(tabId, opts = {}) {
+    if (tabId === 'owner-access' && !isOwnerApprover()) {
+      tabId = 'home';
+    }
+    if (tabId === 'oracle' && !isOwnerApprover()) {
+      tabId = 'home';
+    }
     qsAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabId));
     qsAll('.panel').forEach(p => p.classList.toggle('active', p.id === `tab-${tabId}`));
+    if (!opts.skipHistoryPush) pushNavHistory(tabId);
     if (tabId === 'learn' || tabId === 'tutorial') {
       renderAcademyHub();
       initTutCategoryOptions();
@@ -2215,42 +3086,62 @@
         initTutorialParticles();
       }
     }
-    if (tabId === 'charts') {
-      if (!state.charts.initialized) {
-        initOrResizeChart();
-        state.charts.initialized = true;
-      }
+    if (tabId === 'trading-simulator') {
+      loadTradingSimulator();
+    }
+    if (tabId === 'home') {
+      renderHallOfFame();
+    }
+    if (tabId === 'oracle') {
+      renderOracle();
     }
     if (tabId === 'leaders') {
       renderLeaders();
     }
-
+    if (tabId === 'charts') {
+      initOrResizeChart();
+      renderChartControls();
+      renderChart();
+    }
+    if (tabId === 'portfolio') {
+      renderPortfolio();
+    }
+    if (tabId === 'brain') {
+      renderBrain();
+    }
     if (tabId === 'reports') {
       resetReportsRender();
     }
-
     if (tabId === 'ops') {
       renderOps();
     }
-
+    if (tabId === 'vault') {
+      renderVault();
+    }
+    if (tabId === 'settings') {
+      renderSettings();
+    }
+    if (tabId === 'about') {
+      renderAbout();
+    }
     if (tabId === 'messages') {
-      state.messages.unreadCount = 0;
-      state.messages.threads.forEach((thread) => { thread.unread = false; });
-      saveMessageCenter();
-      updateMessagesUnreadBadge();
       renderMessageCenter();
       renderOwnerRefundQueue();
     }
-
     if (tabId === 'community') {
       renderCommunity();
     }
-
+    if (tabId === 'share') {
+      renderShareTab();
+    }
+    if (tabId === 'owner-access') {
+      renderOwnerAccessPanel();
+    }
     if (tabId === 'portfolio' || tabId === 'settings') {
       renderProfileUi();
       renderPortfolio();
     }
-
+    renderGlobalAiQuickActions();
     emitAudit('UI_TAB', { tab: tabId });
   }
 
@@ -2765,7 +3656,7 @@
         return;
       }
 
-      setStatus('Creating subscription checkout…');
+      setStatus('Opening premium learning checkout…');
       const payload = await postJson('/api/stripe/subscribe', { email });
       if (payload?.url) window.location.href = payload.url;
       setStatus('Idle');
@@ -2788,7 +3679,7 @@
         return;
       }
 
-      setStatus('Creating per-trade checkout…');
+      setStatus('Opening demo workflow fee checkout…');
       localStorage.setItem('pos_pending_trade_notional', String(tradeNotionalUsd));
       localStorage.setItem('pos_pending_trade_fee', String(tradeNotionalUsd * 0.01));
       const payload = await postJson('/api/stripe/trade-fee', { tradeNotional: tradeNotionalUsd, email });
@@ -2821,6 +3712,7 @@
       }
 
       setAutoUi();
+      syncGrowthRewards();
     } catch {
       // ignore
     }
@@ -2852,7 +3744,7 @@
 
       openModal({
         title: 'Locked until paid & agreed',
-        bodyHtml: `<div class="muted">Missing: <strong>${escapeHtml(missing.join(', '))}</strong></div><div class="muted small" style="margin-top:10px">Press Subscribe first, then pay the upfront 1% fee for the exact amount you selected.</div>`,
+        bodyHtml: `<div class="muted">Missing: <strong>${escapeHtml(missing.join(', '))}</strong></div><div class="muted small" style="margin-top:10px">Unlock premium learning first, then review the 1% demo workflow fee for the exact amount you selected. This flow is presented for educational use with paper-first behaviour.</div>`,
         primaryText: 'OK',
         secondaryText: 'Close',
       });
@@ -2870,8 +3762,8 @@
     state.autopilot.nextIndex = 0;
     state.autopilot.awaitingPaymentForIndex = null;
 
-    setStatus('Autopilot running');
-    appendTerminal('INFO', `One Invest started. Total $${formatMoney(total)} split into ${state.autopilot.slices} slices.`);
+    setStatus('Demo autopilot running');
+    appendTerminal('INFO', `One Invest demo started. Total $${formatMoney(total)} split into ${state.autopilot.slices} educational slices.`);
 
     // Create a report record for the start.
     state.reports.unshift({
@@ -3331,10 +4223,13 @@
     cat: 'all',
     search: '',
     completed: [...getTutCompleted()],
+    expandedTracks: JSON.parse(localStorage.getItem('juzzy_tut_expanded_tracks') || 'null') || [],
+    activeTrackKey: localStorage.getItem('juzzy_tut_active_track') || '',
     particles: [],
     achievements: JSON.parse(localStorage.getItem('juzzy_tutorial_achievements') || '[]'),
   };
   let activeTutId = null;
+  let activeLessonExternalResource = null;
   let lastLessonReturn = { tabId: 'tutorial', lessonId: null, step: 0 };
   let globalAiVoiceEnabled = true;
   let globalAiRecognizer = null;
@@ -3409,10 +4304,51 @@
     return 'foundations';
   }
 
-  function getNextRecommendedLesson() {
+  function scoreLessonForUser(tut, profile, searchTerm = '') {
+    if (!tut) return -Infinity;
     const completed = getTutCompleted();
-    const firstIncomplete = allTutorials.find((lesson) => !completed.has(lesson.id));
-    return firstIncomplete || allTutorials[0] || null;
+    const meta = getLessonMeta(tut.id);
+    const ability = classifyLessonAbility(tut);
+    const abilityStrength = Number(profile?.strengths?.[ability] || 1);
+    const isCompleted = completed.has(tut.id);
+    const hasSearch = Boolean(String(searchTerm || '').trim());
+    const normalizedSearch = String(searchTerm || '').trim().toLowerCase();
+    const haystack = `${tut.title} ${tut.desc} ${tut.cat} ${meta.trackTitle}`.toLowerCase();
+    let score = 0;
+
+    score += Math.max(0, 12 - meta.moduleNumber) * 4;
+    score += abilityStrength * 10;
+    score += isCompleted ? -160 : 60;
+
+    if (profile?.currentLessonId === tut.id) score += 120;
+    if (profile?.completedLessons?.includes(tut.id)) score -= 40;
+    if (isPaidLesson(tut.id)) score -= 8;
+
+    if (hasSearch) {
+      if (tut.title.toLowerCase().includes(normalizedSearch)) score += 120;
+      else if (tut.desc.toLowerCase().includes(normalizedSearch)) score += 70;
+      else if (haystack.includes(normalizedSearch)) score += 45;
+    }
+
+    return score;
+  }
+
+  function scoreTrackForUser(group, profile, searchTerm = '') {
+    const lessons = Array.isArray(group?.lessons) ? group.lessons : [];
+    if (!lessons.length) return -Infinity;
+    const completedCount = lessons.filter((lesson) => tutState.completed.includes(lesson.id)).length;
+    const nextLesson = lessons[0];
+    let score = lessons.reduce((sum, lesson) => sum + scoreLessonForUser(lesson, profile, searchTerm), 0) / lessons.length;
+    score += (lessons.length - completedCount) * 6;
+    score -= completedCount * 3;
+    if (nextLesson && profile?.currentLessonId === nextLesson.id) score += 50;
+    return score;
+  }
+
+  function getNextRecommendedLesson() {
+    const profile = getLearnerProfile();
+    const ranked = [...allTutorials].sort((a, b) => scoreLessonForUser(b, profile) - scoreLessonForUser(a, profile));
+    return ranked[0] || allTutorials[0] || null;
   }
 
   function rememberLessonReturn() {
@@ -3442,6 +4378,107 @@
       return;
     }
     setActiveTab(session?.tabId || 'tutorial');
+  }
+
+  function closeLessonExternalResource() {
+    activeLessonExternalResource = null;
+    if (els.tutExternalViewer) els.tutExternalViewer.hidden = true;
+    if (els.tutExternalFrame) els.tutExternalFrame.src = 'about:blank';
+    if (els.tutExternalTitle) els.tutExternalTitle.textContent = 'Lesson Resource';
+    if (els.tutExternalMeta) els.tutExternalMeta.textContent = 'External resource opened inside Juzzy';
+  }
+
+  function openExternalResourceModal(resource) {
+    if (!resource?.url) return;
+    const safeUrl = tutEscapeHtml(String(resource.url || '').trim());
+    const safeLabel = tutEscapeHtml(String(resource.label || 'External Resource').trim());
+    const safeProvider = tutEscapeHtml(String(resource.provider || 'Opened inside Juzzy').trim());
+    openModal({
+      title: String(resource.label || 'External Resource').trim() || 'External Resource',
+      bodyHtml: `<div style="display:flex;flex-direction:column;gap:12px;min-height:70vh"><div class="muted small" style="line-height:1.65">You are still inside Juzzy. ${safeProvider} is opening inside the app below.</div><iframe src="${safeUrl}" title="${safeLabel}" referrerpolicy="no-referrer" style="width:100%;min-height:60vh;border:1px solid rgba(255,255,255,0.12);border-radius:14px;background:rgba(8,14,24,0.95)"></iframe></div>`,
+      primaryText: 'Done',
+      secondaryText: 'Close',
+    });
+  }
+
+  function openExternalResourceInApp(resource) {
+    if (!resource?.url) return;
+    const normalizedResource = {
+      url: String(resource.url || '').trim(),
+      label: String(resource.label || 'External Resource').trim(),
+      provider: String(resource.provider || 'External Resource').trim(),
+    };
+    if (!normalizedResource.url) return;
+    if (activeTutId && els.tutReader && !els.tutReader.hidden) {
+      openLessonExternalResource(normalizedResource);
+      return;
+    }
+    openExternalResourceModal(normalizedResource);
+  }
+
+  function shouldRouteUrlInsideApp(url) {
+    const normalized = String(url || '').trim();
+    if (!normalized || !/^https?:\/\//i.test(normalized)) return false;
+    try {
+      const parsed = new URL(normalized, window.location.href);
+      return parsed.origin !== window.location.origin;
+    } catch {
+      return false;
+    }
+  }
+
+  function installWindowOpenInterceptor() {
+    if (window.__juzzyWindowOpenIntercepted) return;
+    window.__juzzyWindowOpenIntercepted = true;
+    const originalWindowOpen = window.open.bind(window);
+    window.open = function interceptedWindowOpen(url, target, features) {
+      if (shouldRouteUrlInsideApp(url)) {
+        openExternalResourceInApp({
+          url: String(url || '').trim(),
+          label: 'External Resource',
+          provider: 'Opened inside Juzzy',
+        });
+        return window;
+      }
+      return originalWindowOpen(url, target, features);
+    };
+  }
+
+  function openLessonExternalResource(resource) {
+    if (!resource?.url) return;
+    rememberLessonReturn();
+    activeLessonExternalResource = {
+      url: String(resource.url || '').trim(),
+      label: String(resource.label || 'Lesson Resource').trim(),
+      provider: String(resource.provider || 'External Resource').trim(),
+    };
+    if (els.tutExternalTitle) els.tutExternalTitle.textContent = activeLessonExternalResource.label;
+    if (els.tutExternalMeta) els.tutExternalMeta.textContent = `${activeLessonExternalResource.provider} · Framed inside Juzzy when supported · Return to lesson anytime`;
+    if (els.tutExternalFrame) els.tutExternalFrame.src = activeLessonExternalResource.url;
+    if (els.tutExternalViewer) els.tutExternalViewer.hidden = false;
+  }
+
+  function openActiveLessonResourceInNewTab() {
+    if (!activeLessonExternalResource?.url) return;
+    openExternalResourceModal(activeLessonExternalResource);
+  }
+
+  function bindExternalLinksInContainer(container) {
+    if (!container) return;
+    Array.from(container.querySelectorAll('a[href^="http://"], a[href^="https://"], [data-in-app-link="true"]')).forEach((el) => {
+      if (el.dataset.inAppBound === 'true') return;
+      el.dataset.inAppBound = 'true';
+      el.addEventListener('click', (event) => {
+        const url = String(el.getAttribute('href') || el.getAttribute('data-lesson-resource-url') || '').trim();
+        if (!url) return;
+        event.preventDefault();
+        openExternalResourceInApp({
+          url,
+          label: String(el.getAttribute('data-in-app-label') || el.getAttribute('data-lesson-resource-label') || el.textContent || 'External Resource').trim(),
+          provider: String(el.getAttribute('data-in-app-provider') || el.getAttribute('data-lesson-resource-provider') || 'External Resource').trim(),
+        });
+      });
+    });
   }
 
   function renderLearnerDashboard() {
@@ -3528,6 +4565,29 @@
 
   function getLessonMeta(id) {
     return lessonMetaById.get(id) || { moduleNumber: 0, trackTitle: 'Juzzy Academy', tier: 'Free', totalModules: academy.totalModules || allTutorials.length };
+  }
+
+  function saveExpandedTutorialTracks() {
+    try {
+      localStorage.setItem('juzzy_tut_expanded_tracks', JSON.stringify(tutState.expandedTracks));
+    } catch {
+      // ignore
+    }
+  }
+
+  function getTutorialTrackKey(trackTitle) {
+    return String(trackTitle || 'Juzzy Academy').trim() || 'Juzzy Academy';
+  }
+
+  function toggleTutorialTrack(trackKey) {
+    tutState.activeTrackKey = String(trackKey || '').trim();
+    try {
+      localStorage.setItem('juzzy_tut_active_track', tutState.activeTrackKey);
+    } catch {
+      // ignore
+    }
+    saveExpandedTutorialTracks();
+    renderTutorialCatalog();
   }
 
   function sanitizeTutorialHtml(html) {
@@ -3629,6 +4689,7 @@
   function renderTutorialCatalog() {
     if (!els.tutCatalog) return;
     tutState.completed = [...getTutCompleted()];
+    const profile = getLearnerProfile();
     const filtered = allTutorials.filter(t => {
       if (tutState.cat !== 'all' && t.cat !== tutState.cat) return false;
       if (tutState.search) {
@@ -3641,22 +4702,116 @@
       const completedCount = getTutCompleted().size;
       els.tutProgress.textContent = `${completedCount}/${academy.liveModules || allTutorials.length} live modules completed`;
     }
-    els.tutCatalog.innerHTML = filtered.map(t => `
-      <div class="tut-card ${tutState.completed.includes(t.id) ? 'completed' : ''}" data-tut-id="${t.id}">
-        <div class="tut-card-cat">Module ${getLessonMeta(t.id).moduleNumber} · ${getLessonMeta(t.id).trackTitle}</div>
-        <div class="tut-card-title">${t.title}</div>
-        <div class="tut-card-desc">${t.desc}</div>
-        <div class="tut-card-meta">
-          <span class="tut-card-badge ${tutState.completed.includes(t.id) ? 'done' : ''}">${tutState.completed.includes(t.id) ? '✓ Done' : getLessonMeta(t.id).tier}</span>
-          <span>${t.cat}</span>
-          <span>${t.steps.length} steps</span>
+    const grouped = filtered.reduce((acc, tut) => {
+      const meta = getLessonMeta(tut.id);
+      const trackKey = getTutorialTrackKey(meta.trackTitle);
+      if (!acc.has(trackKey)) {
+        acc.set(trackKey, {
+          trackKey,
+          title: meta.trackTitle,
+          tier: meta.tier,
+          lessons: [],
+        });
+      }
+      acc.get(trackKey).lessons.push(tut);
+      return acc;
+    }, new Map());
+    const groups = Array.from(grouped.values()).map((group) => {
+      group.lessons.sort((a, b) => scoreLessonForUser(b, profile, tutState.search) - scoreLessonForUser(a, profile, tutState.search));
+      const completedCount = group.lessons.filter((lesson) => tutState.completed.includes(lesson.id)).length;
+      const recommendedLesson = group.lessons[0] || null;
+      return {
+        ...group,
+        completedCount,
+        recommendedLessonId: recommendedLesson?.id || null,
+      };
+    }).sort((a, b) => scoreTrackForUser(b, profile, tutState.search) - scoreTrackForUser(a, profile, tutState.search));
+    if (!groups.length) {
+      els.tutCatalog.innerHTML = `<div class="tut-empty-state"><div class="tut-card-title">No modules match your search yet</div><div class="tut-card-desc">Try a different keyword or switch to another lesson category.</div></div>`;
+      return;
+    }
+    const activeTrackKey = groups.some((group) => group.trackKey === tutState.activeTrackKey)
+      ? tutState.activeTrackKey
+      : groups[0].trackKey;
+    tutState.activeTrackKey = activeTrackKey;
+    try {
+      localStorage.setItem('juzzy_tut_active_track', tutState.activeTrackKey);
+    } catch {
+      // ignore
+    }
+    const activeGroup = groups.find((group) => group.trackKey === activeTrackKey) || groups[0];
+    els.tutCatalog.innerHTML = `
+      <section class="tut-bubble-shell">
+        <div class="tut-bubble-header">
+          <div>
+            <div class="tut-track-eyebrow">Pathway bubbles</div>
+            <div class="tut-track-title">Choose a module group instead of scrolling through every lesson</div>
+            <div class="tut-track-meta">Each bubble opens a grouped module tab with its subtopics ready to launch in a focused lesson window.</div>
+          </div>
         </div>
-      </div>
-    `).join('');
+        <div class="tut-bubble-row">
+          ${groups.map((group) => `
+            <button class="tut-bubble-tab ${group.trackKey === activeTrackKey ? 'active' : ''}" type="button" data-track-toggle="${tutEscapeHtml(group.trackKey)}">
+              <div class="tut-bubble-tier">${group.tier}</div>
+              <div class="tut-bubble-title">${group.title}</div>
+              <div class="tut-bubble-meta">${group.lessons.length} modules · ${group.completedCount} complete</div>
+            </button>
+          `).join('')}
+        </div>
+      </section>
+      <section class="tut-track-group active" data-track-key="${tutEscapeHtml(activeGroup.trackKey)}">
+        <div class="tut-track-toggle static">
+          <div class="tut-track-summary">
+            <div class="tut-track-eyebrow">${activeGroup.tier} pathway</div>
+            <div class="tut-track-title-row">
+              <div class="tut-track-title">${activeGroup.title}</div>
+              <div class="tut-track-count">${activeGroup.lessons.length} subtopics</div>
+            </div>
+            <div class="tut-track-meta">${activeGroup.completedCount}/${activeGroup.lessons.length} completed · ${activeGroup.recommendedLessonId ? 'Best next lesson prioritized for this learner.' : 'Select a subtopic below to launch it instantly.'}</div>
+          </div>
+          <div class="tut-track-chevron">⬢</div>
+        </div>
+        <div class="tut-track-lessons">
+          ${activeGroup.lessons.map((t) => `
+            <div class="tut-card ${tutState.completed.includes(t.id) ? 'completed' : ''}" data-tut-id="${t.id}">
+              <div class="tut-card-cat">Module ${getLessonMeta(t.id).moduleNumber} · ${t.cat}</div>
+              <div class="tut-card-title">${t.title}</div>
+              <div class="tut-card-desc">${t.desc}</div>
+              <div class="tut-card-meta">
+                <span class="tut-card-badge ${tutState.completed.includes(t.id) ? 'done' : ''}">${tutState.completed.includes(t.id) ? '✓ Done' : getLessonMeta(t.id).tier}</span>
+                ${activeGroup.recommendedLessonId === t.id ? '<span class="tut-card-badge new">Recommended</span>' : ''}
+                <span>${t.steps.length} steps</span>
+              </div>
+              <div class="tutorial-card-actions">
+                <button class="btn" type="button" data-tut-open="${t.id}">Launch Module Window</button>
+                ${isPaidLesson(t.id) ? '<button class="btn primary" type="button" data-tut-unlock="' + t.id + '">Unlock via Stripe</button>' : ''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </section>
+    `;
+    Array.from(els.tutCatalog.querySelectorAll('[data-track-toggle]')).forEach((el) => {
+      el.addEventListener('click', () => {
+        toggleTutorialTrack(el.getAttribute('data-track-toggle'));
+      });
+    });
     Array.from(els.tutCatalog.querySelectorAll('.tut-card')).forEach(el => {
       el.addEventListener('click', () => {
         const id = el.getAttribute('data-tut-id');
         openTutLesson(id);
+      });
+    });
+    Array.from(els.tutCatalog.querySelectorAll('[data-tut-open]')).forEach((el) => {
+      el.addEventListener('click', (evt) => {
+        evt.stopPropagation();
+        openTutLesson(el.getAttribute('data-tut-open'));
+      });
+    });
+    Array.from(els.tutCatalog.querySelectorAll('[data-tut-unlock]')).forEach((el) => {
+      el.addEventListener('click', (evt) => {
+        evt.stopPropagation();
+        promptStripeForModule(el.getAttribute('data-tut-unlock'));
       });
     });
   }
@@ -3763,11 +4918,68 @@
     return d;
   }
 
+  function getGlobalAiQuickActions() {
+    const tabId = getCurrentActiveTabId();
+    const byTab = {
+      home: [
+        'Show me the fastest way to start learning',
+        'What course should I take first?',
+        'Summarize what Juzzy can do for me'
+      ],
+      tutorial: [
+        'Explain this lesson simply',
+        'Quiz me on this topic',
+        'Give me the next best lesson'
+      ],
+      oracle: [
+        'Explain the current market setup',
+        'Show me a low-risk practice idea',
+        'What should I watch before trading?'
+      ],
+      charts: [
+        'Teach me chart patterns',
+        'What is support and resistance?',
+        'How do I spot trend changes?'
+      ],
+      community: [
+        'What should I pay attention to here?',
+        'Summarize the latest community mood',
+        'Show me beginner-safe discussion topics'
+      ],
+      portfolio: [
+        'Explain diversification simply',
+        'How should a beginner track risk?',
+        'What portfolio mistakes should I avoid?'
+      ]
+    };
+    return byTab[tabId] || [
+      'What should I do on this screen?',
+      'Give me the safest next step',
+      'Explain this area in simple terms'
+    ];
+  }
+
+  function renderGlobalAiQuickActions() {
+    if (!els.globalAiQuickActions) return;
+    const actions = getGlobalAiQuickActions();
+    els.globalAiQuickActions.innerHTML = actions.map((label) => (
+      `<button class="global-ai-chip" type="button" data-global-ai-prompt="${tutEscapeHtml(label)}">${tutEscapeHtml(label)}</button>`
+    )).join('');
+    Array.from(els.globalAiQuickActions.querySelectorAll('[data-global-ai-prompt]')).forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const prompt = btn.getAttribute('data-global-ai-prompt') || '';
+        if (els.globalAiInput) els.globalAiInput.value = prompt;
+        void globalAiAnswer(prompt);
+      });
+    });
+  }
+
   function openGlobalAiDock() {
     if (!els.globalAiDock) return;
     els.globalAiDock.hidden = false;
+    renderGlobalAiQuickActions();
     if (els.globalAiMessages && !els.globalAiMessages.children.length) {
-      globalAiAddMsg('ai', '<p>I\'m Juzzy AI. Ask about your lesson, explore the app, or use the microphone to talk.</p>');
+      globalAiAddMsg('ai', '<p>I\'m Juzzy AI. I can explain the current screen, simplify lessons, generate practice steps, and guide you to the best next action.</p>');
     }
   }
 
@@ -3842,6 +5054,140 @@
 
   function tutStripHtml(s) {
     return String(s || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
+  function sanitizeIdeaSubmission(value) {
+    return String(value || '')
+      .replace(/[\u0000-\u001F\u007F]/g, ' ')
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function containsBlockedIdeaContent(value) {
+    const text = String(value || '').toLowerCase();
+    const blockedPatterns = [
+      'script', 'javascript:', '<iframe', 'onerror=', 'onload=', 'powershell', 'cmd.exe', 'terminal command',
+      'virus', 'malware', 'payload', 'ransomware', 'macro', '.exe', '.bat', 'download and run', 'keylogger',
+      'prompt injection', 'ignore previous instructions', 'system prompt', 'bypass security', 'exploit', 'backdoor',
+      'upload file', 'attach file', 'document attachment'
+    ];
+    return blockedPatterns.some((token) => text.includes(token));
+  }
+
+  function classifyIdeaEducationalValue(value) {
+    const text = String(value || '').toLowerCase();
+    const educationalSignals = [
+      'learn', 'lesson', 'module', 'course', 'tutorial', 'education', 'quiz', 'practice', 'training', 'student',
+      'teacher', 'academy', 'guide', 'feedback', 'improve', 'study', 'curriculum', 'explain', 'simulation'
+    ];
+    const score = educationalSignals.reduce((sum, token) => sum + (text.includes(token) ? 1 : 0), 0);
+    return score;
+  }
+
+  function buildIdeaPlanHtml(rawIdea) {
+    const idea = sanitizeIdeaSubmission(rawIdea);
+    if (!idea) {
+      return '<div class="ideas-lab-result-title">Nothing to review yet</div><div class="muted">Type your idea manually to start the secure AI review.</div>';
+    }
+    if (containsBlockedIdeaContent(idea)) {
+      return `<div class="ideas-lab-result-title ideas-lab-result-reject">Rejected for security</div><div class="muted">This submission contains risky or system-oriented content that Juzzy AI will not process. For safety, the Ideas Lab only accepts typed educational product suggestions and never executes instructions, opens files, or accepts technical payloads.</div><div class="ideas-lab-result-list"><div><strong>Why rejected:</strong> unsafe system, exploit, attachment, or code-like language was detected.</div><div><strong>What to do instead:</strong> rewrite the idea as a plain educational feature request in your own words.</div></div>`;
+    }
+    const educationalScore = classifyIdeaEducationalValue(idea);
+    if (educationalScore < 2) {
+      return `<div class="ideas-lab-result-title ideas-lab-result-reject">Needs stronger educational value</div><div class="muted">Juzzy AI only advances ideas that clearly improve learning, safety, guided practice, or educational outcomes.</div><div class="ideas-lab-result-list"><div><strong>Your idea:</strong> ${tutEscapeHtml(idea)}</div><div><strong>How to improve it:</strong> explain what learners gain, which lesson flow it improves, and how it stays safe and educational.</div></div>`;
+    }
+    const roadmap = [
+      'Define the learning goal and who the feature helps most',
+      'Design the safest educational workflow and clear user prompts',
+      'Add AI guidance, explanations, and learning checkpoints',
+      'Add compliance, abuse prevention, and user-facing safety limits',
+      'Test it with beginner and advanced learners before release'
+    ];
+    const safeguards = [
+      'Typed input only with no paste or attachments',
+      'Strict sanitization before AI review',
+      'No code execution or file handling from user content',
+      'Educational-only scope with compliance messaging',
+      'Manual product review before any real implementation decisions'
+    ];
+    return `
+      <div class="ideas-lab-result-title ideas-lab-result-accept">Educational idea approved for planning</div>
+      <div class="muted">Juzzy AI has converted this suggestion into a safe implementation brief. The system does not execute user instructions directly; it creates a controlled product plan.</div>
+      <div class="ideas-lab-result-list">
+        <div><strong>Idea summary:</strong> ${tutEscapeHtml(idea)}</div>
+        <div><strong>Learning value:</strong> This idea appears to improve learner understanding, guided practice, or educational engagement inside Juzzy.</div>
+        <div><strong>AI build brief:</strong> Create a focused feature that teaches clearly, keeps actions safe, and supports measurable student progress.</div>
+      </div>
+      <div class="ideas-lab-subtitle">Implementation roadmap</div>
+      <ol class="ideas-lab-roadmap">${roadmap.map((item) => `<li>${tutEscapeHtml(item)}</li>`).join('')}</ol>
+      <div class="ideas-lab-subtitle">Security safeguards</div>
+      <ul class="ideas-lab-roadmap">${safeguards.map((item) => `<li>${tutEscapeHtml(item)}</li>`).join('')}</ul>
+    `;
+  }
+
+  function reviewIdeaFeedback() {
+    const raw = String(els.ideaFeedbackInput?.value || '');
+    if (!els.ideaFeedbackOutput) return;
+    const html = buildIdeaPlanHtml(raw);
+    els.ideaFeedbackOutput.innerHTML = html;
+    const idea = sanitizeIdeaSubmission(raw);
+    const approved = !containsBlockedIdeaContent(idea) && classifyIdeaEducationalValue(idea) >= 2;
+    if (idea) {
+      const rewards = loadGrowthRewards();
+      const ownerEmail = String(state.user.email || '').trim().toLowerCase() || 'guest@juzzy.local';
+      const existing = rewards.suggestions.find((item) => item.idea === idea && item.ownerEmail === ownerEmail);
+      if (!existing) {
+        rewards.suggestions.unshift({
+          id: `idea-${Date.now()}`,
+          ownerEmail,
+          idea,
+          approved,
+          rewardClaimed: false,
+          createdAt: Date.now(),
+        });
+        saveGrowthRewards(rewards);
+      }
+      renderGrowthRewards();
+    }
+    updateLearnerProfile((profile) => {
+      profile.interactionCount += 1;
+      return profile;
+    });
+  }
+
+  function clearIdeaFeedback() {
+    if (els.ideaFeedbackInput) els.ideaFeedbackInput.value = '';
+    if (els.ideaFeedbackOutput) {
+      els.ideaFeedbackOutput.innerHTML = 'AI review will appear here. Safe educational ideas will be converted into a product brief, learning value summary, safeguards list, and implementation roadmap.';
+    }
+  }
+
+  function hardenPromptInput(el) {
+    if (!el) return;
+    el.addEventListener('paste', (e) => {
+      e.preventDefault();
+    });
+    el.addEventListener('drop', (e) => {
+      e.preventDefault();
+    });
+    el.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+    el.addEventListener('beforeinput', (e) => {
+      if (e.inputType === 'insertFromPaste' || e.inputType === 'insertFromDrop') {
+        e.preventDefault();
+      }
+    });
+  }
+
+  function initPromptSecurityHardening() {
+    [
+      els.globalAiInput,
+      els.tutChatInput,
+      els.messagesComposer,
+      els.ideaFeedbackInput,
+    ].forEach(hardenPromptInput);
   }
 
   function tutContainsAny(q, words) {
@@ -4036,6 +5382,10 @@
   function openTutLesson(id) {
     const tut = allTutorials.find(t => t.id === id);
     if (!tut) return;
+    if (isPaidLesson(id) && !canAccessPaidLesson(id)) {
+      promptStripeForModule(id);
+      return;
+    }
     const meta = getLessonMeta(id);
     activeTutId = id;
     activeTutStep = 0;
@@ -4050,17 +5400,23 @@
     els.tutModeChooser.hidden = false;
     els.tutReader.hidden = true;
     els.tutModeTitle.textContent = tut.title;
-    els.tutModeDesc.textContent = `Module ${meta.moduleNumber} of ${meta.totalModules} · ${meta.trackTitle} · ${meta.tier}. ${tut.desc}`;
+    els.tutModeDesc.textContent = `Module ${meta.moduleNumber} of ${meta.totalModules} · ${meta.trackTitle} · ${meta.tier}. ${tut.desc}${isPaidLesson(id) ? ' This is a paid pathway module and can be unlocked via Stripe at any time.' : ''} This module opens in a focused lesson window so the user lands straight into the subpage instead of scrolling through the full academy.`;
     tutChatClear();
     initTutorialParticles();
   }
 
   function startTutLesson(withVoice) {
     tutTtsEnabled = withVoice;
+    if (!activeTutId) return;
+    if (isPaidLesson(activeTutId) && !canAccessPaidLesson(activeTutId)) {
+      promptStripeForModule(activeTutId);
+      return;
+    }
     els.tutModeChooser.hidden = true;
     els.tutReader.hidden = false;
     if (els.tutModeChooser) els.tutModeChooser.hidden = true;
     if (els.tutReader) els.tutReader.hidden = false;
+    closeLessonExternalResource();
     tutTtsUpdateBtn();
     tutChatGreet();
     renderTutStep();
@@ -4068,6 +5424,7 @@
 
   function closeTutLesson() {
     tutTtsStop();
+    closeLessonExternalResource();
     if (els.tutReader) els.tutReader.hidden = true;
     if (els.tutModeChooser) els.tutModeChooser.hidden = true;
     if (els.tutCatalog) els.tutCatalog.hidden = false;
@@ -4083,6 +5440,10 @@
     if (!step) return;
     const meta = getLessonMeta(tut.id);
     const country = getCountryProfile(state.profile.country);
+    const isFinalStep = activeTutStep === tut.steps.length - 1;
+    const lessonResourceHtml = isFinalStep && tut.youtubeResource
+      ? `<div class="academy-inline-visual academy-lesson-resource"><strong>Supporting video resource:</strong> Finish the in-app lesson first, then use this matched external resource if you want reinforcement.<div style="margin-top:10px"><div><strong>${tut.youtubeResource.title}</strong> · ${tut.youtubeResource.creator}</div><div class="muted small" style="margin-top:6px">${tut.youtubeResource.description || ''}</div><div style="margin-top:12px"><button class="btn primary" data-lesson-action="open-resource" data-lesson-resource-url="${tutEscapeHtml(tut.youtubeResource.url || '')}" data-lesson-resource-label="${tutEscapeHtml(tut.youtubeResource.title || 'Supporting video')}" data-lesson-resource-provider="${tutEscapeHtml(tut.youtubeResource.creator || 'External resource')}">▶ Open supporting video</button></div></div></div>`
+      : '';
     if (els.tutTitle) els.tutTitle.textContent = tut.title;
     if (els.tutLessonCat) els.tutLessonCat.textContent = `${tut.cat} · ${meta.trackTitle} · ${meta.tier}`;
     if (els.tutProgressText) els.tutProgressText.textContent = `Step ${activeTutStep + 1} of ${tut.steps.length}`;
@@ -4094,7 +5455,7 @@
       els.tutBody.style.animation = 'none';
       void els.tutBody.offsetHeight;
       els.tutBody.style.animation = '';
-      els.tutBody.innerHTML = `<div class="academy-module-banner">Module ${meta.moduleNumber} · ${meta.trackTitle} · ${meta.tier}</div><div class="academy-inline-visual"><strong>${country.name} compliance note:</strong> This lesson is educational only. It is not financial, legal, or tax advice, and nothing in Juzzy guarantees profit, income, or investing success. You must verify the laws and requirements of your country before acting.</div>${renderProfessorFaculty()}<div class="academy-lesson-actions"><button class="btn" data-lesson-jump="leaders">Live examples</button><button class="btn" data-lesson-jump="charts">Open charts</button><button class="btn" data-lesson-jump="brain">See AI signals</button><button class="btn" data-lesson-action="ask-ai">Ask AI</button><button class="btn" data-lesson-action="return">Back to module</button></div>${renderAiLessonTools()}<h3>${step.title}</h3>${sanitizeTutorialHtml(step.html)}`;
+      els.tutBody.innerHTML = `<div class="academy-module-banner">Module ${meta.moduleNumber} · ${meta.trackTitle} · ${meta.tier}</div><div class="academy-inline-visual"><strong>${country.name} compliance note:</strong> This lesson is educational only. It is not financial, legal, or tax advice, and nothing in Juzzy guarantees profit, income, or investing success. You must verify the laws and requirements of your country before acting.</div>${renderProfessorFaculty()}<div class="academy-lesson-actions"><button class="btn" data-lesson-jump="leaders">Live examples</button><button class="btn" data-lesson-jump="charts">Open charts</button><button class="btn" data-lesson-jump="brain">See AI signals</button><button class="btn" data-lesson-action="ask-ai">Ask AI</button><button class="btn" data-lesson-action="return">Back to module</button>${isPaidLesson(tut.id) && !canAccessPaidLesson(tut.id) ? '<button class="btn primary" data-lesson-action="unlock-module">Unlock via Stripe</button>' : ''}</div>${renderAiLessonTools()}<h3>${step.title}</h3>${sanitizeTutorialHtml(step.html)}${lessonResourceHtml}`;
       bindLessonInteractiveActions();
       bindProfessorFaculty();
       bindAiLessonTools();
@@ -4106,6 +5467,7 @@
 
   function bindLessonInteractiveActions() {
     if (!els.tutBody) return;
+    bindExternalLinksInContainer(els.tutBody);
     Array.from(els.tutBody.querySelectorAll('[data-lesson-jump]')).forEach((el) => {
       el.addEventListener('click', () => {
         rememberLessonReturn();
@@ -4117,6 +5479,33 @@
         const action = el.getAttribute('data-lesson-action');
         if (action === 'ask-ai') openGlobalAiDock();
         if (action === 'return') restoreLessonReturn();
+        if (action === 'unlock-module' && activeTutId) promptStripeForModule(activeTutId);
+        if (action === 'open-resource') {
+          const resourceUrl = String(el.getAttribute('data-lesson-resource-url') || '').trim();
+          const resourceLabel = String(el.getAttribute('data-lesson-resource-label') || '').trim();
+          const resourceProvider = String(el.getAttribute('data-lesson-resource-provider') || '').trim();
+          if (resourceUrl) {
+            openLessonExternalResource({
+              url: resourceUrl,
+              label: resourceLabel || 'Lesson Resource',
+              provider: resourceProvider || 'External Resource',
+            });
+          }
+        }
+      });
+    });
+    Array.from(els.tutBody.querySelectorAll('[data-lesson-resource-url]')).forEach((el) => {
+      if (el.getAttribute('data-lesson-action') === 'open-resource') return;
+      el.addEventListener('click', () => {
+        const resourceUrl = String(el.getAttribute('data-lesson-resource-url') || '').trim();
+        const resourceLabel = String(el.getAttribute('data-lesson-resource-label') || '').trim();
+        const resourceProvider = String(el.getAttribute('data-lesson-resource-provider') || '').trim();
+        if (!resourceUrl) return;
+        openLessonExternalResource({
+          url: resourceUrl,
+          label: resourceLabel || 'Lesson Resource',
+          provider: resourceProvider || 'External Resource',
+        });
       });
     });
   }
@@ -4159,9 +5548,15 @@
       b.addEventListener('click', () => setActiveTab(b.dataset.tab));
     });
 
+    qsAll('[data-share-platform]').forEach((b) => {
+      b.addEventListener('click', () => openSharePlatform(String(b.getAttribute('data-share-platform') || '')));
+    });
+
     qsAll('[data-jump]').forEach((b) => {
       b.addEventListener('click', () => setActiveTab(b.dataset.jump));
     });
+
+    if (els.navHomeBtn) els.navHomeBtn.addEventListener('click', () => setActiveTab('home'));
 
     if (els.globalAiToggle) els.globalAiToggle.addEventListener('click', openGlobalAiDock);
     if (els.globalAiClose) els.globalAiClose.addEventListener('click', closeGlobalAiDock);
@@ -4183,10 +5578,24 @@
       }
     });
     if (els.returnToLessonBtn) els.returnToLessonBtn.addEventListener('click', restoreLessonReturn);
-    if (els.messagesRefundBtn) els.messagesRefundBtn.addEventListener('click', createRefundRequest);
     if (els.messagesSendBtn) els.messagesSendBtn.addEventListener('click', sendMessageToAiInbox);
     if (els.messagesNewThreadBtn) els.messagesNewThreadBtn.addEventListener('click', createNewMessageThread);
     if (els.communityAvatarSaveBtn) els.communityAvatarSaveBtn.addEventListener('click', saveCommunityAvatarFromInputs);
+    if (els.ideaFeedbackSubmit) els.ideaFeedbackSubmit.addEventListener('click', reviewIdeaFeedback);
+    if (els.ideaFeedbackClear) els.ideaFeedbackClear.addEventListener('click', clearIdeaFeedback);
+    if (els.registerReferralBtn) els.registerReferralBtn.addEventListener('click', registerReferral);
+    if (els.claimIdeaRewardBtn) els.claimIdeaRewardBtn.addEventListener('click', claimIdeaReward);
+    if (els.shareCopyInviteBtn) els.shareCopyInviteBtn.addEventListener('click', () => { void copyTextValue(buildInviteLink('starter'), 'Starter invite copied'); });
+    if (els.shareFamilyPassBtn) els.shareFamilyPassBtn.addEventListener('click', () => { void copyTextValue(buildShareCopy('family'), 'Family share message ready'); });
+    if (els.shareOpenOwnerAccessBtn) els.shareOpenOwnerAccessBtn.addEventListener('click', () => setActiveTab(isOwnerApprover() ? 'owner-access' : 'share'));
+    if (els.ownerGrantLifetimeBtn) els.ownerGrantLifetimeBtn.addEventListener('click', grantOwnerLifetimeAccess);
+    if (els.ownerFamilyShareBtn) els.ownerFamilyShareBtn.addEventListener('click', createOwnerFamilyShareInvite);
+    if (els.ideaFeedbackInput) els.ideaFeedbackInput.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        reviewIdeaFeedback();
+      }
+    });
     if (els.messagesComposer) els.messagesComposer.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         e.preventDefault();
@@ -4232,13 +5641,21 @@
     if (els.authSignOutBtn) els.authSignOutBtn.addEventListener('click', signOutProfile);
     if (els.saveSettingsBtn) els.saveSettingsBtn.addEventListener('click', applySettingsProfile);
     if (els.authUseStripeBtn) els.authUseStripeBtn.addEventListener('click', startSubscriptionCheckout);
+    if (els.installAppBtn) els.installAppBtn.addEventListener('click', () => { void promptDesktopInstall(); });
+    if (els.downloadDesktopBtn) els.downloadDesktopBtn.addEventListener('click', downloadDesktopShortcut);
     if (els.portfolioConnectWallet) els.portfolioConnectWallet.addEventListener('click', connectWalletMock);
     if (els.portfolioSubscribe) els.portfolioSubscribe.addEventListener('click', startSubscriptionCheckout);
     if (els.checkYoutubeLinksBtn) els.checkYoutubeLinksBtn.addEventListener('click', validateYouTubeLinks);
     if (els.openYoutubePlaylistBtn) {
       els.openYoutubePlaylistBtn.addEventListener('click', () => {
         const first = findTutorialYouTubeLinks()[0];
-        if (first?.url) window.open(first.url, '_blank', 'noopener,noreferrer');
+        if (first?.url) {
+          openExternalResourceInApp({
+            url: first.url,
+            label: first.title || 'Tutorial Playlist Resource',
+            provider: first.creator || 'External Resource',
+          });
+        }
       });
     }
 
@@ -4411,6 +5828,8 @@
     if (els.tutNext) els.tutNext.addEventListener('click', () => tutStepNav(1));
     if (els.tutModeQuick) els.tutModeQuick.addEventListener('click', () => startTutLesson(false));
     if (els.tutModeDeep) els.tutModeDeep.addEventListener('click', () => startTutLesson(true));
+    if (els.tutExternalOpenNew) els.tutExternalOpenNew.addEventListener('click', openActiveLessonResourceInNewTab);
+    if (els.tutExternalReturn) els.tutExternalReturn.addEventListener('click', restoreLessonReturn);
     if (els.tutTtsToggle) els.tutTtsToggle.addEventListener('click', () => {
       tutTtsEnabled = !tutTtsEnabled;
       tutTtsUpdateBtn();
@@ -4421,6 +5840,20 @@
       } else {
         tutTtsStop();
       }
+    });
+    document.addEventListener('click', (event) => {
+      const externalLink = event.target instanceof Element ? event.target.closest('a[href^="http://"], a[href^="https://"], [data-in-app-link="true"]') : null;
+      if (!externalLink) return;
+      const href = String(externalLink.getAttribute('href') || '').trim();
+      if (!href) return;
+      if (externalLink.hasAttribute('data-lesson-resource-url')) return;
+      if (externalLink.closest('#modalBody') && externalLink.tagName === 'A') return;
+      event.preventDefault();
+      openExternalResourceInApp({
+        url: href,
+        label: String(externalLink.getAttribute('data-in-app-label') || externalLink.textContent || 'External Resource').trim(),
+        provider: String(externalLink.getAttribute('data-in-app-provider') || 'External Resource').trim(),
+      });
     });
     if (els.tutChatSend) els.tutChatSend.addEventListener('click', () => {
       const q = String(els.tutChatInput?.value || '').trim();
@@ -4439,14 +5872,34 @@
       }
     });
 
-    if (els.opsForceSnapshot) {
-      els.opsForceSnapshot.addEventListener('click', async () => {
-        appendTerminal('INFO', 'OPS: Forcing market snapshot refresh…');
-        emitAudit('OPS_FORCE_SNAPSHOT', {}, 'INFO');
-        await loadMarketSnapshotOnce();
-        renderOps();
-      });
-    }
+    window.addEventListener('message', (event) => {
+      const payload = event?.data;
+      if (!payload || typeof payload !== 'object') return;
+      if (payload.type === 'juzzy-simulator-nav') {
+        const tabId = String(payload.tabId || '').trim();
+        if (!tabId) return;
+        setActiveTab(tabId);
+        return;
+      }
+      if (payload.type === 'juzzy-open-resource') {
+        const url = String(payload.url || '').trim();
+        if (!url) return;
+        openExternalResourceInApp({
+          url,
+          label: String(payload.label || 'External Resource').trim(),
+          provider: String(payload.provider || 'External Resource').trim(),
+        });
+      }
+    });
+    if (els.backBtn) els.backBtn.addEventListener('click', navigateHistory);
+    if (els.globalAiToggle) els.globalAiToggle.addEventListener('click', toggleGlobalAiDock);
+
+    els.opsForceSnapshot.addEventListener('click', async () => {
+      appendTerminal('INFO', 'OPS: Forcing market snapshot refresh…');
+      emitAudit('OPS_FORCE_SNAPSHOT', {}, 'INFO');
+      await loadMarketSnapshotOnce();
+      renderOps();
+    });
 
     if (els.opsReconnect) {
       els.opsReconnect.addEventListener('click', () => {
@@ -4612,10 +6065,12 @@
   function wireUi() {
     document.title = 'Juzzy: wireUi START';
     console.log('[BOOT] wireUi() called');
+    installWindowOpenInterceptor();
     setActiveTab('oracle');
     loadProfile();
     populateCountryOptions();
     populateLanguageOptions();
+    initPromptSecurityHardening();
     els.fuelValue.textContent = String(els.fuel.value);
     setStatus('Idle');
     appendTerminal('INFO', 'Dashboard loaded.');
@@ -4685,6 +6140,7 @@
 
     // Set home as default tab for educational focus
     setActiveTab('home');
+    safe('applySharedEntryContext', () => applySharedEntryContext());
 
     window.setInterval(heartbeatTick, HEARTBEAT_MS);
   }
@@ -4697,4 +6153,75 @@
     document.title = 'Juzzy: wireUi CRASHED - ' + String(e?.message || e);
     console.error('[BOOT] wireUi CRASHED', e);
   }
+  
+  // FORCE REMOVE AI ELEMENTS - FIX BOTH ISSUES
+  function removeAIElements() {
+    const aiSelectors = [
+      '.global-ai',
+      '.ai-assistant',
+      '.juzzy-ai',
+      '.ai-chat',
+      '.ai-popup',
+      '.ai-assistant-btn',
+      '.ai-box',
+      '.chat-widget',
+      '.floating-ai',
+      '[class*="ai-assistant"]',
+      '[class*="global-ai"]',
+      '[class*="juzzy-ai"]',
+      '[id*="ai-assistant"]',
+      '[id*="globalAi"]',
+      '[id*="juzzyAi"]',
+      '[id*="globalAi"]'
+    ];
+    
+    aiSelectors.forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(el => {
+        el.style.display = 'none';
+        el.style.visibility = 'hidden';
+        el.style.opacity = '0';
+        el.style.pointerEvents = 'none';
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        el.style.top = '-9999px';
+        el.style.width = '0';
+        el.style.height = '0';
+        el.style.overflow = 'hidden';
+      });
+    });
+  }
+
+  // Fix margin issues
+  function fixMargins() {
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+    document.body.style.width = '100%';
+    document.body.style.maxWidth = '100%';
+    document.body.style.overflowX = 'hidden';
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    
+    const containers = document.querySelectorAll('.app, .container, .main, .content, .wrapper, .layout');
+    containers.forEach(container => {
+      container.style.margin = '0';
+      container.style.padding = '0';
+      container.style.width = '100%';
+      container.style.maxWidth = '100%';
+      container.style.left = '0';
+      container.style.right = '0';
+    });
+  }
+
+  // Run fixes immediately and continuously
+  removeAIElements();
+  fixMargins();
+  
+  // Keep removing AI elements every 500ms
+  setInterval(() => {
+    removeAIElements();
+    fixMargins();
+  }, 500);
+  
+  console.log('🔧 AI BOX REMOVED - MARGIN ISSUES FIXED');
 })();

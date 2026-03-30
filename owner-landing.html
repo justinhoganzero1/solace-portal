@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3 Amigos Academy - Owner Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="home-styles.css">
+    <link rel="stylesheet" href="tutorial-animations.css">
+    <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="full-course-content.js"></script>
+    <script src="trading-simulator.js"></script>
+    <script src="system-verification.js"></script>
+    <script src="viral-ai-features.js"></script>
+</head>
+<body>
+    <!-- Futuristic Background Elements -->
+    <div class="arc-reactor"></div>
+    <div class="data-stream"></div>
+    <div class="data-stream"></div>
+    <div class="data-stream"></div>
+    <div class="data-stream"></div>
+    <div class="data-stream"></div>
+    <div class="data-stream"></div>
+
+    <div class="app">
+        <header class="app-header">
+            <div class="topbar">
+                <div class="brand">
+                    <div class="brand-mark" aria-hidden="true"><span>3A</span></div>
+                    <div class="brand-text">
+                        <div class="brand-title">3 Amigos Academy</div>
+                        <div class="brand-subtitle">Global Crypto Education</div>
+                    </div>
+                </div>
+
+                <div class="app-nav-controls">
+                    <button id="navHomeBtn" class="btn" type="button">⌂ Home</button>
+                </div>
+
+                <div class="topbar-right">
+                    <!-- Owner Plaque - VISIBLE BY DEFAULT -->
+                    <div id="ownerPlaque" class="owner-plaque">
+                        <div class="owner-plaque-content">
+                            <div class="owner-icon">👑</div>
+                            <div class="owner-text">
+                                <div class="owner-title">OWNER</div>
+                                <div class="owner-subtitle">Full Access</div>
+                            </div>
+                            <div class="owner-glow"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="heartbeat">
+                        <div class="hb-dot" aria-hidden="true"></div>
+                        <div class="hb-text"><span id="hbMs">444</span>ms</div>
+                    </div>
+                    <div class="pill">Status: <span id="statusText">Owner Mode</span></div>
+                    <div id="userIdentityPill" class="pill">👑 owner@juzzy.local</div>
+                    <button id="openSettingsBtn" class="btn">Settings</button>
+                    <button id="connectBtn" class="btn">Connect wallet</button>
+                    <button id="subscribeBtn" class="btn primary btn-glow btn-glow-strong" style="display: none;">Unlock Paid Courses</button>
+                    <button id="authSignOutBtn" class="btn">Sign out</button>
+                </div>
+            </div>
+
+            <div class="risk-disclaimer risk-disclaimer-header">
+                Any information in this app does not guarantee any kind of return and may lead to financial loss. Any information given is for educational and entertainment purposes but does not guarantee any kind of financial gain. Any financial commitment by the user is at their own risk and does not give the user any kind of guaranteed monies.
+            </div>
+
+            <nav class="tabs tabs-header" aria-label="Primary">
+                <button class="tab active" data-tab="home">Home</button>
+                <button id="oracleTab" class="tab" data-tab="oracle">Oracle</button>
+                <button class="tab" data-tab="tutorial">Tutorial</button>
+                <button class="tab" data-tab="trading-simulator">📈 Trading Sim</button>
+                <button class="tab" data-tab="messages">Messages <span id="messagesUnreadBadge" class="pill util-hidden">0</span></button>
+                <button class="tab" data-tab="community">Community</button>
+                <button class="tab" data-tab="leaders">Leaders</button>
+                <button class="tab" data-tab="charts">Charts</button>
+                <button class="tab" data-tab="portfolio">Portfolio</button>
+                <button class="tab" data-tab="brain">Brain</button>
+                <button class="tab" data-tab="reports">Reports</button>
+                <button class="tab" data-tab="ops">Ops</button>
+                <button id="ownerAccessTab" class="tab" data-tab="owner-access">Owner Access</button>
+                <button class="tab" data-tab="vault">Vault</button>
+                <button class="tab" data-tab="settings">Settings</button>
+                <button class="tab" data-tab="about">About</button>
+            </nav>
+        </header>
+
+        <main class="layout">
+            <!-- Home Panel -->
+            <section class="panel active" id="tab-home" role="region" aria-label="Home">
+                <div class="panel-header">
+                    <div>
+                        <div class="h1">👑 Welcome, Owner!</div>
+                        <div class="muted">You have full access to all features. All modules are unlocked, trading simulator is active, and admin controls are available.</div>
+                    </div>
+                    <div class="pill" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 140, 0, 0.1)); border: 1px solid rgba(255, 215, 0, 0.4); color: #FFD700;">Owner Mode</div>
+                </div>
+
+                <div class="hero-section">
+                    <div class="hero-content">
+                        <div class="hero-title">
+                            <span class="gradient-text">3 Amigos Academy</span>
+                            <br>Owner Dashboard
+                        </div>
+                        <div class="hero-subtitle">Complete control over your crypto education platform • All features unlocked • Admin privileges active</div>
+                        <div style="display: flex; gap: 10px; margin-top: 20px;">
+                            <button class="btn btn-hero primary btn-glow" onclick="setActiveTab('tutorial')">
+                                <span style="font-size:1.2em">🎓</span> All Tutorials
+                            </button>
+                            <button class="btn btn-hero primary btn-glow" onclick="setActiveTab('trading-simulator')">
+                                <span style="font-size:1.2em">📈</span> Trading Sim
+                            </button>
+                            <button class="btn btn-hero primary btn-glow" onclick="setActiveTab('owner-access')">
+                                <span style="font-size:1.2em">🔧</span> Admin Panel
+                            </button>
+                        </div>
+                    </div>
+                    <div class="hero-visual">
+                        <div class="floating-cards">
+                            <div class="floating-card" style="--delay:0s">👑 Owner</div>
+                            <div class="floating-card" style="--delay:1s">🎓 All Modules</div>
+                            <div class="floating-card" style="--delay:2s">📈 Trading</div>
+                            <div class="floating-card" style="--delay:3s">🔧 Admin</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">👑</div>
+                        <div class="feature-title">Owner Access</div>
+                        <div class="feature-desc">Full control over platform settings, user management, and administrative features</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎓</div>
+                        <div class="feature-title">All Tutorials Unlocked</div>
+                        <div class="feature-desc">Access to all 490+ modules without any restrictions or payment requirements</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📈</div>
+                        <div class="feature-title">Trading Simulator</div>
+                        <div class="feature-desc">Practice crypto trading with fake money on real platform interfaces</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎁</div>
+                        <div class="feature-title">Grant User Access</div>
+                        <div class="feature-desc">Give free tutorial access to users without granting owner privileges</div>
+                    </div>
+                </div>
+
+                <div class="stats-section">
+                    <div class="stat-item">
+                        <div class="stat-number">490+</div>
+                        <div class="stat-label">Modules Unlocked</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">∞</div>
+                        <div class="stat-label">Owner Privileges</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">Platform Access</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">👑</div>
+                        <div class="stat-label">Owner Status</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- All other panels would be here, but for quick access we're focusing on the owner experience -->
+
+        </main>
+
+        <div class="risk-disclaimer risk-disclaimer-footer">
+            Any information in this app does not guarantee any kind of return and may lead to financial loss. Any information given is for educational and entertainment purposes but does not guarantee any kind of financial gain. Any financial commitment by the user is at their own risk and does not give the user any kind of guaranteed monies.
+        </div>
+
+        <footer class="footer">
+            <div class="muted small">Trading and digital assets are risky. Juzzy is an educational platform, not financial, legal, or tax advice. Outcomes are not guaranteed, references to potential returns are illustrative only, and users must verify the laws of their own country before acting. Fees are explicit and user-consented.</div>
+        </footer>
+    </div>
+
+    <script>
+        // Auto-login as owner
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set owner state immediately
+            if (typeof state !== 'undefined') {
+                state.user.email = 'owner@juzzy.local';
+                state.profile.loggedIn = true;
+                state.profile.name = 'Owner';
+                state.profile.email = 'owner@juzzy.local';
+                state.billing.subscribed = true; // Owner gets all features
+            }
+            
+            // Show owner plaque
+            const ownerPlaque = document.getElementById('ownerPlaque');
+            if (ownerPlaque) {
+                ownerPlaque.classList.remove('util-hidden');
+            }
+            
+            // Update status
+            const statusText = document.getElementById('statusText');
+            if (statusText) {
+                statusText.textContent = 'Owner Mode';
+            }
+            
+            // Update identity pill
+            const identityPill = document.getElementById('userIdentityPill');
+            if (identityPill) {
+                identityPill.textContent = '👑 owner@juzzy.local';
+            }
+            
+            // Hide subscribe button (owner doesn't need it)
+            const subscribeBtn = document.getElementById('subscribeBtn');
+            if (subscribeBtn) {
+                subscribeBtn.style.display = 'none';
+            }
+            
+            console.log('👑 Owner auto-login successful!');
+            console.log('🎓 All tutorials unlocked');
+            console.log('📈 Trading simulator ready');
+            console.log('🔧 Admin controls active');
+        });
+    </script>
+</body>
+</html>

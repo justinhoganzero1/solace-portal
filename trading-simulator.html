@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Trading Simulator - Practice with Fake Money</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(0, 229, 255, 0.14) 0%, transparent 34%),
+                radial-gradient(circle at 80% 10%, rgba(255, 79, 184, 0.12) 0%, transparent 30%),
+                radial-gradient(circle at 50% 100%, rgba(89, 255, 181, 0.09) 0%, transparent 32%),
+                linear-gradient(135deg, #060713 0%, #0a0c1a 45%, #10182a 100%);
+            color: #eaf0ff;
+            overflow-x: hidden;
+        }
+
+        .simulation-watermark {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            display: grid;
+            place-items: center;
+            font-size: clamp(28px, 5vw, 72px);
+            font-weight: 900;
+            letter-spacing: 0.22em;
+            color: rgba(255, 184, 77, 0.05);
+            transform: rotate(-22deg);
+            z-index: 0;
+            text-align: center;
+        }
+
+        .simulation-banner {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: linear-gradient(90deg, rgba(255, 184, 77, 0.96), rgba(255, 95, 109, 0.96));
+            color: #111;
+            text-align: center;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            padding: 10px 16px;
+            text-transform: uppercase;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+        }
+
+        .sim-app-shell {
+            position: sticky;
+            top: 44px;
+            z-index: 19;
+            padding: 14px 18px 0;
+            backdrop-filter: blur(16px);
+            background: linear-gradient(180deg, rgba(6, 7, 19, 0.92), rgba(6, 7, 19, 0.72));
+        }
+
+        .sim-app-shell-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            gap: 12px;
+        }
+
+        .sim-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid rgba(255,255,255,0.09);
+            box-shadow: 0 22px 70px rgba(0, 0, 0, 0.22);
+        }
+
+        .sim-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sim-brand-mark {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            font-weight: 900;
+            color: #06111f;
+            background: linear-gradient(135deg, #00e5ff, #59ffb5);
+            box-shadow: 0 12px 30px rgba(0, 229, 255, 0.24);
+        }
+
+        .sim-brand-title {
+            font-size: 16px;
+            font-weight: 900;
+            color: #f4f8ff;
+        }
+
+        .sim-brand-subtitle {
+            font-size: 12px;
+            color: rgba(234, 240, 255, 0.72);
+        }
+
+        .sim-topbar-right {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .sim-pill {
+            min-height: 44px;
+            padding: 0 12px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: rgba(255,255,255,0.045);
+            color: rgba(234, 240, 255, 0.92);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .sim-disclaimer {
+            padding: 12px 16px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.045);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(234, 240, 255, 0.78);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .sim-primary-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .sim-primary-tab {
+            min-height: 44px;
+            padding: 0 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(129, 164, 224, 0.28);
+            background: rgba(14, 24, 42, 0.96);
+            color: rgba(244, 248, 255, 0.96);
+            font-weight: 800;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .sim-primary-tab.active {
+            border-color: rgba(166, 205, 255, 0.78);
+            background: linear-gradient(180deg, rgba(48, 93, 168, 0.95), rgba(31, 61, 112, 0.98));
+            box-shadow: 0 18px 42px rgba(17, 42, 86, 0.34);
+        }
+
+        .embedded-shell-bar {
+            background: rgba(8, 14, 24, 0.92);
+            border-bottom: 1px solid rgba(255,255,255,0.10);
+            padding: 12px 18px;
+            position: sticky;
+            top: 210px;
+            z-index: 18;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            backdrop-filter: blur(14px);
+        }
+
+        .embedded-shell-copy {
+            display: grid;
+            gap: 4px;
+        }
+
+        .embedded-shell-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #eef4ff;
+            letter-spacing: 0.02em;
+        }
+
+        .embedded-shell-meta {
+            font-size: 12px;
+            color: #9fb2d2;
+        }
+
+        .embedded-shell-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .embedded-shell-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .embedded-shell-btn {
+            min-height: 44px;
+            padding: 0 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(129, 164, 224, 0.28);
+            background: rgba(14, 24, 42, 0.96);
+            color: rgba(244, 248, 255, 0.96);
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .embedded-shell-btn.primary {
+            background: linear-gradient(180deg, rgba(48, 93, 168, 0.95), rgba(31, 61, 112, 0.98));
+            border-color: rgba(166, 205, 255, 0.78);
+        }
+
+        .embedded-shell-btn:hover,
+        .platform-btn:hover {
+            border-color: rgba(153, 188, 244, 0.46);
+            box-shadow: 0 10px 28px rgba(8, 18, 38, 0.28);
+        }
+
+        .platform-switcher {
+            max-width: 1400px;
+            margin: 16px auto 0;
+            padding: 0 20px;
+            display: flex;
+            gap: 10px;
+            position: sticky;
+            top: 278px;
+            z-index: 15;
+            backdrop-filter: blur(12px);
+        }
+
+        .platform-btn {
+            min-height: 44px;
+            padding: 0 14px;
+            border: 1px solid rgba(129, 164, 224, 0.28);
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 800;
+            transition: all 0.3s ease;
+            background: rgba(14, 24, 42, 0.96);
+            color: rgba(244, 248, 255, 0.96);
+        }
+
+        .platform-btn.active {
+            border-color: rgba(166, 205, 255, 0.78);
+            background: linear-gradient(180deg, rgba(48, 93, 168, 0.95), rgba(31, 61, 112, 0.98));
+            box-shadow: 0 18px 42px rgba(17, 42, 86, 0.34);
+        }
+
+        .platform-btn.binance,
+        .platform-btn.coinbase,
+        .platform-btn.kraken,
+        .platform-btn.kucoin { color: rgba(244, 248, 255, 0.96); }
+
+        .trading-header {
+            max-width: 1400px;
+            margin: 18px auto 0;
+            padding: 18px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid rgba(255,255,255,0.09);
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(14px);
+            box-shadow: 0 22px 70px rgba(0, 0, 0, 0.38);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+        }
+
+        .header-copy {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 760px;
+        }
+
+        .training-pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .training-pill {
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(166, 205, 255, 0.24);
+            background: rgba(48, 93, 168, 0.16);
+            color: rgba(234, 240, 255, 0.9);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+
+        .balance-section {
+            display: flex;
+            gap: 30px;
+        }
+
+        .balance-item {
+            text-align: center;
+            min-width: 140px;
+            padding: 14px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.045);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .balance-label {
+            font-size: 12px;
+            color: #848E9C;
+            margin-bottom: 5px;
+        }
+
+        .balance-value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .positive { color: #0ECB81; }
+        .negative { color: #F6465D; }
+
+        .trading-main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.9fr);
+            gap: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .workspace-stack,
+        .trading-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .price-section,
+        .portfolio-section,
+        .chart-section,
+        .simulation-panel,
+        .order-ticket,
+        .activity-section {
+            background: rgba(255, 255, 255, 0.045);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.09);
+            box-shadow: 0 18px 42px rgba(0,0,0,0.28);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #EAECEF;
+        }
+
+        .panel-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .panel-kicker {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(198, 224, 255, 0.88);
+        }
+
+        .simulation-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .sim-card {
+            padding: 14px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.09);
+        }
+
+        .sim-card-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #8ea4c7;
+            margin-bottom: 6px;
+        }
+
+        .sim-card-value {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .sim-controls {
+            margin-top: 16px;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .sim-select,
+        .sim-button,
+        .ticket-field select,
+        .ticket-field input,
+        .chart-section select {
+            width: 100%;
+            min-height: 44px;
+            padding: 11px 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+        }
+
+        .sim-button {
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .sim-button.primary {
+            background: linear-gradient(180deg, rgba(48, 93, 168, 0.95), rgba(31, 61, 112, 0.98));
+            border-color: rgba(166, 205, 255, 0.78);
+        }
+
+        .price-table-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .price-item {
+            background: rgba(255,255,255,0.04);
+            border-radius: 14px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .price-item:hover {
+            background: rgba(255,255,255,0.07);
+            transform: translateX(5px);
+            border-color: rgba(0,212,170,0.24);
+        }
+
+        .price-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .crypto-icon {
+            font-size: 20px;
+        }
+
+        .crypto-name {
+            font-weight: 600;
+        }
+
+        .price-details {
+            text-align: right;
+        }
+
+        .current-price {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .price-change {
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .price-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-buy, .btn-sell {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-buy {
+            background: #0ECB81;
+            color: #FFF;
+        }
+
+        .btn-sell {
+            background: #F6465D;
+            color: #FFF;
+        }
+
+        .btn-buy:hover { background: #00B876; }
+        .btn-sell:hover { background: #E5395C; }
+
+        .market-watch-meta {
+            font-size: 12px;
+            color: #8ea4c7;
+        }
+
+        .ticket-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .ticket-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .ticket-field {
+            display: grid;
+            gap: 6px;
+        }
+
+        .ticket-field label {
+            font-size: 12px;
+            color: #9ab0d1;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .ticket-summary {
+            padding: 14px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            display: grid;
+            gap: 8px;
+        }
+
+        .ticket-summary-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            color: #c9d8f0;
+            font-size: 14px;
+        }
+
+        .ticket-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .portfolio-grid,
+        .activity-feed {
+            display: grid;
+            gap: 10px;
+        }
+
+        .portfolio-item {
+            background: rgba(255,255,255,0.04);
+            border-radius: 14px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .portfolio-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .portfolio-details {
+            font-size: 12px;
+            line-height: 1.6;
+            color: #848E9C;
+        }
+
+        .pl {
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .portfolio-actions {
+            margin-top: 10px;
+        }
+
+        .chart-container {
+            height: 240px;
+            margin-top: 15px;
+            position: relative;
+        }
+
+        .chart-canvas {
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.04);
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .chart-overlay-label {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255,184,77,0.14);
+            border: 1px solid rgba(255,184,77,0.25);
+            font-size: 10px;
+            letter-spacing: 0.12em;
+            color: #ffd79a;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .activity-item {
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .activity-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: #8ea4c7;
+        }
+
+        .activity-copy {
+            color: #eef4ff;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .trading-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #1E2329;
+            border-radius: 12px;
+            padding: 0;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #EAECEF;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #848E9C;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .price-info {
+            background: #2B2B42;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .price-info div {
+            margin-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #848E9C;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            background: #2B2B42;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #FFF;
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #F3BA2F;
+        }
+
+        .fee-info {
+            font-size: 12px;
+            color: #848E9C;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #333;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-cancel {
+            padding: 10px 20px;
+            background: #2B2B42;
+            border: none;
+            border-radius: 6px;
+            color: #FFF;
+            cursor: pointer;
+        }
+
+        .trading-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            z-index: 2000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .trading-notification.success { background: #0ECB81; }
+        .trading-notification.error { background: #F6465D; }
+        .trading-notification.warning { background: #F7931A; }
+        .trading-notification.info { background: #0052FF; }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @media (max-width: 1024px) {
+            .trading-main {
+                grid-template-columns: 1fr;
+            }
+
+            .simulation-grid,
+            .sim-controls {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .balance-section {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .embedded-shell-bar,
+            .platform-switcher {
+                flex-wrap: wrap;
+            }
+
+            .header-content,
+            .price-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .ticket-row,
+            .ticket-actions,
+            .simulation-grid,
+            .sim-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .price-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="simulation-watermark">TRAINING SIMULATION ONLY</div>
+    <div class="simulation-banner">TRAINING SIMULATION ONLY · NO REAL MONEY · NO REAL ORDERS · EDUCATIONAL USE ONLY</div>
+
+    <div class="sim-app-shell">
+        <div class="sim-app-shell-inner">
+            <div class="sim-topbar">
+                <div class="sim-brand">
+                    <div class="sim-brand-mark">3A</div>
+                    <div>
+                        <div class="sim-brand-title">3 Amigos Academy</div>
+                        <div class="sim-brand-subtitle">Global Crypto Education</div>
+                    </div>
+                </div>
+                <div class="sim-topbar-right">
+                    <button class="embedded-shell-btn" type="button" data-parent-jump="home">⌂ Home</button>
+                    <div class="sim-pill">Status: Training Mode</div>
+                    <div class="sim-pill">Guest</div>
+                    <button class="embedded-shell-btn primary" type="button" data-parent-jump="tutorial">Return to Tutorial</button>
+                </div>
+            </div>
+
+            <div class="sim-disclaimer">Any information in this simulator does not guarantee any kind of return and may lead to financial loss. Any figures, orders, fills, balances, and portfolio values shown here are for educational and entertainment purposes only.</div>
+
+            <nav class="sim-primary-tabs" aria-label="Simulator shell navigation">
+                <button class="sim-primary-tab" type="button" data-parent-jump="home">Home</button>
+                <button class="sim-primary-tab" type="button" data-parent-jump="freebies">Freebies</button>
+                <button class="sim-primary-tab" type="button" data-parent-jump="oracle">Oracle</button>
+                <button class="sim-primary-tab" type="button" data-parent-jump="tutorial">Tutorial</button>
+                <button class="sim-primary-tab active" type="button" data-parent-jump="trading-simulator">📈 Trading Sim</button>
+                <button class="sim-primary-tab" type="button" data-parent-jump="community">Community</button>
+                <button class="sim-primary-tab" type="button" data-parent-jump="leaders">Leaders</button>
+                <button class="sim-primary-tab" type="button" data-parent-jump="charts">Charts</button>
+                <button class="sim-primary-tab" type="button" data-parent-jump="portfolio">Portfolio</button>
+                <button class="sim-primary-tab" type="button" data-parent-jump="reports">Reports</button>
+                <button class="sim-primary-tab" type="button" data-parent-jump="settings">Settings</button>
+            </nav>
+        </div>
+    </div>
+
+    <div class="embedded-shell-bar">
+        <div class="embedded-shell-copy">
+            <div class="embedded-shell-title">Juzzy Training Simulator</div>
+            <div class="embedded-shell-meta">A near-identical training shell with app-style tabs, panels, and controls.</div>
+        </div>
+        <div class="embedded-shell-actions">
+            <div class="embedded-shell-tabs">
+                <button class="embedded-shell-btn" type="button" data-parent-jump="home">Home</button>
+                <button class="embedded-shell-btn" type="button" data-parent-jump="tutorial">Tutorial</button>
+                <button class="embedded-shell-btn" type="button" data-parent-jump="community">Community</button>
+                <button class="embedded-shell-btn" type="button" data-parent-jump="charts">Charts</button>
+                <button class="embedded-shell-btn" type="button" data-parent-jump="portfolio">Portfolio</button>
+            </div>
+            <button class="embedded-shell-btn primary" type="button" data-parent-jump="trading-simulator">Refresh Simulator</button>
+        </div>
+    </div>
+
+    <div class="platform-switcher">
+        <button class="platform-btn binance active" onclick="switchPlatform('binance')">🟡 Binance</button>
+        <button class="platform-btn coinbase" onclick="switchPlatform('coinbase')">🔵 Coinbase</button>
+        <button class="platform-btn kraken" onclick="switchPlatform('kraken')">🟣 Kraken</button>
+        <button class="platform-btn kucoin" onclick="switchPlatform('kucoin')">🟢 KuCoin</button>
+    </div>
+
+    <div class="trading-header">
+        <div class="header-content">
+            <div class="header-copy">
+                <div class="panel-kicker">Trading Sim · Practice Mode</div>
+                <h1 style="font-size: 30px; margin-bottom: 5px; line-height: 1.2;">Crypto Trading Simulator</h1>
+                <p style="color: rgba(234, 240, 255, 0.78); font-size: 14px;">A full in-browser training workspace designed to feel like the live Juzzy product while keeping every price, fill, order, and result simulated.</p>
+                <div class="training-pill-row">
+                    <div class="training-pill">TRAINING SIMULATION ONLY</div>
+                    <div class="training-pill">Simulated balances</div>
+                    <div class="training-pill">Simulated fills</div>
+                    <div class="training-pill">No guaranteed outcomes</div>
+                </div>
+            </div>
+            <div class="balance-section">
+                <div class="balance-item">
+                    <div class="balance-label">Balance</div>
+                    <div class="balance-value" id="trading-balance">$10,000.00</div>
+                </div>
+                <div class="balance-item">
+                    <div class="balance-label">Portfolio Value</div>
+                    <div class="balance-value" id="trading-total">$10,000.00</div>
+                </div>
+                <div class="balance-item">
+                    <div class="balance-label">P/L</div>
+                    <div class="balance-value" id="trading-pl">$0.00 (0.00%)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="trading-main">
+        <div class="workspace-stack">
+            <div class="simulation-panel">
+                <div class="panel-head">
+                    <div>
+                        <div class="panel-kicker">Simulation Control Room</div>
+                        <h2 class="section-title" style="margin-bottom:0;">Training Session Controls</h2>
+                    </div>
+                    <div class="training-pill">TRAINING SIMULATION ONLY</div>
+                </div>
+                <div class="simulation-grid">
+                    <div class="sim-card"><div class="sim-card-label">Mode</div><div class="sim-card-value" id="sim-mode-label">Balanced</div></div>
+                    <div class="sim-card"><div class="sim-card-label">Simulation Speed</div><div class="sim-card-value" id="sim-speed-label">1.0x</div></div>
+                    <div class="sim-card"><div class="sim-card-label">Open Positions</div><div class="sim-card-value" id="sim-open-positions">0</div></div>
+                </div>
+                <div class="sim-controls">
+                    <select id="simScenario" class="sim-select">
+                        <option value="balanced">Balanced training</option>
+                        <option value="bull">Bull breakout simulation</option>
+                        <option value="bear">Bear pressure simulation</option>
+                        <option value="volatile">High volatility simulation</option>
+                    </select>
+                    <select id="simSpeed" class="sim-select">
+                        <option value="1">1x speed</option>
+                        <option value="0.5">0.5x speed</option>
+                        <option value="2">2x speed</option>
+                        <option value="4">4x speed</option>
+                    </select>
+                    <button id="simResetBtn" class="sim-button" type="button">Reset Training Account</button>
+                    <button id="simPauseBtn" class="sim-button primary" type="button">Pause Simulation</button>
+                </div>
+            </div>
+
+            <div class="price-section">
+                <div class="panel-head">
+                    <div>
+                        <div class="panel-kicker">Market Watch</div>
+                        <h2 class="section-title" style="margin-bottom:0;">Simulated Market Prices</h2>
+                    </div>
+                    <div class="market-watch-meta">Training prices stream live inside this simulation only</div>
+                </div>
+                <div class="price-table-grid" id="trading-price-table">
+                </div>
+            </div>
+
+            <div class="activity-section">
+                <div class="panel-head">
+                    <div>
+                        <div class="panel-kicker">Execution Journal</div>
+                        <h2 class="section-title" style="margin-bottom:0;">Training Activity Feed</h2>
+                    </div>
+                    <div class="training-pill">SIMULATED EXECUTIONS</div>
+                </div>
+                <div class="activity-feed" id="trading-activity-feed"></div>
+            </div>
+        </div>
+
+        <div class="trading-sidebar">
+            <div class="order-ticket">
+                <div class="panel-head">
+                    <div>
+                        <div class="panel-kicker">Order Ticket</div>
+                        <h2 class="section-title" style="margin-bottom:0;">Build a Simulated Trade</h2>
+                    </div>
+                    <div class="training-pill">NO REAL ORDERS</div>
+                </div>
+                <div class="ticket-grid">
+                    <div class="ticket-row">
+                        <div class="ticket-field">
+                            <label for="ticketSymbol">Asset</label>
+                            <select id="ticketSymbol">
+                                <option value="BTC">Bitcoin (BTC)</option>
+                                <option value="ETH">Ethereum (ETH)</option>
+                                <option value="BNB">Binance Coin (BNB)</option>
+                                <option value="ADA">Cardano (ADA)</option>
+                                <option value="SOL">Solana (SOL)</option>
+                                <option value="XRP">Ripple (XRP)</option>
+                                <option value="DOT">Polkadot (DOT)</option>
+                                <option value="DOGE">Dogecoin (DOGE)</option>
+                                <option value="AVAX">Avalanche (AVAX)</option>
+                                <option value="MATIC">Polygon (MATIC)</option>
+                            </select>
+                        </div>
+                        <div class="ticket-field">
+                            <label for="ticketType">Order type</label>
+                            <select id="ticketType">
+                                <option value="market">Market</option>
+                                <option value="limit">Limit</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="ticket-row">
+                        <div class="ticket-field">
+                            <label for="ticketAmount">Amount</label>
+                            <input id="ticketAmount" type="number" step="0.000001" min="0" placeholder="0.000000" />
+                        </div>
+                        <div class="ticket-field">
+                            <label for="ticketLimitPrice">Limit price</label>
+                            <input id="ticketLimitPrice" type="number" step="0.01" min="0" placeholder="Optional for market" />
+                        </div>
+                    </div>
+                    <div class="ticket-summary" id="ticketSummary"></div>
+                    <div class="ticket-actions">
+                        <button id="ticketBuyBtn" class="sim-button primary" type="button">Simulate Buy</button>
+                        <button id="ticketSellBtn" class="sim-button" type="button">Simulate Sell</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portfolio-section">
+                <div class="panel-head">
+                    <div>
+                        <div class="panel-kicker">Position Monitor</div>
+                        <h2 class="section-title" style="margin-bottom:0;">My Simulated Portfolio</h2>
+                    </div>
+                </div>
+                <div class="portfolio-grid" id="trading-portfolio">
+                    <div style="text-align: center; color: #848E9C; padding: 20px;">
+                        No simulated holdings yet. Start a training trade.
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <div class="panel-head">
+                    <div>
+                        <div class="panel-kicker">Price View</div>
+                        <h2 class="section-title" style="margin-bottom:0;">Selected Asset Chart</h2>
+                    </div>
+                </div>
+                <select id="selected-crypto">
+                    <option value="BTC">Bitcoin (BTC)</option>
+                    <option value="ETH">Ethereum (ETH)</option>
+                    <option value="BNB">Binance Coin (BNB)</option>
+                    <option value="ADA">Cardano (ADA)</option>
+                    <option value="SOL">Solana (SOL)</option>
+                    <option value="XRP">Ripple (XRP)</option>
+                    <option value="DOT">Polkadot (DOT)</option>
+                    <option value="DOGE">Dogecoin (DOGE)</option>
+                    <option value="AVAX">Avalanche (AVAX)</option>
+                    <option value="MATIC">Polygon (MATIC)</option>
+                </select>
+                <div class="chart-container">
+                    <div class="chart-overlay-label">Training simulation only</div>
+                    <canvas id="price-chart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <div class="panel-head">
+                    <div>
+                        <div class="panel-kicker">Allocation View</div>
+                        <h2 class="section-title" style="margin-bottom:0;">Portfolio Distribution</h2>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-overlay-label">Simulated allocation</div>
+                    <canvas id="portfolio-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="trading-simulator.js"></script>
+    <script>
+        // Initialize trading simulator
+        let simulator;
+        
+        function switchPlatform(platform) {
+            // Update active button
+            document.querySelectorAll('.platform-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.platform-btn.${platform}`).classList.add('active');
+            
+            // Switch platform in simulator
+            if (simulator) {
+                simulator.switchPlatform(platform);
+            }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            simulator = initializeTradingSimulator();
+
+            document.querySelectorAll('[data-parent-jump]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const target = button.getAttribute('data-parent-jump');
+                    if (window.parent && window.parent !== window && typeof window.parent.postMessage === 'function') {
+                        window.parent.postMessage({ type: 'juzzy-simulator-nav', tabId: target }, '*');
+                        return;
+                    }
+                    if (target === 'trading-simulator') {
+                        window.location.reload();
+                    }
+                });
+            });
+            
+            // Set up canvas sizes
+            const priceCanvas = document.getElementById('price-chart');
+            const portfolioCanvas = document.getElementById('portfolio-chart');
+            
+            function resizeCanvas() {
+                priceCanvas.width = priceCanvas.offsetWidth;
+                priceCanvas.height = priceCanvas.offsetHeight;
+                portfolioCanvas.width = portfolioCanvas.offsetWidth;
+                portfolioCanvas.height = portfolioCanvas.offsetHeight;
+                
+                if (simulator) {
+                    simulator.updateCharts();
+                }
+            }
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Update chart when crypto selection changes
+            document.getElementById('selected-crypto').addEventListener('change', () => {
+                if (simulator) {
+                    simulator.updateCharts();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

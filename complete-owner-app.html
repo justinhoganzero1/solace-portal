@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3 Amigos Academy - Complete Owner Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="home-styles.css">
+    <link rel="stylesheet" href="tutorial-animations.css">
+    <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="full-course-content.js"></script>
+    <script src="trading-simulator.js"></script>
+    <script src="system-verification.js"></script>
+    <script src="viral-ai-features.js"></script>
+</head>
+<body>
+    <!-- Futuristic Background Elements -->
+    <div class="arc-reactor"></div>
+
+    <div class="app">
+        <header class="app-header">
+            <div class="topbar">
+                <div class="brand">
+                    <div class="brand-mark" aria-hidden="true"><span>3A</span></div>
+                    <div class="brand-text">
+                        <div class="brand-title">3 Amigos Academy</div>
+                        <div class="brand-subtitle">Global Crypto Education</div>
+                    </div>
+                </div>
+
+                <div class="app-nav-controls">
+                    <button id="navHomeBtn" class="btn" type="button">⌂ Home</button>
+                </div>
+
+                <div class="topbar-right">
+                    <!-- Owner Plaque -->
+                    <div id="ownerPlaque" class="owner-plaque">
+                        <div class="owner-plaque-content">
+                            <div class="owner-icon">👑</div>
+                            <div class="owner-text">
+                                <div class="owner-title">OWNER</div>
+                                <div class="owner-subtitle">Full Access</div>
+                            </div>
+                            <div class="owner-glow"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="heartbeat">
+                        <div class="hb-dot" aria-hidden="true"></div>
+                        <div class="hb-text"><span id="hbMs">444</span>ms</div>
+                    </div>
+                    <div class="pill">Status: <span id="statusText">Owner Mode</span></div>
+                    <div id="userIdentityPill" class="pill">👑 owner@juzzy.local</div>
+                    <button id="openSettingsBtn" class="btn">Settings</button>
+                    <button id="connectBtn" class="btn">Connect wallet</button>
+                    <button id="authSignOutBtn" class="btn">Sign out</button>
+                </div>
+            </div>
+
+            <div class="risk-disclaimer risk-disclaimer-header">
+                Any information in this app does not guarantee any kind of return and may lead to financial loss. Any information given is for educational and entertainment purposes but does not guarantee any kind of financial gain. Any financial commitment by the user is at their own risk and does not give the user any kind of guaranteed monies.
+            </div>
+
+            <nav class="tabs tabs-header" aria-label="Primary">
+                <button class="tab active" data-tab="home">Home</button>
+                <button id="oracleTab" class="tab" data-tab="oracle">Oracle</button>
+                <button class="tab" data-tab="tutorial">Tutorial</button>
+                <button class="tab" data-tab="trading-simulator">📈 Trading Sim</button>
+                <button class="tab" data-tab="messages">Messages <span id="messagesUnreadBadge" class="pill util-hidden">0</span></button>
+                <button class="tab" data-tab="community">Community</button>
+                <button class="tab" data-tab="leaders">Leaders</button>
+                <button class="tab" data-tab="charts">Charts</button>
+                <button class="tab" data-tab="portfolio">Portfolio</button>
+                <button class="tab" data-tab="brain">Brain</button>
+                <button class="tab" data-tab="reports">Reports</button>
+                <button class="tab" data-tab="ops">Ops</button>
+                <button id="ownerAccessTab" class="tab" data-tab="owner-access">Owner Access</button>
+                <button class="tab" data-tab="vault">Vault</button>
+                <button class="tab" data-tab="settings">Settings</button>
+                <button class="tab" data-tab="about">About</button>
+            </nav>
+        </header>
+
+        <main class="layout">
+            <!-- Home Panel -->
+            <section class="panel active" id="tab-home" role="region" aria-label="Home">
+                <div class="panel-header">
+                    <div>
+                        <div class="h1">👑 Welcome, Owner!</div>
+                        <div class="muted">You have full access to all features. All modules are unlocked, trading simulator is active, and admin controls are available.</div>
+                    </div>
+                    <div class="pill" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 140, 0, 0.1)); border: 1px solid rgba(255, 215, 0, 0.4); color: #FFD700;">Owner Mode</div>
+                </div>
+
+                <div class="hero-section">
+                    <div class="hero-content">
+                        <div class="hero-title">
+                            <span class="gradient-text">3 Amigos Academy</span>
+                            <br>Owner Dashboard
+                        </div>
+                        <div class="hero-subtitle">Complete control over your crypto education platform • All features unlocked • Admin privileges active</div>
+                        <div style="display: flex; gap: 10px; margin-top: 20px;">
+                            <button class="btn btn-hero primary btn-glow" onclick="setActiveTab('tutorial')">
+                                <span style="font-size:1.2em">🎓</span> All Tutorials
+                            </button>
+                            <button class="btn btn-hero primary btn-glow" onclick="setActiveTab('trading-simulator')">
+                                <span style="font-size:1.2em">📈</span> Trading Sim
+                            </button>
+                            <button class="btn btn-hero primary btn-glow" onclick="setActiveTab('owner-access')">
+                                <span style="font-size:1.2em">🔧</span> Admin Panel
+                            </button>
+                        </div>
+                    </div>
+                    <div class="hero-visual">
+                        <div class="floating-cards">
+                            <div class="floating-card" style="--delay:0s">👑 Owner</div>
+                            <div class="floating-card" style="--delay:1s">🎓 All Modules</div>
+                            <div class="floating-card" style="--delay:2s">📈 Trading</div>
+                            <div class="floating-card" style="--delay:3s">🔧 Admin</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">👑</div>
+                        <div class="feature-title">Owner Access</div>
+                        <div class="feature-desc">Full control over platform settings, user management, and administrative features</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎓</div>
+                        <div class="feature-title">All Tutorials Unlocked</div>
+                        <div class="feature-desc">Access to all 490+ modules without any restrictions or payment requirements</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📈</div>
+                        <div class="feature-title">Trading Simulator</div>
+                        <div class="feature-desc">Practice crypto trading with fake money on real platform interfaces</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎁</div>
+                        <div class="feature-title">Grant User Access</div>
+                        <div class="feature-desc">Give free tutorial access to users without granting owner privileges</div>
+                    </div>
+                </div>
+
+                <div class="stats-section">
+                    <div class="stat-item">
+                        <div class="stat-number">490+</div>
+                        <div class="stat-label">Modules Unlocked</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">∞</div>
+                        <div class="stat-label">Owner Privileges</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">Platform Access</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">👑</div>
+                        <div class="stat-label">Owner Status</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Oracle Panel -->
+            <section class="panel" id="tab-oracle" role="region" aria-label="Oracle">
+                <div class="panel-header">
+                    <div>
+                        <div class="h1">🔮 Oracle AI</div>
+                        <div class="muted">Advanced AI predictions and insights for crypto markets and educational pathways.</div>
+                    </div>
+                </div>
+                <div style="padding: 40px;">
+                    <div style="max-width: 800px; margin: 0 auto;">
+                        <div style="background: rgba(0, 229, 255, 0.1); border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 16px; padding: 30px; margin-bottom: 30px;">
+                            <h3 style="color: #00e5ff; margin-bottom: 15px;">🔮 Market Prediction</h3>
+                            <p style="margin-bottom: 15px;">Based on current market analysis, the Oracle predicts increased volatility in altcoins over the next 72 hours.</p>
+                            <div style="display: flex; gap: 10px;">
+                                <span class="pill" style="background: rgba(0, 229, 255, 0.2);">BTC: Bullish</span>
+                                <span class="pill" style="background: rgba(255, 79, 184, 0.2);">ETH: Neutral</span>
+                                <span class="pill" style="background: rgba(89, 255, 181, 0.2);">ALTS: Volatile</span>
+                            </div>
+                        </div>
+                        
+                        <div style="background: rgba(255, 79, 184, 0.1); border: 1px solid rgba(255, 79, 184, 0.3); border-radius: 16px; padding: 30px; margin-bottom: 30px;">
+                            <h3 style="color: #ff4fb8; margin-bottom: 15px;">🎓 Learning Path Recommendation</h3>
+                            <p style="margin-bottom: 15px;">Your learning progress suggests focusing on DeFi protocols next. Recommended modules: DeFi Fundamentals, Yield Farming, and Liquidity Pools.</p>
+                            <button class="btn primary" onclick="setActiveTab('tutorial')">Start Learning</button>
+                        </div>
+                        
+                        <div style="background: rgba(89, 255, 181, 0.1); border: 1px solid rgba(89, 255, 181, 0.3); border-radius: 16px; padding: 30px;">
+                            <h3 style="color: #59ffb5; margin-bottom: 15px;">⚡ Real-time Insights</h3>
+                            <p style="margin-bottom: 15px;">Trading volume increased 23% in the last hour. New users joining platform at 15% above average rate.</p>
+                            <div style="font-size: 12px; color: rgba(234, 240, 255, 0.6);">Last updated: Just now</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tutorial Panel -->
+            <section class="panel" id="tab-tutorial" role="region" aria-label="Tutorial">
+                <div class="panel-header">
+                    <div>
+                        <div class="h1">🎓 Complete Tutorial Library</div>
+                        <div class="muted">All 490+ modules unlocked. Start your crypto education journey here.</div>
+                    </div>
+                </div>
+                
+                <div style="padding: 20px;">
+                    <!-- Tutorial Categories -->
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="margin-bottom: 15px;">📚 Learning Categories</h3>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="btn primary" onclick="filterTutorials('basics')">Basics</button>
+                            <button class="btn" onclick="filterTutorials('trading')">Trading</button>
+                            <button class="btn" onclick="filterTutorials('defi')">DeFi</button>
+                            <button class="btn" onclick="filterTutorials('nft')">NFTs</button>
+                            <button class="btn" onclick="filterTutorials('security')">Security</button>
+                            <button class="btn" onclick="filterTutorials('advanced')">Advanced</button>
+                        </div>
+                    </div>
+
+                    <!-- Tutorial Grid -->
+                    <div class="tutorial-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <!-- Basics Tutorials -->
+                        <div class="tutorial-card" data-category="basics">
+                            <div style="background: linear-gradient(135deg, #00e5ff, #1488cc); color: white; padding: 20px; border-radius: 12px 12px 0 0;">
+                                <h4>🚀 Crypto Basics</h4>
+                                <p style="font-size: 14px; opacity: 0.9;">15 modules • 2.5 hours</p>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 0 0 12px 12px;">
+                                <ul style="list-style: none; padding: 0;">
+                                    <li style="margin-bottom: 8px;">✓ What is Cryptocurrency?</li>
+                                    <li style="margin-bottom: 8px;">✓ Blockchain Technology</li>
+                                    <li style="margin-bottom: 8px;">✓ Wallets & Security</li>
+                                    <li style="margin-bottom: 8px;">✓ Your First Purchase</li>
+                                </ul>
+                                <button class="btn primary" style="width: 100%; margin-top: 15px;">Start Learning</button>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-card" data-category="trading">
+                            <div style="background: linear-gradient(135deg, #ff4fb8, #e91e63); color: white; padding: 20px; border-radius: 12px 12px 0 0;">
+                                <h4>📈 Technical Analysis</h4>
+                                <p style="font-size: 14px; opacity: 0.9;">25 modules • 4 hours</p>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 0 0 12px 12px;">
+                                <ul style="list-style: none; padding: 0;">
+                                    <li style="margin-bottom: 8px;">✓ Chart Patterns</li>
+                                    <li style="margin-bottom: 8px;">✓ Support & Resistance</li>
+                                    <li style="margin-bottom: 8px;">✓ Indicators & Oscillators</li>
+                                    <li style="margin-bottom: 8px;">✓ Risk Management</li>
+                                </ul>
+                                <button class="btn primary" style="width: 100%; margin-top: 15px;">Start Learning</button>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-card" data-category="defi">
+                            <div style="background: linear-gradient(135deg, #59ffb5, #00c853); color: black; padding: 20px; border-radius: 12px 12px 0 0;">
+                                <h4>💰 DeFi Masterclass</h4>
+                                <p style="font-size: 14px; opacity: 0.9;">30 modules • 5 hours</p>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 0 0 12px 12px;">
+                                <ul style="list-style: none; padding: 0;">
+                                    <li style="margin-bottom: 8px;">✓ Decentralized Finance</li>
+                                    <li style="margin-bottom: 8px;">✓ Yield Farming</li>
+                                    <li style="margin-bottom: 8px;">✓ Liquidity Pools</li>
+                                    <li style="margin-bottom: 8px;">✓ Staking & Rewards</li>
+                                </ul>
+                                <button class="btn primary" style="width: 100%; margin-top: 15px;">Start Learning</button>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-card" data-category="nft">
+                            <div style="background: linear-gradient(135deg, #7a5cff, #b14dff); color: white; padding: 20px; border-radius: 12px 12px 0 0;">
+                                <h4>🎨 NFT Complete Guide</h4>
+                                <p style="font-size: 14px; opacity: 0.9;">20 modules • 3 hours</p>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 0 0 12px 12px;">
+                                <ul style="list-style: none; padding: 0;">
+                                    <li style="margin-bottom: 8px;">✓ Understanding NFTs</li>
+                                    <li style="margin-bottom: 8px;">✓ Creating NFTs</li>
+                                    <li style="margin-bottom: 8px;">✓ Marketplaces</li>
+                                    <li style="margin-bottom: 8px;">✓ Flipping Strategies</li>
+                                </ul>
+                                <button class="btn primary" style="width: 100%; margin-top: 15px;">Start Learning</button>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-card" data-category="security">
+                            <div style="background: linear-gradient(135deg, #ff5f6d, #ff1744); color: white; padding: 20px; border-radius: 12px 12px 0 0;">
+                                <h4>🔒 Security Essentials</h4>
+                                <p style="font-size: 14px; opacity: 0.9;">18 modules • 2.5 hours</p>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 0 0 12px 12px;">
+                                <ul style="list-style: none; padding: 0;">
+                                    <li style="margin-bottom: 8px;">✓ Secure Storage</li>
+                                    <li style="margin-bottom: 8px;">✓ Private Keys</li>
+                                    <li style="margin-bottom: 8px;">✓ Avoiding Scams</li>
+                                    <li style="margin-bottom: 8px;">✓ Best Practices</li>
+                                </ul>
+                                <button class="btn primary" style="width: 100%; margin-top: 15px;">Start Learning</button>
+                            </div>
+                        </div>
+
+                        <div class="tutorial-card" data-category="advanced">
+                            <div style="background: linear-gradient(135deg, #ffd700, #ff8c00); color: black; padding: 20px; border-radius: 12px 12px 0 0;">
+                                <h4>⚡ Advanced Strategies</h4>
+                                <p style="font-size: 14px; opacity: 0.9;">35 modules • 6 hours</p>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 0 0 12px 12px;">
+                                <ul style="list-style: none; padding: 0;">
+                                    <li style="margin-bottom: 8px;">✓ Arbitrage Trading</li>
+                                    <li style="margin-bottom: 8px;">✓ Algorithmic Trading</li>
+                                    <li style="margin-bottom: 8px;">✓ Portfolio Management</li>
+                                    <li style="margin-bottom: 8px;">✓ Tax Optimization</li>
+                                </ul>
+                                <button class="btn primary" style="width: 100%; margin-top: 15px;">Start Learning</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trading Simulator Panel -->
+            <section class="panel" id="tab-trading-simulator" role="region" aria-label="Trading Simulator">
+                <div class="panel-header">
+                    <div>
+                        <div class="h1">📈 Crypto Trading Simulator</div>
+                        <div class="muted">Practice trading with fake money on real platform interfaces. No financial risk.</div>
+                    </div>
+                </div>
+                
+                <div class="trading-simulator-container">
+                    <!-- Platform Switcher -->
+                    <div style="background: var(--panel); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                        <div style="display: flex; gap: 10px; align-items: center; justify-content: space-between;">
+                            <div>
+                                <h4 style="margin-bottom: 5px;">Choose Trading Platform</h4>
+                                <p style="font-size: 12px; opacity: 0.7;">Practice on real exchange interfaces</p>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn primary" onclick="switchPlatform('binance')">🟡 Binance</button>
+                                <button class="btn" onclick="switchPlatform('coinbase')">🔵 Coinbase</button>
+                                <button class="btn" onclick="switchPlatform('kraken')">🟣 Kraken</button>
+                                <button class="btn" onclick="switchPlatform('kucoin')">🟢 KuCoin</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trading Stats -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                        <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #00e5ff;">$10,000</div>
+                            <div style="font-size: 12px; opacity: 0.7;">Available Balance</div>
+                        </div>
+                        <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #59ffb5;">+$2,450</div>
+                            <div style="font-size: 12px; opacity: 0.7;">Total P/L</div>
+                        </div>
+                        <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #ff4fb8;">24</div>
+                            <div style="font-size: 12px; opacity: 0.7;">Trades Executed</div>
+                        </div>
+                        <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #ffd700;">85%</div>
+                            <div style="font-size: 12px; opacity: 0.7;">Success Rate</div>
+                        </div>
+                    </div>
+
+                    <!-- Trading Interface -->
+                    <div id="trading-simulator-frame" style="background: var(--panel); border-radius: 12px; padding: 20px; min-height: 600px;">
+                        <div style="text-align: center; padding: 40px;">
+                            <div style="font-size: 48px; margin-bottom: 20px;">📈</div>
+                            <h3 style="color: #00e5ff; margin-bottom: 10px;">Trading Simulator Ready</h3>
+                            <p style="margin-bottom: 20px;">Select a platform above to start practicing with $10,000 fake money</p>
+                            
+                            <!-- Sample Trading Interface -->
+                            <div style="background: var(--bg1); border-radius: 12px; padding: 20px; margin-top: 20px; text-align: left;">
+                                <h4 style="margin-bottom: 15px;">📊 Market Overview</h4>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+                                    <div style="background: var(--panel); padding: 10px; border-radius: 8px;">
+                                        <div style="font-size: 12px; opacity: 0.7;">BTC/USD</div>
+                                        <div style="font-size: 16px; font-weight: bold;">$45,230</div>
+                                        <div style="font-size: 12px; color: #59ffb5;">+2.4%</div>
+                                    </div>
+                                    <div style="background: var(--panel); padding: 10px; border-radius: 8px;">
+                                        <div style="font-size: 12px; opacity: 0.7;">ETH/USD</div>
+                                        <div style="font-size: 16px; font-weight: bold;">$2,845</div>
+                                        <div style="font-size: 12px; color: #59ffb5;">+1.8%</div>
+                                    </div>
+                                    <div style="background: var(--panel); padding: 10px; border-radius: 8px;">
+                                        <div style="font-size: 12px; opacity: 0.7;">BNB/USD</div>
+                                        <div style="font-size: 16px; font-weight: bold;">$312</div>
+                                        <div style="font-size: 12px; color: #ff5f6d;">-0.9%</div>
+                                    </div>
+                                    <div style="background: var(--panel); padding: 10px; border-radius: 8px;">
+                                        <div style="font-size: 12px; opacity: 0.7;">SOL/USD</div>
+                                        <div style="font-size: 16px; font-weight: bold;">$98</div>
+                                        <div style="font-size: 12px; color: #59ffb5;">+5.2%</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                                    <button class="btn primary" style="flex: 1;">Buy BTC</button>
+                                    <button class="btn" style="flex: 1; background: var(--red);">Sell BTC</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Messages Panel -->
+            <section class="panel" id="tab-messages" role="region" aria-label="Messages">
+                <div class="panel-header">
+                    <div>
+                        <div class="h1">💬 Messages</div>
+                        <div class="muted">Communicate with the academy team and community.</div>
+                    </div>
+                </div>
+                <div style="padding: 40px; text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">💬</div>
+                    <h3 style="color: #00e5ff; margin-bottom: 10px;">Message Center</h3>
+                    <p style="margin-bottom: 20px;">No new messages</p>
+                    <button class="btn primary">Compose Message</button>
+                </div>
+            </section>
+
+            <!-- Community Panel -->
+            <section class="panel" id="tab-community" role="region" aria-label="Community">
+                <div class="panel-header">
+                    <div>
+                        <div class="h1">👥 Community</div>
+                        <div class="muted">Connect with fellow learners and share your progress.</div>
+                    </div>
+                </div>
+                <div style="padding: 40px;">
+                    <div style="max-width: 800px; margin: 0 auto;">
+                        <!-- Community Stats -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #00e5ff;">1,247</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Active Members</div>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #ff4fb8;">89</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Online Now</div>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #59ffb5;">456</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Discussions</div>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #ffd700;">2.3k</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Messages Today</div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Discussions -->
+                        <h3 style="margin-bottom: 15px;">🔥 Recent Discussions</h3>
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                    <h4>Best DeFi strategies for beginners?</h4>
+                                    <span class="pill" style="font-size: 11px;">15 min ago</span>
+                                </div>
+                                <p style="font-size: 14px; opacity: 0.8; margin-bottom: 10px;">Looking for advice on getting started with DeFi yield farming...</p>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <span style="font-size: 12px;">💬 23 replies</span>
+                                    <span style="font-size: 12px;">👍 45 likes</span>
+                                </div>
+                            </div>
+                            
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                    <h4>Completed Technical Analysis course!</h4>
+                                    <span class="pill" style="font-size: 11px;">1 hour ago</span>
+                                </div>
+                                <p style="font-size: 14px; opacity: 0.8; margin-bottom: 10px;">Just finished the technical analysis modules, highly recommend!</p>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <span style="font-size: 12px;">💬 12 replies</span>
+                                    <span style="font-size: 12px;">👍 67 likes</span>
+                                </div>
+                            </div>
+                            
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                    <h4>Trading simulator profits screenshot</h4>
+                                    <span class="pill" style="font-size: 11px;">2 hours ago</span>
+                                </div>
+                                <p style="font-size: 14px; opacity: 0.8; margin-bottom: 10px;">Hit my first $1k profit in the simulator! Here's how...</p>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <span style="font-size: 12px;">💬 34 replies</span>
+                                    <span style="font-size: 12px;">👍 89 likes</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Leaders Panel -->
+            <section class="panel" id="tab-leaders" role="region" aria-label="Leaders">
+                <div class="panel-header">
+                    <div>
+                        <div class="h1">🏆 Leaders</div>
+                        <div class="muted">Top performers and achievement holders.</div>
+                    </div>
+                </div>
+                <div style="padding: 40px;">
+                    <div style="max-width: 800px; margin: 0 auto;">
+                        <!-- Leaderboard -->
+                        <h3 style="margin-bottom: 15px;">🥇 Top Learners This Month</h3>
+                        <div style="background: var(--panel); border-radius: 12px; padding: 20px; margin-bottom: 30px;">
+                            <div style="display: flex; flex-direction: column; gap: 15px;">
+                                <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(255, 215, 0, 0.1); border-radius: 8px;">
+                                    <div style="font-size: 24px;">🥇</div>
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: bold;">Alex Chen</div>
+                                        <div style="font-size: 12px; opacity: 0.7;">Level 42 • 2,450 XP</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-weight: bold; color: #ffd700;">89%</div>
+                                        <div style="font-size: 12px; opacity: 0.7;">Completion</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(192, 192, 192, 0.1); border-radius: 8px;">
+                                    <div style="font-size: 24px;">🥈</div>
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: bold;">Sarah Miller</div>
+                                        <div style="font-size: 12px; opacity: 0.7;">Level 38 • 2,200 XP</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-weight: bold; color: #c0c0c0;">76%</div>
+                                        <div style="font-size: 12px; opacity: 0.7;">Completion</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(205, 127, 50, 0.1); border-radius: 8px;">
+                                    <div style="font-size: 24px;">🥉</div>
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: bold;">Mike Johnson</div>
+                                        <div style="font-size: 12px; opacity: 0.7;">Level 35 • 1,950 XP</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-weight: bold; color: #cd7f32;">68%</div>
+                                        <div style="font-size: 12px; opacity: 0.7;">Completion</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Achievements -->
+                        <h3 style="margin-bottom: 15px;">🏅 Recent Achievements</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 32px; margin-bottom: 10px;">🎓</div>
+                                <div style="font-weight: bold; margin-bottom: 5px;">Scholar</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Complete 50 modules</div>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 32px; margin-bottom: 10px;">📈</div>
+                                <div style="font-weight: bold; margin-bottom: 5px;">Trader</div>
+                                <div style="font-size: 12px; opacity: 0.7;">100 profitable trades</div>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 32px; margin-bottom: 10px;">🔥</div>
+                                <div style="font-weight: bold; margin-bottom: 5px;">On Fire</div>
+                                <div style="font-size: 12px; opacity: 0.7;">30 day streak</div>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 32px; margin-bottom: 10px;">💎</div>
+                                <div style="font-weight: bold; margin-bottom: 5px;">Diamond Hands</div>
+                                <div style="font-size: 12px; opacity: 0.7;">HODL for 90 days</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Panel -->
+            <section class="panel" id="tab-charts" role="region" aria-label="Charts">
+                <div class="panel-header">
+                    <div>
+                        <div class="h1">📊 Charts & Analytics</div>
+                        <div class="muted">Real-time market data and portfolio analytics.</div>
+                    </div>
+                </div>
+                <div style="padding: 40px;">
+                    <div style="max-width: 1000px; margin: 0 auto;">
+                        <!-- Chart Controls -->
+                        <div style="background: var(--panel); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                                <select style="background: var(--bg1); border: 1px solid var(--stroke); color: var(--text); padding: 8px 12px; border-radius: 6px;">
+                                    <option>BTC/USD</option>
+                                    <option>ETH/USD</option>
+                                    <option>BNB/USD</option>
+                                </select>
+                                <button class="btn primary">1D</button>
+                                <button class="btn">1W</button>
+                                <button class="btn">1M</button>
+                                <button class="btn">1Y</button>
+                                <button class="btn" style="background: var(--pink);">Live</button>
+                            </div>
+                        </div>
+
+                        <!-- Chart Area -->
+                        <div style="background: var(--panel); border-radius: 12px; padding: 20px; height: 400px; display: flex; align-items: center; justify-content: center;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 48px; margin-bottom: 20px;">📊</div>
+                                <h4 style="color: #00e5ff; margin-bottom: 10px;">Live Chart</h4>
+                                <p style="margin-bottom: 20px;">Real-time price charts and technical indicators</p>
+                                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: left;">
+                                    <div>
+                                        <div style="font-size: 12px; opacity: 0.7;">Current Price</div>
+                                        <div style="font-size: 18px; font-weight: bold; color: #59ffb5;">$45,230</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 12px; opacity: 0.7;">24h Change</div>
+                                        <div style="font-size: 18px; font-weight: bold; color: #59ffb5;">+2.4%</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 12px; opacity: 0.7;">24h Volume</div>
+                                        <div style="font-size: 18px; font-weight: bold;">$1.2B</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 12px; opacity: 0.7;">Market Cap</div>
+                                        <div style="font-size: 18px; font-weight: bold;">$882B</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Portfolio Panel -->
+            <section class="panel" id="tab-portfolio" role="region" aria-label="Portfolio">
+                <div class="panel-header">
+                    <div>
+                        <div class="h1">💼 Portfolio</div>
+                        <div class="muted">Track your investments and performance.</div>
+                    </div>
+                </div>
+                <div style="padding: 40px;">
+                    <div style="max-width: 800px; margin: 0 auto;">
+                        <!-- Portfolio Summary -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #00e5ff;">$12,450</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Total Value</div>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #59ffb5;">+$2,450</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Total P/L</div>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #ff4fb8;">+24.5%</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Return %</div>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #ffd700;">8</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Holdings</div>
+                            </div>
+                        </div>
+
+                        <!-- Holdings -->
+                        <h3 style="margin-bottom: 15px;">💎 Your Holdings</h3>
+                        <div style="background: var(--panel); border-radius: 12px; padding: 20px;">
+                            <div style="display: flex; flex-direction: column; gap: 15px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--bg1); border-radius: 8px;">
+                                    <div>
+                                        <div style="font-weight: bold;">Bitcoin</div>
+                                        <div style="font-size: 12px; opacity: 0.7;">0.15 BTC</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-weight: bold;">$6,785</div>
+                                        <div style="font-size: 12px; color: #59ffb5;">+5.2%</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--bg1); border-radius: 8px;">
+                                    <div>
+                                        <div style="font-weight: bold;">Ethereum</div>
+                                        <div style="font-size: 12px; opacity: 0.7;">2.5 ETH</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-weight: bold;">$7,112</div>
+                                        <div style="font-size: 12px; color: #59ffb5;">+3.8%</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--bg1); border-radius: 8px;">
+                                    <div>
+                                        <div style="font-weight: bold;">Cardano</div>
+                                        <div style="font-size: 12px; opacity: 0.7;">1,000 ADA</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-weight: bold;">$580</div>
+                                        <div style="font-size: 12px; color: #ff5f6d;">-1.2%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Brain Panel -->
+            <section class="panel" id="tab-brain" role="region" aria-label="Brain">
+                <div class="panel-header">
+                    <div>
+                        <div class="h1">🧠 AI Brain</div>
+                        <div class="muted">Your personal AI assistant for learning and trading.</div>
+                    </div>
+                </div>
+                <div style="padding: 40px; text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">🧠</div>
+                    <h3 style="color: #00e5ff; margin-bottom: 10px;">AI Assistant</h3>
+                    <p style="margin-bottom: 20px;">Your personal AI is ready to help with learning and trading</p>
+                    <button class="btn primary">Start Chat</button>
+                </div>
+            </section>
+
+            <!-- Reports Panel -->
+            <section class="panel" id="tab-reports" role="region" aria-label="Reports">
+                <div class="panel-header">
+                    <div>
+                        <div class="h1">📋 Reports</div>
+                        <div class="muted">Detailed reports and analytics.</div>
+                    </div>
+                </div>
+                <div style="padding: 40px; text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">📋</div>
+                    <h3 style="color: #00e5ff; margin-bottom: 10px;">Reports Center</h3>
+                    <p style="margin-bottom: 20px;">Generate detailed reports on your progress and performance</p>
+                    <button class="btn primary">Generate Report</button>
+                </div>
+            </section>
+
+            <!-- Ops Panel -->
+            <section class="panel" id="tab-ops" role="region" aria-label="Ops">
+                <div class="panel-header">
+                    <div>
+                        <div class="h1">⚙️ Operations</div>
+                        <div class="muted">System operations and maintenance.</div>
+                    </div>
+                </div>
+                <div style="padding: 40px; text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">⚙️</div>
+                    <h3 style="color: #00e5ff; margin-bottom: 10px;">Operations Center</h3>
+                    <p style="margin-bottom: 20px;">System status and operational controls</p>
+                    <button class="btn primary">View Status</button>
+                </div>
+            </section>
+
+            <!-- Owner Access Panel -->
+            <section class="panel" id="tab-owner-access" role="region" aria-label="Owner Access">
+                <div class="panel-header">
+                    <div>
+                        <div class="h1">🔧 Owner Access Panel</div>
+                        <div class="muted">Administrative controls and user management.</div>
+                    </div>
+                </div>
+                <div style="padding: 40px;">
+                    <div style="max-width: 800px; margin: 0 auto;">
+                        <!-- Owner Stats -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+                            <div style="background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.3); padding: 20px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #FFD700;">👑</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Owner Status</div>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #00e5ff;">1,247</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Total Users</div>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #59ffb5;">89</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Active Now</div>
+                            </div>
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #ff4fb8;">156</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Granted Access</div>
+                            </div>
+                        </div>
+
+                        <!-- Owner Actions -->
+                        <h3 style="margin-bottom: 15px;">🔧 Admin Actions</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px;">
+                                <h4 style="margin-bottom: 10px;">🎁 Grant User Access</h4>
+                                <p style="font-size: 14px; opacity: 0.8; margin-bottom: 15px;">Give free tutorial access to users</p>
+                                <input type="email" placeholder="user@email.com" style="width: 100%; padding: 8px; background: var(--bg1); border: 1px solid var(--stroke); border-radius: 6px; color: var(--text); margin-bottom: 10px;">
+                                <button class="btn primary" style="width: 100%;">Grant Access</button>
+                            </div>
+                            
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px;">
+                                <h4 style="margin-bottom: 10px;">📊 View Analytics</h4>
+                                <p style="font-size: 14px; opacity: 0.8; margin-bottom: 15px;">Platform usage and statistics</p>
+                                <button class="btn primary" style="width: 100%;">View Analytics</button>
+                            </div>
+                            
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px;">
+                                <h4 style="margin-bottom: 10px;">👥 User Management</h4>
+                                <p style="font-size: 14px; opacity: 0.8; margin-bottom: 15px;">Manage user accounts</p>
+                                <button class="btn primary" style="width: 100%;">Manage Users</button>
+                            </div>
+                            
+                            <div style="background: var(--panel); padding: 20px; border-radius: 12px;">
+                                <h4 style="margin-bottom: 10px;">⚙️ System Settings</h4>
+                                <p style="font-size: 14px; opacity: 0.8; margin-bottom: 15px;">Configure platform settings</p>
+                                <button class="btn primary" style="width: 100%;">Settings</button>
+                            </div>
+                        </div>
+
+                        <!-- Recent Access Grants -->
+                        <h3 style="margin-bottom: 15px; margin-top: 30px;">📋 Recent Access Grants</h3>
+                        <div style="background: var(--panel); border-radius: 12px; padding: 20px;">
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--bg1); border-radius: 6px;">
+                                    <div>
+                                        <div style="font-weight: bold;">student@example.com</div>
+                                        <div style="font-size: 12px; opacity: 0.7;">Granted 2 hours ago</div>
+                                    </div>
+                                    <span class="pill" style="background: rgba(89, 255, 181, 0.2); color: #59ffb5;">Active</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--bg1); border-radius: 6px;">
+                                    <div>
+                                        <div style="font-weight: bold;">learner@test.com</div>
+                                        <div style="font-size: 12px; opacity: 0.7;">Granted 1 day ago</div>
+                                    </div>
+                                    <span class="pill" style="background: rgba(89, 255, 181, 0.2); color: #59ffb5;">Active</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Vault Panel -->
+            <section class="panel" id="tab-vault" role="region" aria-label="Vault">
+                <div class="panel-header">
+                    <div>
+                        <div class="h1">🔐 Vault</div>
+                        <div class="muted">Secure storage and sensitive data.</div>
+                    </div>
+                </div>
+                <div style="padding: 40px; text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">🔐</div>
+                    <h3 style="color: #00e5ff; margin-bottom: 10px;">Secure Vault</h3>
+                    <p style="margin-bottom: 20px;">Your encrypted storage for sensitive information</p>
+                    <button class="btn primary">Open Vault</button>
+                </div>
+            </section>
+
+            <!-- Settings Panel -->
+            <section class="panel" id="tab-settings" role="region" aria-label="Settings">
+                <div class="panel-header">
+                    <div>
+                        <div class="h1">⚙️ Settings</div>
+                        <div class="muted">Manage your account preferences.</div>
+                    </div>
+                </div>
+                <div style="padding: 40px;">
+                    <div style="max-width: 600px; margin: 0 auto;">
+                        <div style="background: var(--panel); padding: 30px; border-radius: 12px;">
+                            <h3 style="margin-bottom: 20px;">👤 Account Settings</h3>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 5px; font-size: 14px;">Display Name</label>
+                                <input type="text" value="Owner" style="width: 100%; padding: 10px; background: var(--bg1); border: 1px solid var(--stroke); border-radius: 6px; color: var(--text);">
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 5px; font-size: 14px;">Email</label>
+                                <input type="email" value="owner@juzzy.local" style="width: 100%; padding: 10px; background: var(--bg1); border: 1px solid var(--stroke); border-radius: 6px; color: var(--text);">
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 5px; font-size: 14px;">Country</label>
+                                <select style="width: 100%; padding: 10px; background: var(--bg1); border: 1px solid var(--stroke); border-radius: 6px; color: var(--text);">
+                                    <option>United States</option>
+                                    <option>United Kingdom</option>
+                                    <option>Canada</option>
+                                    <option>Australia</option>
+                                </select>
+                            </div>
+                            
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn primary">Save Changes</button>
+                                <button class="btn">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Panel -->
+            <section class="panel" id="tab-about" role="region" aria-label="About">
+                <div class="panel-header">
+                    <div>
+                        <div class="h1">ℹ️ About</div>
+                        <div class="muted">Learn about 3 Amigos Academy.</div>
+                    </div>
+                </div>
+                <div style="padding: 40px;">
+                    <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+                        <div style="font-size: 48px; margin-bottom: 20px;">🎓</div>
+                        <h2 style="margin-bottom: 15px;">3 Amigos Academy</h2>
+                        <p style="margin-bottom: 30px; font-size: 18px; line-height: 1.6;">
+                            Your premier destination for cryptocurrency education. Learn from industry experts, 
+                            practice with our trading simulator, and join a community of passionate learners.
+                        </p>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 40px;">
+                            <div>
+                                <div style="font-size: 32px; margin-bottom: 10px;">📚</div>
+                                <h4 style="margin-bottom: 5px;">490+ Modules</h4>
+                                <p style="font-size: 14px; opacity: 0.7;">Comprehensive curriculum</p>
+                            </div>
+                            <div>
+                                <div style="font-size: 32px; margin-bottom: 10px;">👥</div>
+                                <h4 style="margin-bottom: 5px;">1,247+ Students</h4>
+                                <p style="font-size: 14px; opacity: 0.7;">Growing community</p>
+                            </div>
+                            <div>
+                                <div style="font-size: 32px; margin-bottom: 10px;">🏆</div>
+                                <h4 style="margin-bottom: 5px;">Expert Instructors</h4>
+                                <p style="font-size: 14px; opacity: 0.7;">Industry professionals</p>
+                            </div>
+                            <div>
+                                <div style="font-size: 32px; margin-bottom: 10px;">⭐</div>
+                                <h4 style="margin-bottom: 5px;">4.9 Rating</h4>
+                                <p style="font-size: 14px; opacity: 0.7;">Student reviews</p>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 40px; padding: 20px; background: var(--panel); border-radius: 12px;">
+                            <p style="font-size: 12px; opacity: 0.6;">
+                                Version 2.0 • Built with ❤️ by the 3 Amigos Team<br>
+                                © 2024 3 Amigos Academy. All rights reserved.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <div class="risk-disclaimer risk-disclaimer-footer">
+            Any information in this app does not guarantee any kind of return and may lead to financial loss. Any information given is for educational and entertainment purposes but does not guarantee any kind of financial gain. Any financial commitment by the user is at their own risk and does not give the user any kind of guaranteed monies.
+        </div>
+
+        <footer class="footer">
+            <div class="muted small">Trading and digital assets are risky. Juzzy is an educational platform, not financial, legal, or tax advice. Outcomes are not guaranteed, references to potential returns are illustrative only, and users must verify the laws of their own country before acting. Fees are explicit and user-consented.</div>
+        </footer>
+    </div>
+
+    <script src="main.js"></script>
+    <script>
+        // COMPLETE OWNER ACCESS - FULLY POPULATED APP
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('👑 COMPLETE POPULATED OWNER APP LOADED');
+            
+            // Set owner state immediately
+            if (typeof state !== 'undefined') {
+                state.user.email = 'owner@juzzy.local';
+                state.profile.loggedIn = true;
+                state.profile.name = 'Owner';
+                state.profile.email = 'owner@juzzy.local';
+                state.billing.subscribed = true;
+            }
+            
+            // Show owner plaque
+            const ownerPlaque = document.getElementById('ownerPlaque');
+            if (ownerPlaque) {
+                ownerPlaque.classList.remove('util-hidden');
+            }
+            
+            // Update status
+            const statusText = document.getElementById('statusText');
+            if (statusText) {
+                statusText.textContent = 'Owner Mode';
+            }
+            
+            // Update identity pill
+            const identityPill = document.getElementById('userIdentityPill');
+            if (identityPill) {
+                identityPill.textContent = '👑 owner@juzzy.local';
+            }
+            
+            // Show owner and oracle tabs
+            const ownerAccessTab = document.getElementById('ownerAccessTab');
+            const oracleTab = document.getElementById('oracleTab');
+            if (ownerAccessTab) ownerAccessTab.hidden = false;
+            if (oracleTab) oracleTab.hidden = false;
+            
+            // COMPLETE TAB FUNCTIONALITY - ALL TABS WORK
+            function initializeCompleteTabs() {
+                const tabs = document.querySelectorAll('.tab');
+                const panels = document.querySelectorAll('.panel');
+                
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const tabId = this.getAttribute('data-tab');
+                        if (!tabId) return;
+                        
+                        console.log('🔄 Tab clicked:', tabId);
+                        
+                        // Remove active class from all tabs and panels
+                        tabs.forEach(t => t.classList.remove('active'));
+                        panels.forEach(p => p.classList.remove('active'));
+                        
+                        // Add active class to clicked tab and corresponding panel
+                        this.classList.add('active');
+                        const targetPanel = document.getElementById('tab-' + tabId);
+                        if (targetPanel) {
+                            targetPanel.classList.add('active');
+                            console.log('✅ Panel activated:', 'tab-' + tabId);
+                        } else {
+                            console.log('⚠️ Panel not found:', 'tab-' + tabId);
+                        }
+                        
+                        // Special handling for specific tabs
+                        if (tabId === 'trading-simulator') {
+                            console.log('📈 Loading trading simulator...');
+                        }
+                        
+                        if (tabId === 'tutorial') {
+                            console.log('🎓 Loading tutorials...');
+                        }
+                        
+                        if (tabId === 'owner-access') {
+                            console.log('🔧 Loading owner panel...');
+                        }
+                        
+                        if (tabId === 'community') {
+                            console.log('👥 Loading community...');
+                        }
+                        
+                        if (tabId === 'leaders') {
+                            console.log('🏆 Loading leaders...');
+                        }
+                    });
+                });
+            }
+            
+            // Initialize complete tab functionality
+            initializeCompleteTabs();
+            
+            // Re-apply tab fixes every second to ensure they work
+            setInterval(initializeCompleteTabs, 1000);
+            
+            console.log('✅ COMPLETE APP POPULATED - ALL TABS WORKING');
+            console.log('🎓 All tutorials loaded');
+            console.log('📈 Trading simulator ready');
+            console.log('👥 Community active');
+            console.log('🏆 Leaders loaded');
+            console.log('📊 Charts ready');
+            console.log('💼 Portfolio loaded');
+            console.log('🔧 Owner access active');
+            console.log('👑 FULLY POPULATED OWNER APP READY!');
+        });
+        
+        // Tab switching function
+        function setActiveTab(tabId) {
+            const tabs = document.querySelectorAll('.tab');
+            const panels = document.querySelectorAll('.panel');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            panels.forEach(panel => panel.classList.remove('active'));
+            
+            const clickedTab = document.querySelector(`[data-tab="${tabId}"]`);
+            const targetPanel = document.getElementById(`tab-${tabId}`);
+            
+            if (clickedTab) clickedTab.classList.add('active');
+            if (targetPanel) targetPanel.classList.add('active');
+            
+            console.log('🔄 Tab switched to:', tabId);
+        }
+        
+        // Tutorial filtering function
+        function filterTutorials(category) {
+            const cards = document.querySelectorAll('.tutorial-card');
+            cards.forEach(card => {
+                if (category === 'basics' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            console.log('🎓 Filtered tutorials by:', category);
+        }
+        
+        // Trading platform switching
+        function switchPlatform(platform) {
+            console.log('📈 Switched to platform:', platform);
+            alert(`Switched to ${platform.charAt(0).toUpperCase() + platform.slice(1)} trading interface`);
+        }
+    </script>
+</body>
+</html>

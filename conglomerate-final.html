@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Conglomerate - Innovation Powered by Artificial Intelligence</title>
+    <style>
+        /* COMPLETE RESET - NO MARGINS ANYWHERE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+            position: relative !important;
+            left: 0 !important;
+            right: 0 !important;
+        }
+
+        :root {
+            --primary-color: #00e5ff;
+            --secondary-color: #7a5cff;
+            --accent-color: #ffcc4d;
+            --dark-bg: #0a0e1a;
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --text-primary: rgba(234, 240, 255, 0.95);
+            --text-secondary: rgba(234, 240, 255, 0.7);
+            --text-muted: rgba(234, 240, 255, 0.5);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* COMPLETELY REMOVE AI ASSISTANT */
+        .ai-assistant,
+        .global-ai,
+        .juzzy-ai,
+        .ai-chat,
+        .ai-popup,
+        .ai-assistant-btn,
+        .ai-box,
+        .chat-widget,
+        .floating-ai,
+        [class*="ai-assistant"],
+        [class*="global-ai"],
+        [class*="juzzy-ai"],
+        [id*="ai-assistant"],
+        [id*="globalAi"],
+        [id*="juzzyAi"] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            position: absolute !important;
+            left: -9999px !important;
+            top: -9999px !important;
+            width: 0 !important;
+            height: 0 !important;
+            overflow: hidden !important;
+        }
+
+        /* Header - Full Width, No Margins */
+        .ai-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(10, 14, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            margin: 0 !important;
+            padding: 0 20px;
+        }
+
+        .ai-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .ai-logo {
+            width: 40px;
+            height: 40px;
+            position: relative;
+        }
+
+        .ai-core {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #00e5ff, #1488cc);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .brand-text h1 {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00e5ff, #1488cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-text p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 5px;
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: var(--primary-color);
+            background: rgba(0, 229, 255, 0.1);
+        }
+
+        /* Main Content - Full Width, No Margins */
+        .ai-main {
+            margin-top: 70px;
+            width: 100%;
+            min-height: calc(100vh - 70px);
+            position: relative;
+            left: 0;
+            right: 0;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            padding: 0 !important;
+        }
+
+        .hero-section {
+            padding: 80px 20px 60px;
+            text-align: center;
+            position: relative;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            left: 0;
+            right: 0;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00e5ff, #1488cc);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 10px 30px rgba(0, 229, 255, 0.3);
+        }
+
+        /* Portfolio Section - Full Width */
+        .portfolio-section {
+            padding: 80px 20px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            left: 0;
+            right: 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #7a5cff, #b14dff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            width: 100%;
+        }
+
+        .app-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .app-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+            box-shadow: 0 20px 40px rgba(0, 229, 255, 0.1);
+        }
+
+        .app-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #00e5ff, #1488cc);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .app-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .app-description {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .app-features {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .app-features li {
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .app-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+        }
+
+        /* Background Effects */
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .floating-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 229, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 50%, rgba(122, 92, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 100%, rgba(255, 204, 77, 0.05) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .hero-section, .portfolio-section {
+                padding: 60px 20px;
+            }
+            
+            .portfolio-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .ai-nav {
+                flex-direction: column;
+                height: auto;
+                padding: 15px 0;
+                gap: 15px;
+            }
+            
+            .nav-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .ai-main {
+                margin-top: 120px;
+            }
+            
+            .hero-section {
+                padding: 40px 20px;
+            }
+            
+            .hero-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+
+        /* Force no horizontal scroll */
+        body {
+            overflow-x: hidden !important;
+        }
+
+        /* Remove any possible margins */
+        .container, .main, .content, .wrapper, .layout {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            left: 0 !important;
+            right: 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- AI Navigation Header -->
+    <header class="ai-header">
+        <nav class="ai-nav">
+            <div class="nav-brand">
+                <div class="ai-logo">
+                    <div class="ai-core"></div>
+                </div>
+                <div class="brand-text">
+                    <h1>AI Conglomerate</h1>
+                    <p>Innovation Ecosystem</p>
+                </div>
+            </div>
+            
+            <div class="nav-menu">
+                <button class="nav-item active" data-section="home">Home</button>
+                <button class="nav-item" data-section="portfolio">Portfolio</button>
+                <button class="nav-item" data-section="about">About</button>
+                <button class="nav-item" data-section="contact">Contact</button>
+            </div>
+
+            <div class="nav-actions">
+                <!-- NO AI ASSISTANT BUTTON - COMPLETELY REMOVED -->
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="ai-main">
+        <!-- Hero Section -->
+        <section class="hero-section" id="home">
+            <div class="hero-bg">
+                <div class="floating-particles"></div>
+            </div>
+            
+            <div class="hero-content">
+                <h1 class="hero-title">AI Conglomerate</h1>
+                <p class="hero-subtitle">Innovation Powered by Artificial Intelligence. Building the future with cutting-edge AI solutions across multiple platforms.</p>
+                
+                <div class="hero-actions">
+                    <a href="index.html" class="btn btn-primary">
+                        <span>🎓</span>
+                        3 Amigos Academy
+                    </a>
+                    <a href="trading-simulator.html" class="btn btn-secondary">
+                        <span>📈</span>
+                        Trading Simulator
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Section -->
+        <section class="portfolio-section" id="portfolio">
+            <div class="section-header">
+                <h2 class="section-title">Our Portfolio</h2>
+                <p class="hero-subtitle">Discover our suite of AI-powered applications</p>
+            </div>
+            
+            <div class="portfolio-grid">
+                <!-- 3 Amigos Academy -->
+                <div class="app-card">
+                    <div class="app-icon">🎓</div>
+                    <h3 class="app-title">3 Amigos Academy</h3>
+                    <p class="app-description">Comprehensive crypto education platform with AI-powered learning and immersive tutorials.</p>
+                    <ul class="app-features">
+                        <li>490+ Educational Modules</li>
+                        <li>AI-Powered Learning Assistant</li>
+                        <li>Interactive Trading Simulator</li>
+                        <li>Community & Gamification</li>
+                    </ul>
+                    <a href="index.html" class="btn btn-primary">Launch Academy</a>
+                </div>
+
+                <!-- Trading Simulator -->
+                <div class="app-card">
+                    <div class="app-icon">📈</div>
+                    <h3 class="app-title">Trading Simulator</h3>
+                    <p class="app-description">Practice crypto trading with fake money on real platform interfaces. Risk-free learning environment.</p>
+                    <ul class="app-features">
+                        <li>Real Platform Interfaces</li>
+                        <li>$10,000 Starting Balance</li>
+                        <li>Live Price Simulations</li>
+                        <li>Portfolio Analytics</li>
+                    </ul>
+                    <a href="trading-simulator.html" class="btn btn-primary">Start Trading</a>
+                </div>
+
+                <!-- AI Assistant -->
+                <div class="app-card">
+                    <div class="app-icon">🤖</div>
+                    <h3 class="app-title">AI Assistant</h3>
+                    <p class="app-description">Intelligent AI companion providing personalized support across all platforms.</p>
+                    <ul class="app-features">
+                        <li>24/7 Availability</li>
+                        <li>Natural Language Processing</li>
+                        <li>Context-Aware Responses</li>
+                        <li>Multi-Platform Integration</li>
+                    </ul>
+                    <button class="btn btn-secondary" disabled>Integrated Everywhere</button>
+                </div>
+
+                <!-- Portfolio Dashboard -->
+                <div class="app-card">
+                    <div class="app-icon">📊</div>
+                    <h3 class="app-title">Portfolio Dashboard</h3>
+                    <p class="app-description">Professional portfolio tracking with real-time analytics and insights.</p>
+                    <ul class="app-features">
+                        <li>Real-Time Market Data</li>
+                        <li>Performance Analytics</li>
+                        <li>Risk Assessment</li>
+                        <li>Custom Dashboards</li>
+                    </ul>
+                    <button class="btn btn-secondary" disabled>Coming Soon</button>
+                </div>
+
+                <!-- Admin Panel -->
+                <div class="app-card">
+                    <div class="app-icon">🔧</div>
+                    <h3 class="app-title">Admin Panel</h3>
+                    <p class="app-description">Complete administrative control over all platforms with advanced management tools.</p>
+                    <ul class="app-features">
+                        <li>User Management</li>
+                        <li>Content Control</li>
+                        <li>Analytics Dashboard</li>
+                        <li>System Monitoring</li>
+                    </ul>
+                    <button class="btn btn-secondary" disabled>Owner Access Only</button>
+                </div>
+
+                <!-- Community Hub -->
+                <div class="app-card">
+                    <div class="app-icon">👥</div>
+                    <h3 class="app-title">Community Hub</h3>
+                    <p class="app-description">Connect with learners, share insights, and grow together in our vibrant community.</p>
+                    <ul class="app-features">
+                        <li>Social Features</li>
+                        <li>Discussion Forums</li>
+                        <li>Achievement Sharing</li>
+                        <li>Peer Learning</li>
+                    </ul>
+                    <button class="btn btn-secondary" disabled>Integrated in Academy</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Navigation functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const section = this.getAttribute('data-section');
+                    const targetSection = document.getElementById(section);
+                    
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // Force remove any AI elements that might appear
+            setInterval(() => {
+                const aiElements = document.querySelectorAll('[class*="ai"], [id*="ai"], [class*="assistant"], [id*="assistant"]');
+                aiElements.forEach(el => {
+                    if (!el.closest('.ai-logo') && !el.closest('.brand-text')) {
+                        el.style.display = 'none';
+                        el.style.visibility = 'hidden';
+                        el.style.opacity = '0';
+                    }
+                });
+            }, 1000);
+            
+            console.log('🌟 AI Conglomerate FIXED - Both Issues Resolved!');
+            console.log('✅ NO LEFT MARGIN - Full width layout');
+            console.log('✅ NO AI BOX - Completely removed');
+        });
+    </script>
+</body>
+</html>

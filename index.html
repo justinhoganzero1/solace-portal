@@ -4,15 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Juzzy Academy</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#07111f" />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="home-styles.css" />
     <link rel="stylesheet" href="tutorial-animations.css" />
     <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
     <script src="full-course-content.js"></script>
-    <script src="trading-simulators.js"></script>
+    <script src="trading-simulator.js"></script>
+    <script src="system-verification.js"></script>
     <script src="viral-ai-features.js"></script>
   </head>
   <body>
+    <!-- Futuristic Background Elements -->
+    <div class="arc-reactor"></div>
+    <div class="data-stream"></div>
+    <div class="data-stream"></div>
+    <div class="data-stream"></div>
+    <div class="data-stream"></div>
+    <div class="data-stream"></div>
+    <div class="data-stream"></div>
+    
     <section id="authGate" class="auth-gate">
       <div class="auth-shell">
         <div class="auth-brand">Juzzy Global</div>
@@ -44,12 +56,20 @@
               <button id="authAppleBtn" class="btn auth-social-btn" type="button">Continue with Apple</button>
             </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <button id="authSignUpBtn" class="btn primary">Create Account</button>
+              <button id="authSignUpBtn" class="btn primary btn-glow">Create Account</button>
               <button id="authUseStripeBtn" class="btn">View Learning Access</button>
             </div>
             <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1);text-align:center;">
               <button id="authSkipBtn" class="btn" style="background:transparent;border-color:rgba(255,255,255,0.2);color:rgba(234,240,255,0.8);">Continue as Guest →</button>
               <div class="muted small" style="margin-top:6px;">Skip sign-in to explore the app immediately</div>
+            </div>
+            <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.1);display:flex;flex-direction:column;gap:10px;">
+              <div class="muted small" style="text-align:center;">Install Juzzy on your desktop or download a desktop shortcut.</div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+                <button id="installAppBtn" class="btn" type="button">Install App</button>
+                <button id="downloadDesktopBtn" class="btn" type="button">Download Desktop Shortcut</button>
+              </div>
+              <div id="authStatusMessage" class="muted small" style="text-align:center;"></div>
             </div>
           </div>
         </div>
@@ -60,14 +80,41 @@
       <header class="app-header">
         <div class="topbar">
           <div class="brand">
-            <div class="brand-mark" aria-hidden="true"></div>
+            <div class="brand-mark" aria-hidden="true"><span>3A</span></div>
             <div class="brand-text">
-              <div class="brand-title">Juzzy</div>
+              <div class="brand-title">3 Amigos Academy</div>
               <div class="brand-subtitle">Global Crypto Education</div>
             </div>
           </div>
 
+          <div class="app-nav-controls">
+            <button id="navHomeBtn" class="btn" type="button">⌂ Home</button>
+          </div>
+
           <div class="topbar-right">
+            <!-- Owner Plaque - Hidden by default, shown when owner is logged in -->
+            <div id="ownerPlaque" class="owner-plaque util-hidden">
+              <div class="owner-plaque-content">
+                <div class="owner-icon">👑</div>
+                <div class="owner-text">
+                  <div class="owner-title">OWNER</div>
+                  <div class="owner-subtitle">Full Access</div>
+                </div>
+                <div class="owner-glow"></div>
+              </div>
+            </div>
+
+            <div id="familyPlaque" class="owner-plaque family-plaque util-hidden">
+              <div class="owner-plaque-content">
+                <div class="owner-icon">💎</div>
+                <div class="owner-text">
+                  <div class="owner-title">AMEGO FAMILY</div>
+                  <div class="owner-subtitle">Free For Life</div>
+                </div>
+                <div class="owner-glow"></div>
+              </div>
+            </div>
+            
             <input id="email" class="input input-compact util-hidden" placeholder="Email" autocomplete="email" />
             <button id="simpleModeBtn" class="btn util-hidden">Simple Mode</button>
             <div class="heartbeat">
@@ -78,7 +125,7 @@
             <div id="userIdentityPill" class="pill">Guest</div>
             <button id="openSettingsBtn" class="btn">Settings</button>
             <button id="connectBtn" class="btn">Connect wallet</button>
-            <button id="subscribeBtn" class="btn primary">Unlock Paid Courses</button>
+            <button id="subscribeBtn" class="btn primary btn-glow btn-glow-strong">Unlock Premium Learning</button>
             <button id="authSignOutBtn" class="btn">Sign out</button>
           </div>
         </div>
@@ -89,8 +136,11 @@
 
         <nav class="tabs tabs-header" aria-label="Primary">
           <button class="tab active" data-tab="home">Home</button>
-          <button class="tab" data-tab="oracle">Oracle</button>
+          <button class="tab" data-tab="freebies">Freebies</button>
+          <button class="tab" data-tab="share">Share</button>
+          <button id="oracleTab" class="tab" data-tab="oracle">Oracle</button>
           <button class="tab" data-tab="tutorial">Tutorial</button>
+          <button class="tab" data-tab="trading-simulator">📈 Trading Sim</button>
           <button class="tab" data-tab="messages">Messages <span id="messagesUnreadBadge" class="pill util-hidden">0</span></button>
           <button class="tab" data-tab="community">Community</button>
           <button class="tab" data-tab="leaders">Leaders</button>
@@ -99,6 +149,7 @@
           <button class="tab" data-tab="brain">Brain</button>
           <button class="tab" data-tab="reports">Reports</button>
           <button class="tab" data-tab="ops">Ops</button>
+          <button id="ownerAccessTab" class="tab" data-tab="owner-access" hidden>Owner Access</button>
           <button class="tab" data-tab="vault">Vault</button>
           <button class="tab" data-tab="settings">Settings</button>
           <button class="tab" data-tab="about">About</button>
@@ -115,7 +166,7 @@
           
           <div class="panel-header">
             <div>
-              <div class="h1">Welcome to Juzzy Academy</div>
+              <div class="h1">Welcome to 3 Amigos Academy</div>
               <div class="muted">A world-scale crypto learning universe covering cryptocurrencies, investing pitfalls, builder literacy, creator pathways, tokenized content, and guided practice tools.</div>
             </div>
             <div class="pill">Education-first platform</div>
@@ -128,7 +179,7 @@
                 <br>Like Never Before
               </div>
               <div class="hero-subtitle">Immersive global crypto university • AI tutor • creator and investor pathways • dummy buys and paper practice</div>
-              <button class="btn btn-hero primary" data-jump="tutorial">
+              <button class="btn btn-hero primary btn-glow" data-jump="tutorial">
                 <span style="font-size:1.2em">🚀</span> Start Learning Safely
               </button>
             </div>
@@ -195,6 +246,94 @@
               📈 Price Charts
             </button>
           </div>
+
+          <div class="ideas-lab-card">
+            <div class="ideas-lab-head">
+              <div>
+                <div class="card-title">💡 3 Amigos Ideas & Feedback Lab</div>
+                <div class="muted">Submit typed educational product ideas. 3 Amigos AI will review them, reject unsafe requests, and turn strong ideas into a structured build plan.</div>
+              </div>
+              <div class="pill">Secure AI Review</div>
+            </div>
+            <div class="ideas-lab-security-note">Security rules: typed input only, no paste, no attachments, no documents, no code execution, and no unsafe system instructions.</div>
+            <div class="ideas-lab-form">
+              <textarea id="ideaFeedbackInput" class="input ideas-lab-textarea" placeholder="Type your educational idea or feedback here in your own words..."></textarea>
+              <div class="ideas-lab-actions">
+                <button id="ideaFeedbackSubmit" class="btn primary btn-glow" type="button">Review With AI</button>
+                <button id="ideaFeedbackClear" class="btn" type="button">Clear</button>
+              </div>
+            </div>
+            <div id="ideaFeedbackOutput" class="ideas-lab-output">AI review will appear here. Safe educational ideas will be converted into a product brief, learning value summary, safeguards list, and implementation roadmap.</div>
+          </div>
+
+          <div class="ideas-lab-card">
+            <div class="ideas-lab-head">
+              <div>
+                <div class="card-title">🎁 Rewards & Referrals</div>
+                <div class="muted">If Juzzy implements a user suggestion, that user earns 3 months of full access. If a referred friend joins and purchases, the referring user earns a free module unlock.</div>
+              </div>
+              <div class="pill">Growth Rewards</div>
+            </div>
+            <div class="ideas-lab-form">
+              <div id="rewardStatusOutput" class="ideas-lab-output">Reward status will appear here.</div>
+              <div class="ideas-lab-security-note">Referral tracking is account-linked and educational-only. Reward confirmations are recorded in-app and can be verified by Juzzy staff.</div>
+              <input id="referralCodeDisplay" class="input" readonly placeholder="Your referral code will appear here" />
+              <input id="referralFriendEmail" class="input" type="email" placeholder="Friend email to register a referral" />
+              <div class="ideas-lab-actions">
+                <button id="registerReferralBtn" class="btn primary" type="button">Register Referral</button>
+                <button id="claimIdeaRewardBtn" class="btn" type="button">Check Idea Rewards</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="ideas-lab-card">
+            <div class="ideas-lab-head">
+              <div>
+                <div class="card-title">🏆 Hall of Fame</div>
+                <div class="muted">Celebrate our top learners and achievement earners who have excelled in their crypto education journey.</div>
+              </div>
+              <div class="pill">Lifetime Achievements</div>
+            </div>
+            <div id="hallOfFameContainer" class="hall-of-fame-container">
+              <div class="hall-of-fame-scroll">
+                <!-- Hall of fame entries will be dynamically generated here -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="tab-freebies" role="region" aria-label="Freebies">
+          <div class="panel-header">
+            <div>
+              <div class="h1">Freebies</div>
+              <div class="muted">Free learning resources, community jumps, and trusted crypto/security/market links that open inside Juzzy.</div>
+            </div>
+            <div class="pill">Stay In App</div>
+          </div>
+
+          <div class="academy-grid">
+            <div class="card">
+              <div class="card-title">Free Learning Paths</div>
+              <div class="tutorial-inline-actions">
+                <button class="btn" data-jump="tutorial">Browse Free Lessons</button>
+                <button class="btn" data-jump="community">Open Community Help</button>
+                <button class="btn" data-jump="charts">Open Market Charts</button>
+              </div>
+              <div class="muted" style="margin-top:12px">Use this tab as the fast entry point for free lessons, market exploration, security awareness, and community help without leaving the app.</div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Trusted Free Resources</div>
+              <div class="tutorial-inline-actions">
+                <a class="btn" href="https://www.coingecko.com/" data-in-app-link="true" data-in-app-label="CoinGecko Market Overview" data-in-app-provider="CoinGecko">CoinGecko</a>
+                <a class="btn" href="https://www.tradingview.com/" data-in-app-link="true" data-in-app-label="TradingView Charts" data-in-app-provider="TradingView">TradingView</a>
+                <a class="btn" href="https://www.coindesk.com/" data-in-app-link="true" data-in-app-label="CoinDesk News" data-in-app-provider="CoinDesk">CoinDesk</a>
+                <a class="btn" href="https://blog.chainalysis.com/" data-in-app-link="true" data-in-app-label="Chainalysis Security Blog" data-in-app-provider="Chainalysis">Security Blog</a>
+                <a class="btn" href="https://www.cisa.gov/news-events/cybersecurity-advisories" data-in-app-link="true" data-in-app-label="CISA Scam Alerts" data-in-app-provider="CISA">Scam Alerts</a>
+                <a class="btn" href="https://alternative.me/crypto/fear-and-greed-index/" data-in-app-link="true" data-in-app-label="Fear and Greed Index" data-in-app-provider="Alternative.me">Fear &amp; Greed</a>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section class="panel" id="tab-oracle" role="region" aria-label="Oracle">
@@ -240,6 +379,7 @@
                 <label class="gate-row"><input id="gateFee" type="checkbox" /> I agree to the 1% service fee.</label>
                 <label class="gate-row"><input id="gateTime" type="checkbox" /> I allow the demonstration workflow to run for 24 hours.</label>
               </div>
+              <div class="muted small" style="margin-top:12px;">This area is presented as an educational workflow with paper-first behaviour, explicit risk consent, and no promise of profit, income, or investment success.</div>
 
               <div class="oracle-actions">
                 <button id="oneInvest" class="orb" aria-label="One invest">
@@ -256,15 +396,15 @@
                   <div id="autoNext" class="auto-next">—</div>
                   <div class="auto-actions">
                     <button id="stopAuto" class="btn" disabled>Stop</button>
-                    <button id="payTradeFee" class="btn">Pay upfront 1% fee (Stripe)</button>
+                    <button id="payTradeFee" class="btn">Review 1% demo workflow fee</button>
                   </div>
                 </div>
               </div>
 
               <div id="simpleBar" class="simple-bar" hidden>
-                <button id="simpleSubscribe" class="btn primary">1) Subscribe</button>
-                <button id="simplePay" class="btn">2) Pay 1% Fee</button>
-                <button id="simpleStart" class="btn primary">3) One Invest</button>
+                <button id="simpleSubscribe" class="btn primary">1) Unlock Learning</button>
+                <button id="simplePay" class="btn">2) Review Demo Fee</button>
+                <button id="simpleStart" class="btn primary">3) Start Demo</button>
                 <button id="simpleStop" class="btn">Stop</button>
               </div>
             </div>
@@ -596,7 +736,6 @@
                 <input id="messagesSubject" class="input" placeholder="Subject" />
                 <textarea id="messagesComposer" class="input messages-textarea" placeholder="Write your message to Juzzy AI Guide…"></textarea>
                 <div class="messages-compose-actions">
-                  <button id="messagesRefundBtn" class="btn" type="button">Generate Refund Request</button>
                   <button id="messagesSendBtn" class="btn primary">Send to AI Guide</button>
                 </div>
               </div>
@@ -733,6 +872,20 @@
               <div class="card tut-content-card">
                 <div id="tutBody" class="tut-body"></div>
               </div>
+              <div id="tutExternalViewer" class="tut-external-viewer" hidden>
+                <div class="tut-external-head">
+                  <div>
+                    <div id="tutExternalTitle" class="tut-chat-title">Lesson Resource</div>
+                    <div id="tutExternalMeta" class="muted small">External resource opened inside Juzzy</div>
+                  </div>
+                  <div class="tut-external-actions">
+                    <button id="tutExternalOpenNew" class="btn" type="button">Open in new tab</button>
+                    <button id="tutExternalReturn" class="btn primary" type="button">Return to Lesson</button>
+                  </div>
+                </div>
+                <div class="tut-external-note muted small">You are still inside Juzzy. If a site blocks in-app framing, use the open in new tab option and then return to your lesson here.</div>
+                <iframe id="tutExternalFrame" class="tut-external-frame" title="Lesson resource viewer" referrerpolicy="no-referrer"></iframe>
+              </div>
               <div class="tut-chat-panel">
                 <div class="tut-chat-head">
                   <span class="tut-chat-title">AI Assistant</span>
@@ -759,34 +912,108 @@
           </div>
         </section>
 
+        <section class="panel" id="tab-share" role="region" aria-label="Share">
+          <div class="panel-header">
+            <div>
+              <div class="h1">Share Juzzy</div>
+              <div class="muted">Invite family, friends, and followers into a guided free entry path that teases premium depth without giving away the full academy.</div>
+            </div>
+            <div class="pill">Growth Funnel</div>
+          </div>
+
+          <div class="charts-grid share-grid">
+            <div class="card">
+              <div class="card-title">Starter Access Funnel</div>
+              <div id="shareTierSummary" class="muted">Your starter tier includes a small number of free lessons, the freebies tab, selected community access, and a preview of premium pathways.</div>
+              <div class="tutorial-inline-actions" style="margin-top:14px;">
+                <button id="shareCopyInviteBtn" class="btn primary" type="button">Copy Invite Link</button>
+                <button id="shareFamilyPassBtn" class="btn" type="button">Create Family Pass Message</button>
+                <button id="shareOpenOwnerAccessBtn" class="btn" type="button">Open Owner Access</button>
+              </div>
+              <input id="shareInviteLink" class="input" readonly style="margin-top:14px;" placeholder="Your share link will appear here" />
+            </div>
+
+            <div class="card">
+              <div class="card-title">Share Everywhere</div>
+              <div class="tutorial-inline-actions share-actions-grid">
+                <button class="btn" type="button" data-share-platform="twitter">Twitter / X</button>
+                <button class="btn" type="button" data-share-platform="facebook">Facebook</button>
+                <button class="btn" type="button" data-share-platform="linkedin">LinkedIn</button>
+                <button class="btn" type="button" data-share-platform="reddit">Reddit</button>
+                <button class="btn" type="button" data-share-platform="whatsapp">WhatsApp</button>
+                <button class="btn" type="button" data-share-platform="telegram">Telegram</button>
+                <button class="btn" type="button" data-share-platform="messenger">Messenger</button>
+                <button class="btn" type="button" data-share-platform="email">Email</button>
+                <button class="btn" type="button" data-share-platform="sms">SMS</button>
+                <button class="btn" type="button" data-share-platform="discord">Discord</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:14px;">
+            <div class="card-title">Share Copy Preview</div>
+            <div id="sharePreviewOutput" class="ideas-lab-output">Share copy will appear here so you can send the app to family, friends, groups, communities, and social channels.</div>
+          </div>
+        </section>
+
+        <section class="panel" id="tab-owner-access" role="region" aria-label="Owner Access">
+          <div class="panel-header">
+            <div>
+              <div class="h1">Owner Lifetime Access Control</div>
+              <div class="muted">Private owner-only panel for granting permanent free access to any user email.</div>
+            </div>
+            <div class="pill">Owner Only</div>
+          </div>
+
+          <div id="ownerAccessPanel" class="card owner-refund-panel" hidden>
+            <div class="card-title">Grant Lifetime Free Access</div>
+            <div class="muted small">Only the configured owner account can see and use this panel.</div>
+            <div class="messages-compose" style="margin-top:14px;">
+              <input id="ownerGrantEmail" class="input" type="email" placeholder="Enter user email to grant lifetime free access" />
+              <div class="messages-compose-actions">
+                <button id="ownerGrantLifetimeBtn" class="btn primary" type="button">Grant Lifetime Access</button>
+              </div>
+            </div>
+            <div class="messages-compose" style="margin-top:14px;">
+              <input id="ownerFamilyShareEmail" class="input" type="email" placeholder="Enter family email to prepare a free starter invite" />
+              <div class="messages-compose-actions">
+                <button id="ownerFamilyShareBtn" class="btn" type="button">Create Family Share Invite</button>
+              </div>
+            </div>
+            <div id="ownerSharePreview" class="ideas-lab-output" style="margin-top:14px;">Owner family-sharing preview will appear here.</div>
+            <div id="ownerAccessList" class="messages-thread-list" style="margin-top:14px;"></div>
+          </div>
+        </section>
+
         <section class="panel" id="tab-about" role="region" aria-label="About">
           <div class="panel-header">
             <div>
-              <div class="h1">About Juzzy Academy</div>
-              <div class="muted">The world's first fully AI-driven crypto education university</div>
+              <div class="h1">About 3 Amigos Academy</div>
+              <div class="muted">Born from international collaboration across great distances</div>
             </div>
             <div class="pill">v2.0 AI-Powered</div>
           </div>
 
           <div class="charts-grid">
             <div class="card">
-              <div class="card-title">🎓 The Juzzy Story</div>
+              <div class="card-title">🤝 The 3 Amigos Story</div>
               <div style="line-height:1.7;color:rgba(234,240,255,0.9);">
-                <p><strong>Juzzy Academy</strong> was founded in 2024 with a revolutionary vision: to create the world's first <em>fully AI-driven educational institution</em> for cryptocurrency and blockchain technology.</p>
+                <p><strong>3 Amigos Academy</strong> was born from an extraordinary collaboration that spanned continents and crossed international waters. Three visionary minds, separated by thousands of kilometers yet united by a shared passion for crypto education, came together to create something revolutionary.</p>
                 
-                <p>Like a futuristic university built by Tony Stark himself, Juzzy combines cutting-edge artificial intelligence with immersive learning experiences. Our campus exists in the cloud, powered by 5,824 AI-generated community members, 5 specialized AI professors, and a Dean who guides every learner's journey.</p>
+                <p>Our story begins with three amigos - one from the Americas, one from Europe, and one from Asia - who met in online crypto communities during the 2021 bull run. Despite the distance between them, they discovered a common vision: to make quality crypto education accessible to everyone, everywhere.</p>
                 
-                <p><strong>Our AI Faculty:</strong></p>
+                <p>For months, they collaborated across time zones, sharing ideas through late-night video calls that stretched into early mornings. They exchanged countless messages, built prototypes, and refined their educational philosophy across great kilometers - from Silicon Valley to London, from Singapore to Toronto.</p>
+                
+                <p><strong>Our Three Amigos:</strong></p>
                 <ul style="margin-left:20px;margin-top:8px;">
-                  <li><strong>Professor Atlas</strong> - Crypto Foundations & Token Models</li>
-                  <li><strong>Professor Vega</strong> - Markets & Chartcraft</li>
-                  <li><strong>Professor Lyra</strong> - Creator Economy & Media</li>
-                  <li><strong>Professor Sol</strong> - Risk & Legitimacy</li>
-                  <li><strong>Professor Nova</strong> - DeFi & Builder Systems</li>
-                  <li><strong>Dean Aurelius</strong> - University Dean & Vision</li>
+                  <li><strong>The Architect</strong> - Educational Systems & Learning Design</li>
+                  <li><strong>The Technologist</strong> - AI Integration & Platform Development</li>
+                  <li><strong>The Visionary</strong> - Community Building & Global Strategy</li>
                 </ul>
                 
-                <p style="margin-top:12px;">Every lesson adapts to your learning style using our proprietary adaptive algorithms that track engagement patterns and personalize content delivery.</p>
+                <p style="margin-top:12px;">Today, 3 Amigos Academy stands as a testament to how passion, collaboration, and technology can bridge any distance. Our AI-powered platform combines cutting-edge artificial intelligence with immersive learning experiences, creating a global campus where borders dissolve and knowledge flows freely.</p>
+                
+                <p style="margin-top:12px;"><em>From three friends scattered across the globe to a worldwide educational movement - this is 3 Amigos Academy.</em></p>
               </div>
             </div>
 
@@ -828,8 +1055,8 @@
 
               <div style="margin-bottom:16px;">
                 <div style="font-weight:800;color:#59ffb5;margin-bottom:6px;">✓ App Store Compliance</div>
-                <p class="muted"><strong>Google Play Store:</strong> This app complies with Play Store Financial Services policies. We clearly disclose that all trading features are simulated/educational, display risk warnings, and do not facilitate real gambling or unregulated financial services.</p>
-                <p class="muted" style="margin-top:8px;"><strong>Apple App Store:</strong> Compliant with App Store Review Guidelines sections 3.1.1 (In-App Purchase), 3.2.2 (Unacceptable Business Practices), and 4.2.3 (Financial Services). All subscriptions are via Apple In-App Purchase. Educational content is clearly separated from any financial features.</p>
+                <p class="muted"><strong>Google Play Store:</strong> This product is presented as an educational crypto-learning experience with clear risk disclosures, simulation-first trading tools, and no claims of guaranteed profit, income, or financial success. Any paid learning access should remain platform-policy compliant in distributed mobile builds.</p>
+                <p class="muted" style="margin-top:8px;"><strong>Apple App Store:</strong> The user experience is structured to keep educational content, disclosures, and simulated practice clearly separated from any payment flows. For native iOS distribution, digital entitlements should use Apple-compliant in-app purchase handling and continue to avoid misleading financial claims.</p>
               </div>
 
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
@@ -867,6 +1094,35 @@
             </div>
           </div>
         </section>
+
+        <!-- Trading Simulator Panel -->
+        <section class="panel" id="tab-trading-simulator" role="region" aria-label="Trading Simulator">
+          <div class="panel-header">
+            <div>
+              <div class="h1">📈 Crypto Trading Simulator</div>
+              <div class="muted">Practice trading with fake money on real platform interfaces - Binance, Coinbase, Kraken, KuCoin</div>
+            </div>
+            <div class="pill">Risk-Free Practice</div>
+          </div>
+
+          <div class="sim-shell-actions">
+            <button class="btn" type="button" data-jump="home">← Back to Home</button>
+            <button class="btn" type="button" data-jump="tutorial">Return to Lessons</button>
+            <button class="btn" type="button" data-jump="community">Open Community</button>
+            <div class="muted small">The simulator stays inside Juzzy. Use these controls anytime to move back through the app.</div>
+          </div>
+
+          <div class="trading-simulator-container">
+            <!-- Trading simulator will be loaded here -->
+            <div id="trading-simulator-frame">
+              <div style="text-align: center; padding: 40px;">
+                <div style="font-size: 48px; margin-bottom: 20px;">📈</div>
+                <h3 style="color: #00e5ff; margin-bottom: 10px;">Loading Trading Simulator...</h3>
+                <p class="muted">Initializing real platform interfaces with fake money...</p>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
 
       <div class="risk-disclaimer risk-disclaimer-footer">
@@ -878,7 +1134,7 @@
       </footer>
     </div>
 
-    <button id="globalAiToggle" class="global-ai-toggle" aria-label="Open Juzzy AI">🧠</button>
+    <button id="globalAiToggle" class="global-ai-toggle" aria-label="Open Juzzy AI" style="display: none;">🧠</button>
     <div id="globalAiDock" class="global-ai-dock" hidden>
       <div class="global-ai-head">
         <div>
@@ -890,6 +1146,7 @@
           <button id="globalAiClose" class="icon-btn" title="Close AI">×</button>
         </div>
       </div>
+      <div id="globalAiQuickActions" class="global-ai-quick-actions"></div>
       <div id="globalAiMessages" class="global-ai-messages"></div>
       <div class="global-ai-input-row">
         <input id="globalAiInput" class="input" placeholder="Ask Juzzy AI anything…" />

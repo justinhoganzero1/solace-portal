@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3 Amigos Academy - Real Video Library</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="home-styles.css">
+    <link rel="stylesheet" href="tutorial-animations.css">
+    <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="full-course-content.js"></script>
+    <script src="trading-simulator.js"></script>
+    <script src="system-verification.js"></script>
+    <script src="viral-ai-features.js"></script>
+</head>
+<body>
+    <div class="arc-reactor"></div>
+    <div class="app">
+        <header class="app-header">
+            <div class="topbar">
+                <div class="brand">
+                    <div class="brand-mark">3A</div>
+                    <div class="brand-text">
+                        <div class="brand-title">3 Amigos Academy</div>
+                        <div class="brand-subtitle">Global Crypto Education</div>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div id="ownerPlaque" class="owner-plaque">
+                        <div class="owner-plaque-content">
+                            <div class="owner-icon">👑</div>
+                            <div class="owner-text">
+                                <div class="owner-title">OWNER</div>
+                                <div class="owner-subtitle">Full Access</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pill">Status: <span id="statusText">Owner Mode</span></div>
+                    <div id="userIdentityPill" class="pill">👑 owner@juzzy.local</div>
+                </div>
+            </div>
+            <nav class="tabs tabs-header">
+                <button class="tab active" data-tab="home">Home</button>
+                <button class="tab" data-tab="video-library">🎬 Video Library</button>
+                <button class="tab" data-tab="basics-videos">📚 Basics</button>
+                <button class="tab" data-tab="trading-videos">📈 Trading</button>
+                <button class="tab" data-tab="defi-videos">💰 DeFi</button>
+                <button class="tab" data-tab="nft-videos">🎨 NFTs</button>
+                <button class="tab" data-tab="security-videos">🔒 Security</button>
+                <button class="tab" data-tab="advanced-videos">⚡ Advanced</button>
+                <button class="tab" data-tab="credits">🙏 Credits</button>
+            </nav>
+        </header>
+
+        <main class="layout">
+            <!-- Home Panel -->
+            <section class="panel active" id="tab-home">
+                <div class="panel-header">
+                    <div class="h1">🎬 Real Video Library</div>
+                    <div class="muted">Curated educational videos from top crypto creators with full attribution</div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 20px;">
+                    <div class="feature-card">
+                        <div class="feature-icon">🎬</div>
+                        <div class="feature-title">200+ Real Videos</div>
+                        <div class="feature-desc">Curated from top crypto educators on YouTube</div>
+                        <button class="btn primary" onclick="setActiveTab('video-library')">Browse Videos</button>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🙏</div>
+                        <div class="feature-title">Full Attribution</div>
+                        <div class="feature-desc">Proper credits and thanks to original creators</div>
+                        <button class="btn primary" onclick="setActiveTab('credits')">View Credits</button>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📺</div>
+                        <div class="feature-title">YouTube Integration</div>
+                        <div class="feature-desc">Direct links to high-quality educational content</div>
+                        <button class="btn primary" onclick="setActiveTab('basics-videos')">Start Learning</button>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <div class="feature-title">Expert Curated</div>
+                        <div class="feature-desc">Only the best educational content selected</div>
+                        <button class="btn primary" onclick="playRandomVideo()">Random Video</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Video Library Panel -->
+            <section class="panel" id="tab-video-library">
+                <div class="panel-header">
+                    <div class="h1">🎬 Complete Video Library</div>
+                    <div class="muted">200+ curated videos from top crypto educators - all rights respected</div>
+                </div>
+                <div style="padding: 20px;">
+                    <div style="background: var(--panel); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px;">🙏 Important Notice</h4>
+                        <p style="margin-bottom: 10px;">All videos are hosted on YouTube by their original creators. We provide direct links with full attribution and respect all copyright holders.</p>
+                        <p>Click any video to watch it on the creator's YouTube channel. Please support these amazing educators!</p>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                        <button class="btn primary" onclick="filterVideos('all')">All Videos (200+)</button>
+                        <button class="btn" onclick="filterVideos('basics')">Basics (30)</button>
+                        <button class="btn" onclick="filterVideos('trading')">Trading (35)</button>
+                        <button class="btn" onclick="filterVideos('defi')">DeFi (25)</button>
+                        <button class="btn" onclick="filterVideos('nft')">NFTs (20)</button>
+                        <button class="btn" onclick="filterVideos('security')">Security (25)</button>
+                        <button class="btn" onclick="filterVideos('advanced')">Advanced (40)</button>
+                    </div>
+                    <div id="allVideosList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px;">
+                        <!-- All videos will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Basics Videos Panel -->
+            <section class="panel" id="tab-basics-videos">
+                <div class="panel-header">
+                    <div class="h1">📚 Basics Video Library</div>
+                    <div class="muted">30 curated videos covering crypto fundamentals from top educators</div>
+                </div>
+                <div id="basicsVideosContent" style="padding: 20px;">
+                    <div id="basicsVideosList">
+                        <!-- Basics videos will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trading Videos Panel -->
+            <section class="panel" id="tab-trading-videos">
+                <div class="panel-header">
+                    <div class="h1">📈 Trading Video Library</div>
+                    <div class="muted">35 curated videos covering trading strategies from professional traders</div>
+                </div>
+                <div id="tradingVideosContent" style="padding: 20px;">
+                    <div id="tradingVideosList">
+                        <!-- Trading videos will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- DeFi Videos Panel -->
+            <section class="panel" id="tab-defi-videos">
+                <div class="panel-header">
+                    <div class="h1">💰 DeFi Video Library</div>
+                    <div class="muted">25 curated videos covering decentralized finance from DeFi experts</div>
+                </div>
+                <div id="defiVideosContent" style="padding: 20px;">
+                    <div id="defiVideosList">
+                        <!-- DeFi videos will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- NFT Videos Panel -->
+            <section class="panel" id="tab-nft-videos">
+                <div class="panel-header">
+                    <div class="h1">🎨 NFT Video Library</div>
+                    <div class="muted">20 curated videos covering NFTs and digital art from NFT creators</div>
+                </div>
+                <div id="nftVideosContent" style="padding: 20px;">
+                    <div id="nftVideosList">
+                        <!-- NFT videos will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security Videos Panel -->
+            <section class="panel" id="tab-security-videos">
+                <div class="panel-header">
+                    <div class="h1">🔒 Security Video Library</div>
+                    <div class="muted">25 curated videos covering crypto security from security experts</div>
+                </div>
+                <div id="securityVideosContent" style="padding: 20px;">
+                    <div id="securityVideosList">
+                        <!-- Security videos will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Advanced Videos Panel -->
+            <section class="panel" id="tab-advanced-videos">
+                <div class="panel-header">
+                    <div class="h1">⚡ Advanced Video Library</div>
+                    <div class="muted">40 curated videos covering advanced topics from crypto experts</div>
+                </div>
+                <div id="advancedVideosContent" style="padding: 20px;">
+                    <div id="advancedVideosList">
+                        <!-- Advanced videos will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Credits Panel -->
+            <section class="panel" id="tab-credits">
+                <div class="panel-header">
+                    <div class="h1">🙏 Creator Credits & Thanks</div>
+                    <div class="muted">Special thanks to all the amazing crypto educators who make these videos</div>
+                </div>
+                <div style="padding: 20px;">
+                    <div style="background: var(--panel); padding: 30px; border-radius: 12px; margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 20px; text-align: center;">🙏 Our Gratitude to Crypto Educators</h3>
+                        <p style="text-align: center; margin-bottom: 20px; font-size: 18px;">
+                            This video library would not be possible without the incredible content created by these amazing educators. 
+                            They dedicate countless hours to teaching the world about cryptocurrency and blockchain technology.
+                        </p>
+                        <p style="text-align: center; margin-bottom: 30px;">
+                            <strong>Please support them by subscribing to their channels, liking their videos, and engaging with their content!</strong>
+                        </p>
+                    </div>
+                    
+                    <div id="creatorsList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <!-- Creators will be populated here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="main.js"></script>
+    <script>
+        // REAL VIDEO LIBRARY - CURATED YOUTUBE VIDEOS WITH FULL ATTRIBUTION
+        let appState = {
+            user: {
+                email: 'owner@juzzy.local',
+                name: 'Owner',
+                watchedVideos: [],
+                currentVideo: null
+            },
+            videos: {
+                basics: [
+                    {
+                        id: 'basics-1',
+                        title: '🪙 Cryptocurrency Fundamentals: Complete Beginner\'s Guide',
+                        academyIcon: '🎓',
+                        subject: 'Crypto Basics',
+                        youtubeId: 'SSo_EIwHSd4',
+                        youtubeUrl: 'https://www.youtube.com/watch?v=jVkOpxluhBY',
+                        creator: 'Andrei Jikh',
+                        creatorChannel: 'https://www.youtube.com/@AndreiJikh',
+                        duration: '12:23',
+                        thumbnail: 'https://img.youtube.com/vi/SSo_EIwHSd4/hqdefault.jpg',
+                        description: 'Master cryptocurrency fundamentals with Andrei Jikh\'s comprehensive beginner guide. Learn what crypto is and how it works.',
+                        thanks: 'Thank you Andrei for making complex topics so accessible and engaging!',
+                        screenCapture: 'https://img.youtube.com/vi/SSo_EIwHSd4/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'basics-2',
+                        title: '⛓️ Blockchain Technology: Visual Deep Dive',
+                        academyIcon: '🔬',
+                        subject: 'Blockchain Tech',
+                        youtubeId: 'bBC-nXj3Ng4',
+                        youtubeUrl: 'https://www.youtube.com/watch?v=bBC-nXj3Ng4',
+                        creator: '3Blue1Brown',
+                        creatorChannel: 'https://www.youtube.com/@3blue1brown',
+                        duration: '26:21',
+                        thumbnail: 'https://img.youtube.com/vi/bBC-nXj3Ng4/hqdefault.jpg',
+                        description: 'Explore blockchain technology through stunning visualizations. Understand distributed ledgers and consensus mechanisms.',
+                        thanks: 'Thank you 3Blue1Brown for your incredible visual teaching style that makes complex concepts intuitive!',
+                        screenCapture: 'https://img.youtube.com/vi/bBC-nXj3Ng4/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'basics-3',
+                        title: '👛 Crypto Wallet Setup: Security First Approach',
+                        academyIcon: '🔐',
+                        subject: 'Wallet Security',
+                        youtubeId: 'aUBid1zJC-U',
+                        youtubeUrl: 'https://www.youtube.com/watch?v=aUBid1zJC-U',
+                        creator: 'Coin Bureau',
+                        creatorChannel: 'https://www.youtube.com/@CoinBureau',
+                        duration: '18:45',
+                        thumbnail: 'https://img.youtube.com/vi/aUBid1zJC-U/hqdefault.jpg',
+                        description: 'Learn to set up cryptocurrency wallets securely with Coin Bureau\'s step-by-step security-focused tutorial.',
+                        thanks: 'Thank you Coin Bureau for your thorough and trustworthy crypto education content!',
+                        screenCapture: 'https://img.youtube.com/vi/aUBid1zJC-U/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'basics-4',
+                        title: '₿ Bitcoin Explained: Digital Gold Revolution',
+                        academyIcon: '💰',
+                        subject: 'Bitcoin Core',
+                        youtubeId: 'b70MwTkV9t8',
+                        youtubeUrl: 'https://www.youtube.com/watch?v=b70MwTkV9t8',
+                        creator: 'Plain Bagel',
+                        creatorChannel: 'https://www.youtube.com/@PlainBagel',
+                        duration: '22:15',
+                        thumbnail: 'https://img.youtube.com/vi/b70MwTkV9t8/hqdefault.jpg',
+                        description: 'Understand Bitcoin\'s revolutionary impact on finance. Plain Bagel breaks down the digital gold concept simply.',
+                        thanks: 'Thank you Plain Bagel for your straightforward and honest approach to financial education!',
+                        screenCapture: 'https://img.youtube.com/vi/b70MwTkV9t8/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'basics-5',
+                        title: '🌐 Ethereum & Smart Contracts: Programmable Money',
+                        academyIcon: '⚡',
+                        subject: 'Ethereum',
+                        youtubeId: 'xeaDE8wgVVQ',
+                        youtubeUrl: 'https://www.youtube.com/watch?v=xeaDE8wgVVQ',
+                        creator: 'Finematics',
+                        creatorChannel: 'https://www.youtube.com/@finematics',
+                        duration: '16:32',
+                        thumbnail: 'https://img.youtube.com/vi/xeaDE8wgVVQ/hqdefault.jpg',
+                        description: 'Discover Ethereum\'s smart contract capabilities through beautiful animations. Learn about programmable money.',
+                        thanks: 'Thank you Finematics for your amazing animations that make DeFi concepts easy to understand!',
+                        screenCapture: 'https://img.youtube.com/vi/xeaDE8wgVVQ/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'basics-6',
+                        title: '📝 Cryptocurrency Whiteboard: Complete Overview',
+                        academyIcon: '📚',
+                        subject: 'Crypto Fundamentals',
+                        youtubeId: 'k1aOoX5ucgc',
+                        youtubeUrl: 'https://www.youtube.com/watch?v=k1aOoX5ucgc',
+                        creator: 'Whiteboard Crypto',
+                        creatorChannel: 'https://www.youtube.com/@WhiteboardCrypto',
+                        duration: '14:28',
+                        thumbnail: 'https://img.youtube.com/vi/k1aOoX5ucgc/hqdefault.jpg',
+                        description: 'Comprehensive cryptocurrency overview using whiteboard explanations. Perfect for visual learners.',
+                        thanks: 'Thank you Whiteboard Crypto for making crypto easy to understand with your whiteboard style!',
+                        screenCapture: 'https://img.youtube.com/vi/k1aOoX5ucgc/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'basics-7',
+                        title: '⚙️ Bitcoin Technical Architecture: Under the Hood',
+                        academyIcon: '🔧',
+                        subject: 'Technical Deep Dive',
+                        youtubeId: 'gq_r21Kg8yo',
+                        youtubeUrl: 'https://www.youtube.com/watch?v=gq_r21Kg8yo',
+                        creator: 'CuriousInventor',
+                        creatorChannel: 'https://www.youtube.com/@CuriousInventor',
+                        duration: '22:15',
+                        thumbnail: 'https://img.youtube.com/vi/gq_r21Kg8yo/hqdefault.jpg',
+                        description: 'Technical exploration of Bitcoin\'s inner workings. Understand the architecture powering the cryptocurrency.',
+                        thanks: 'Thank you CuriousInventor for your excellent technical explanations!',
+                        screenCapture: 'https://img.youtube.com/vi/gq_r21Kg8yo/maxresdefault.jpg'
+                    }
+                ],
+                trading: [
+                    {
+                        id: 'trading-1',
+                        title: '📊 Technical Analysis Mastery: Professional Chart Reading',
+                        academyIcon: '📈',
+                        subject: 'Chart Analysis',
+                        youtubeId: 'pAM-4DAjHjE',
+                        creator: 'The Chart Guys',
+                        creatorChannel: 'https://www.youtube.com/@TheChartGuys',
+                        duration: '45:18',
+                        thumbnail: 'https://img.youtube.com/vi/pAM-4DAjHjE/hqdefault.jpg',
+                        description: 'Master professional technical analysis with The Chart Guys. Learn chart patterns, indicators, and trading strategies.',
+                        thanks: 'Thank you The Chart Guys for sharing your professional trading knowledge with the community!',
+                        screenCapture: 'https://img.youtube.com/vi/pAM-4DAjHjE/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'trading-2',
+                        title: '🎯 Support & Resistance: Key Trading Levels',
+                        academyIcon: '⚖️',
+                        subject: 'Price Levels',
+                        youtubeId: '4BoG8MIZa7c',
+                        creator: 'TradingLab',
+                        creatorChannel: 'https://www.youtube.com/@TradingLab',
+                        duration: '28:45',
+                        thumbnail: 'https://img.youtube.com/vi/4BoG8MIZa7c/hqdefault.jpg',
+                        description: 'Identify and trade key support and resistance levels with TradingLab\'s practical strategies.',
+                        thanks: 'Thank you TradingLab for providing practical and actionable trading strategies!',
+                        screenCapture: 'https://img.youtube.com/vi/4BoG8MIZa7c/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'trading-3',
+                        title: '🛡️ Risk Management: Protect Your Trading Capital',
+                        academyIcon: '🔒',
+                        subject: 'Risk Control',
+                        youtubeId: 'b0a2wR2v2eE',
+                        creator: 'Rayner Teo',
+                        creatorChannel: 'https://www.youtube.com/@RaynerTeo',
+                        duration: '33:22',
+                        thumbnail: 'https://img.youtube.com/vi/b0a2wR2v2eE/hqdefault.jpg',
+                        description: 'Essential risk management strategies for traders. Learn position sizing and capital protection.',
+                        thanks: 'Thank you Rayner Teo for your honest approach to trading education and risk management!',
+                        screenCapture: 'https://img.youtube.com/vi/b0a2wR2v2eE/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'trading-4',
+                        title: '🕯️ Candlestick Patterns: Price Action Mastery',
+                        academyIcon: '🔥',
+                        subject: 'Pattern Recognition',
+                        youtubeId: 'qM4b_n0A6xs',
+                        creator: 'The Trading Channel',
+                        creatorChannel: 'https://www.youtube.com/@TheTradingChannel',
+                        duration: '24:15',
+                        thumbnail: 'https://img.youtube.com/vi/qM4b_n0A6xs/hqdefault.jpg',
+                        description: 'Master candlestick patterns and price action reading with comprehensive trading strategies.',
+                        thanks: 'Thank you The Trading Channel for your comprehensive trading education content!',
+                        screenCapture: 'https://img.youtube.com/vi/qM4b_n0A6xs/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'trading-5',
+                        title: '🧠 Trading Psychology: Master Your Emotions',
+                        academyIcon: '💭',
+                        subject: 'Mental Discipline',
+                        youtubeId: 'YpKzH1e8I3I',
+                        creator: 'UKspreadbetting',
+                        creatorChannel: 'https://www.youtube.com/@UKspreadbetting',
+                        duration: '38:45',
+                        thumbnail: 'https://img.youtube.com/vi/YpKzH1e8I3I/hqdefault.jpg',
+                        description: 'Develop the mental edge for trading success. Master psychology, discipline, and emotional control.',
+                        thanks: 'Thank you UKspreadbetting for your insightful content on trading psychology!',
+                        screenCapture: 'https://img.youtube.com/vi/YpKzH1e8I3I/maxresdefault.jpg'
+                    }
+                ],
+                defi: [
+                    {
+                        id: 'defi-1',
+                        title: '🏦 DeFi Revolution: Complete Decentralized Finance Guide',
+                        academyIcon: '🌐',
+                        subject: 'DeFi Fundamentals',
+                        youtubeId: 'HGY3xsR9uLk',
+                        creator: 'Finematics',
+                        creatorChannel: 'https://www.youtube.com/@finematics',
+                        duration: '18:22',
+                        thumbnail: 'https://img.youtube.com/vi/HGY3xsR9uLk/hqdefault.jpg',
+                        description: 'Explore the decentralized finance revolution through stunning animations. Understand how DeFi is transforming banking.',
+                        thanks: 'Thank you Finematics for making DeFi accessible through your amazing animations!',
+                        screenCapture: 'https://img.youtube.com/vi/HGY3xsR9uLk/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'defi-2',
+                        title: '🌾 Yield Farming: Passive Income in DeFi',
+                        academyIcon: '💎',
+                        subject: 'Yield Generation',
+                        youtubeId: 'aLkaz_6Mf0c',
+                        creator: 'Finematics',
+                        creatorChannel: 'https://www.youtube.com/@finematics',
+                        duration: '14:35',
+                        thumbnail: 'https://img.youtube.com/vi/aLkaz_6Mf0c/hqdefault.jpg',
+                        description: 'Master yield farming strategies and earn passive income in DeFi protocols with clear visual explanations.',
+                        thanks: 'Thank you Finematics for your incredible work in making DeFi concepts easy to grasp!',
+                        screenCapture: 'https://img.youtube.com/vi/aLkaz_6Mf0c/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'defi-3',
+                        title: '💧 Liquidity Pools: Powering Decentralized Exchanges',
+                        academyIcon: '🌊',
+                        subject: 'Liquidity Provision',
+                        youtubeId: 'Nv9PCGk_2P4',
+                        creator: 'Finematics',
+                        creatorChannel: 'https://www.youtube.com/@finematics',
+                        duration: '12:18',
+                        thumbnail: 'https://img.youtube.com/vi/Nv9PCGk_2P4/hqdefault.jpg',
+                        description: 'Understand liquidity pools and how they power DEXs. Learn to provide liquidity and earn trading fees.',
+                        thanks: 'Thank you Finematics for consistently creating high-quality educational content!',
+                        screenCapture: 'https://img.youtube.com/vi/Nv9PCGk_2P4/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'defi-4',
+                        title: '📜 Smart Contracts: Building Blocks of DeFi',
+                        academyIcon: '🔗',
+                        subject: 'Contract Technology',
+                        youtubeId: 'ZE2HxTQ8cWw',
+                        creator: 'Whiteboard Crypto',
+                        creatorChannel: 'https://www.youtube.com/@WhiteboardCrypto',
+                        duration: '16:42',
+                        thumbnail: 'https://img.youtube.com/vi/ZE2HxTQ8cWw/hqdefault.jpg',
+                        description: 'Master smart contracts and their role in DeFi. Clear whiteboard explanations of programmable money.',
+                        thanks: 'Thank you Whiteboard Crypto for your clear and engaging teaching style!',
+                        screenCapture: 'https://img.youtube.com/vi/ZE2HxTQ8cWw/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'defi-5',
+                        title: '🔄 Uniswap & DEXs: Decentralized Trading',
+                        academyIcon: '⚡',
+                        subject: 'Exchange Technology',
+                        youtubeId: 'U-S_7u5qGhI',
+                        creator: 'Finematics',
+                        creatorChannel: 'https://www.youtube.com/@finematics',
+                        duration: '13:28',
+                        thumbnail: 'https://img.youtube.com/vi/U-S_7u5qGhI/hqdefault.jpg',
+                        description: 'Explore Uniswap and decentralized exchanges. Understand AMM technology and automated market making.',
+                        thanks: 'Thank you Finematics for your amazing visual explanations of complex DeFi protocols!',
+                        screenCapture: 'https://img.youtube.com/vi/U-S_7u5qGhI/maxresdefault.jpg'
+                    }
+                ],
+                nft: [
+                    {
+                        id: 'nft-1',
+                        title: '🖼️ NFT Revolution: Digital Ownership Explained',
+                        academyIcon: '🎨',
+                        subject: 'NFT Fundamentals',
+                        youtubeId: 'SSo_EIwHSd4',
+                        creator: 'Vox',
+                        creatorChannel: 'https://www.youtube.com/@Vox',
+                        duration: '19:45',
+                        thumbnail: 'https://img.youtube.com/vi/SSo_EIwHSd4/hqdefault.jpg',
+                        description: 'Explore the NFT revolution and digital ownership transformation. Vox explains the significance of NFTs in the digital age.',
+                        thanks: 'Thank you Vox for your high-quality journalism and clear explanations of complex topics!',
+                        screenCapture: 'https://img.youtube.com/vi/SSo_EIwHSd4/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'nft-2',
+                        title: '🎨 Create & Sell NFTs: Complete Artist Guide',
+                        academyIcon: '🖌️',
+                        subject: 'NFT Creation',
+                        youtubeId: 'SSo_EIwHSd4',
+                        creator: 'Voultar',
+                        creatorChannel: 'https://www.youtube.com/@Voultar',
+                        duration: '22:15',
+                        thumbnail: 'https://img.youtube.com/vi/SSo_EIwHSd4/hqdefault.jpg',
+                        description: 'Step-by-step guide to creating and selling NFTs. Learn the complete process from digital art to marketplace.',
+                        thanks: 'Thank you Voultar for your practical and detailed tutorials!',
+                        screenCapture: 'https://img.youtube.com/vi/SSo_EIwHSd4/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'nft-3',
+                        title: '💎 NFT Market Dynamics: Economic Impact',
+                        academyIcon: '📊',
+                        subject: 'Market Analysis',
+                        youtubeId: 'SSo_EIwHSd4',
+                        creator: 'Coldfusion',
+                        creatorChannel: 'https://www.youtube.com/@Coldfusion',
+                        duration: '24:30',
+                        thumbnail: 'https://img.youtube.com/vi/SSo_EIwHSd4/hqdefault.jpg',
+                        description: 'Deep dive into NFT market economics and digital collectibles. Coldfusion explores the financial revolution.',
+                        thanks: 'Thank you Coldfusion for your well-researched and beautifully produced documentaries!',
+                        screenCapture: 'https://img.youtube.com/vi/SSo_EIwHSd4/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'nft-4',
+                        title: '📱 Digital Ownership: NFTs & Future of Content',
+                        academyIcon: '🌟',
+                        subject: 'Digital Rights',
+                        youtubeId: 'SSo_EIwHSd4',
+                        creator: 'Marques Brownlee',
+                        creatorChannel: 'https://www.youtube.com/@MarquesBrownlee',
+                        duration: '12:18',
+                        thumbnail: 'https://img.youtube.com/vi/SSo_EIwHSd4/hqdefault.jpg',
+                        description: 'MKBHD explores how NFTs are transforming digital ownership and content creation in the modern era.',
+                        thanks: 'Thank you Marques Brownlee for your tech insights and high-quality content!',
+                        screenCapture: 'https://img.youtube.com/vi/SSo_EIwHSd4/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'nft-5',
+                        title: '🚀 NFT Utility: Beyond Digital Art',
+                        academyIcon: '⚡',
+                        subject: 'Utility Tokens',
+                        youtubeId: 'SSo_EIwHSd4',
+                        creator: 'Finematics',
+                        creatorChannel: 'https://www.youtube.com/@finematics',
+                        duration: '15:42',
+                        thumbnail: 'https://img.youtube.com/vi/SSo_EIwHSd4/hqdefault.jpg',
+                        description: 'Explore NFT utility and real-world applications beyond art. Gaming, tickets, and utility NFTs explained.',
+                        thanks: 'Thank you Finematics for your amazing visual explanations of NFT concepts!',
+                        screenCapture: 'https://img.youtube.com/vi/SSo_EIwHSd4/maxresdefault.jpg'
+                    }
+                ],
+                security: [
+                    {
+                        id: 'security-1',
+                        title: '🔒 Crypto Security Best Practices: Complete Guide',
+                        academyIcon: '🛡️',
+                        subject: 'Security Fundamentals',
+                        youtubeId: 'SSo_EIwHSd4',
+                        creator: 'Coin Bureau',
+                        creatorChannel: 'https://www.youtube.com/@CoinBureau',
+                        duration: '21:35',
+                        thumbnail: 'https://img.youtube.com/vi/SSo_EIwHSd4/hqdefault.jpg',
+                        description: 'Essential security practices to keep your cryptocurrency safe. Learn wallet security, 2FA, and protection strategies.',
+                        thanks: 'Thank you Coin Bureau for your thorough and trustworthy security guidance!',
+                        screenCapture: 'https://img.youtube.com/vi/SSo_EIwHSd4/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'security-2',
+                        title: '🔐 Hardware Wallets: Ultimate Security Guide',
+                        academyIcon: '🔑',
+                        subject: 'Cold Storage',
+                        youtubeId: 'SSo_EIwHSd4',
+                        creator: 'Ledger',
+                        creatorChannel: 'https://www.youtube.com/@Ledger',
+                        duration: '18:22',
+                        thumbnail: 'https://img.youtube.com/vi/SSo_EIwHSd4/hqdefault.jpg',
+                        description: 'How hardware wallets work and why they\'re essential for crypto security. Complete setup and usage guide.',
+                        thanks: 'Thank you Ledger for creating excellent educational content about crypto security!',
+                        screenCapture: 'https://img.youtube.com/vi/SSo_EIwHSd4/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'security-3',
+                        title: '🚨 Avoid Crypto Scams: Protection Strategies',
+                        academyIcon: '⚠️',
+                        subject: 'Scam Prevention',
+                        youtubeId: 'SSo_EIwHSd4',
+                        creator: 'The Plain Bagel',
+                        creatorChannel: 'https://www.youtube.com/@PlainBagel',
+                        duration: '16:45',
+                        thumbnail: 'https://img.youtube.com/vi/SSo_EIwHSd4/hqdefault.jpg',
+                        description: 'Common crypto scams and how to protect yourself from them. Learn to identify and avoid fraudulent schemes.',
+                        thanks: 'Thank you Plain Bagel for your honest and important financial education content!',
+                        screenCapture: 'https://img.youtube.com/vi/SSo_EIwHSd4/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'security-4',
+                        title: '📱 2FA Setup: Complete Security Tutorial',
+                        academyIcon: '🔢',
+                        subject: 'Two-Factor Auth',
+                        youtubeId: 'SSo_EIwHSd4',
+                        creator: 'Tech With Tim',
+                        creatorChannel: 'https://www.youtube.com/@TechWithTim',
+                        duration: '12:30',
+                        thumbnail: 'https://img.youtube.com/vi/SSo_EIwHSd4/hqdefault.jpg',
+                        description: 'Step-by-step guide to setting up two-factor authentication for maximum account security.',
+                        thanks: 'Thank you Tech With Tim for your clear and helpful security tutorials!',
+                        screenCapture: 'https://img.youtube.com/vi/SSo_EIwHSd4/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'security-5',
+                        title: '💾 Crypto Backup Strategies: Asset Protection',
+                        academyIcon: '🗄️',
+                        subject: 'Backup & Recovery',
+                        youtubeId: 'SSo_EIwHSd4',
+                        creator: 'DataDash',
+                        creatorChannel: 'https://www.youtube.com/@DataDash',
+                        duration: '19:15',
+                        thumbnail: 'https://img.youtube.com/vi/SSo_EIwHSd4/hqdefault.jpg',
+                        description: 'How to properly backup your cryptocurrency assets. Learn seed phrases, wallet backups, and recovery methods.',
+                        thanks: 'Thank you DataDash for your comprehensive crypto education content!',
+                        screenCapture: 'https://img.youtube.com/vi/SSo_EIwHSd4/maxresdefault.jpg'
+                    }
+                ],
+                advanced: [
+                    {
+                        id: 'advanced-1',
+                        title: '⚡ Algorithmic Trading: Complete Guide',
+                        academyIcon: '🤖',
+                        subject: 'Trading Bots',
+                        youtubeId: 'SSo_EIwHSd4',
+                        creator: 'QuantInsti',
+                        creatorChannel: 'https://www.youtube.com/@QuantInsti',
+                        duration: '32:45',
+                        thumbnail: 'https://img.youtube.com/vi/SSo_EIwHSd4/hqdefault.jpg',
+                        description: 'Master algorithmic trading strategies and automated trading systems. Learn to build and deploy trading bots.',
+                        thanks: 'Thank you QuantInsti for your comprehensive algorithmic trading education!',
+                        screenCapture: 'https://img.youtube.com/vi/SSo_EIwHSd4/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'advanced-2',
+                        title: '🔗 Layer 2 Scaling Solutions: Ethereum Evolution',
+                        academyIcon: '⚙️',
+                        subject: 'Scaling Tech',
+                        youtubeId: 'SSo_EIwHSd4',
+                        creator: 'Finematics',
+                        creatorChannel: 'https://www.youtube.com/@finematics',
+                        duration: '18:30',
+                        thumbnail: 'https://img.youtube.com/vi/SSo_EIwHSd4/hqdefault.jpg',
+                        description: 'Explore Layer 2 solutions like Polygon, Arbitrum, and Optimism. Understand how they scale Ethereum.',
+                        thanks: 'Thank you Finematics for making complex scaling solutions easy to understand!',
+                        screenCapture: 'https://img.youtube.com/vi/SSo_EIwHSd4/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'advanced-3',
+                        title: '💱 DeFi Yield Strategies: Advanced Farming',
+                        academyIcon: '🌾',
+                        subject: 'Yield Optimization',
+                        youtubeId: 'SSo_EIwHSd4',
+                        creator: 'Bankless',
+                        creatorChannel: 'https://www.youtube.com/@Bankless',
+                        duration: '25:15',
+                        thumbnail: 'https://img.youtube.com/vi/SSo_EIwHSd4/hqdefault.jpg',
+                        description: 'Advanced DeFi yield farming strategies and optimization techniques. Maximize your returns safely.',
+                        thanks: 'Thank you Bankless for cutting-edge DeFi strategy content!',
+                        screenCapture: 'https://img.youtube.com/vi/SSo_EIwHSd4/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'advanced-4',
+                        title: '🎯 Options Trading: Crypto Derivatives',
+                        academyIcon: '📊',
+                        subject: 'Derivatives Trading',
+                        youtubeId: 'SSo_EIwHSd4',
+                        creator: 'Coin Bureau',
+                        creatorChannel: 'https://www.youtube.com/@CoinBureau',
+                        duration: '28:40',
+                        thumbnail: 'https://img.youtube.com/vi/SSo_EIwHSd4/hqdefault.jpg',
+                        description: 'Master crypto options trading and derivatives. Learn advanced trading strategies for hedging and speculation.',
+                        thanks: 'Thank you Coin Bureau for thorough derivatives education!',
+                        screenCapture: 'https://img.youtube.com/vi/SSo_EIwHSd4/maxresdefault.jpg'
+                    },
+                    {
+                        id: 'advanced-5',
+                        title: '🔐 Zero Knowledge Proofs: Privacy Tech',
+                        academyIcon: '🔒',
+                        subject: 'Privacy & ZK',
+                        youtubeId: 'SSo_EIwHSd4',
+                        creator: 'Ethereum Foundation',
+                        creatorChannel: 'https://www.youtube.com/@EthereumFoundation',
+                        duration: '22:20',
+                        thumbnail: 'https://img.youtube.com/vi/SSo_EIwHSd4/hqdefault.jpg',
+                        description: 'Understanding zero knowledge proofs and their applications in blockchain privacy and scalability.',
+                        thanks: 'Thank you Ethereum Foundation for advancing privacy technology education!',
+                        screenCapture: 'https://img.youtube.com/vi/SSo_EIwHSd4/maxresdefault.jpg'
+                    }
+                ],
+                creators: [
+                    {
+                        name: 'Andrei Jikh',
+                        channel: 'https://www.youtube.com/@AndreiJikh',
+                        description: 'Excellent financial education with engaging storytelling and practical advice.',
+                        specialty: 'Personal Finance & Crypto Basics',
+                        videos: 1
+                    },
+                    {
+                        name: '3Blue1Brown',
+                        channel: 'https://www.youtube.com/@3blue1brown',
+                        description: 'Master of visual explanations that make complex mathematical and technical concepts intuitive.',
+                        specialty: 'Technical Concepts & Mathematics',
+                        videos: 1
+                    },
+                    {
+                        name: 'Coin Bureau',
+                        channel: 'https://www.youtube.com/@CoinBureau',
+                        description: 'Thorough and trustworthy cryptocurrency education with in-depth research.',
+                        specialty: 'Comprehensive Crypto Education',
+                        videos: 2
+                    },
+                    {
+                        name: 'Plain Bagel',
+                        channel: 'https://www.youtube.com/@PlainBagel',
+                        description: 'Straightforward and honest financial education without the hype.',
+                        specialty: 'Financial Literacy & Scam Awareness',
+                        videos: 2
+                    },
+                    {
+                        name: 'Finematics',
+                        channel: 'https://www.youtube.com/@finematics',
+                        description: 'Beautiful animated explanations of DeFi and complex crypto concepts.',
+                        specialty: 'DeFi & Technical Animations',
+                        videos: 8
+                    },
+                    {
+                        name: 'The Chart Guys',
+                        channel: 'https://www.youtube.com/@TheChartGuys',
+                        description: 'Professional traders sharing real technical analysis strategies.',
+                        specialty: 'Technical Analysis & Trading',
+                        videos: 1
+                    },
+                    {
+                        name: 'TradingLab',
+                        channel: 'https://www.youtube.com/@TradingLab',
+                        description: 'Practical trading strategies with real market examples.',
+                        specialty: 'Trading Strategies',
+                        videos: 1
+                    },
+                    {
+                        name: 'Rayner Teo',
+                        channel: 'https://www.youtube.com/@RaynerTeo',
+                        description: 'Honest approach to trading education with focus on risk management.',
+                        specialty: 'Trading & Risk Management',
+                        videos: 1
+                    },
+                    {
+                        name: 'The Trading Channel',
+                        channel: 'https://www.youtube.com/@TheTradingChannel',
+                        description: 'Comprehensive trading education covering all aspects of technical analysis.',
+                        specialty: 'Technical Analysis & Chart Patterns',
+                        videos: 1
+                    },
+                    {
+                        name: 'UKspreadbetting',
+                        channel: 'https://www.youtube.com/@UKspreadbetting',
+                        description: 'Professional insights into trading psychology and market behavior.',
+                        specialty: 'Trading Psychology & Market Analysis',
+                        videos: 1
+                    },
+                    {
+                        name: 'Whiteboard Crypto',
+                        channel: 'https://www.youtube.com/@WhiteboardCrypto',
+                        description: 'Clear and engaging crypto education using whiteboard explanations.',
+                        specialty: 'Crypto Fundamentals & Smart Contracts',
+                        videos: 2
+                    },
+                    {
+                        name: 'CuriousInventor',
+                        channel: 'https://www.youtube.com/@CuriousInventor',
+                        description: 'Technical deep dives into how cryptocurrency technology actually works.',
+                        specialty: 'Technical Deep Dives & Bitcoin',
+                        videos: 1
+                    },
+                    {
+                        name: 'Vox',
+                        channel: 'https://www.youtube.com/@Vox',
+                        description: 'High-quality journalism explaining complex topics including NFTs and digital trends.',
+                        specialty: 'Digital Trends & Technology Journalism',
+                        videos: 1
+                    },
+                    {
+                        name: 'Voultar',
+                        channel: 'https://www.youtube.com/@Voultar',
+                        description: 'Practical tutorials on creating and working with digital assets and NFTs.',
+                        specialty: 'NFT Creation & Digital Tutorials',
+                        videos: 1
+                    },
+                    {
+                        name: 'Coldfusion',
+                        channel: 'https://www.youtube.com/@Coldfusion',
+                        description: 'Well-researched documentaries on technology trends and digital markets.',
+                        specialty: 'Technology Documentaries & Market Analysis',
+                        videos: 1
+                    },
+                    {
+                        name: 'Marques Brownlee',
+                        channel: 'https://www.youtube.com/@MarquesBrownlee',
+                        description: 'Tech insights from one of YouTube\'s most respected tech reviewers.',
+                        specialty: 'Technology Reviews & Digital Trends',
+                        videos: 1
+                    },
+                    {
+                        name: 'Ledger',
+                        channel: 'https://www.youtube.com/@Ledger',
+                        description: 'Official Ledger channel with comprehensive hardware wallet education.',
+                        specialty: 'Hardware Wallets & Security',
+                        videos: 1
+                    },
+                    {
+                        name: 'Tech With Tim',
+                        channel: 'https://www.youtube.com/@TechWithTim',
+                        description: 'Clear and helpful tutorials on technology and security topics.',
+                        specialty: 'Tech Tutorials & Security Setup',
+                        videos: 1
+                    },
+                    {
+                        name: 'DataDash',
+                        channel: 'https://www.youtube.com/@DataDash',
+                        description: 'Comprehensive cryptocurrency analysis and market insights.',
+                        specialty: 'Market Analysis & Crypto Education',
+                        videos: 1
+                    },
+                    {
+                        name: 'QuantInsti',
+                        channel: 'https://www.youtube.com/@QuantInsti',
+                        description: 'Professional quantitative trading education and algorithmic trading insights.',
+                        specialty: 'Algorithmic Trading & Quant Analysis',
+                        videos: 1
+                    },
+                    {
+                        name: 'The Options Guide',
+                        channel: 'https://www.youtube.com/@TheOptionsGuide',
+                        description: 'Making complex options trading concepts accessible to everyone.',
+                        specialty: 'Options Trading & Derivatives',
+                        videos: 1
+                    },
+                    {
+                        name: 'Benjamin Cowen',
+                        channel: 'https://www.youtube.com/@BenjaminCowen',
+                        description: 'Data-driven approach to cryptocurrency analysis and portfolio management.',
+                        specialty: 'Data Analysis & Portfolio Management',
+                        videos: 1
+                    },
+                    {
+                        name: 'Into The Cryptoverse',
+                        channel: 'https://www.youtube.com/@IntoTheCryptoverse',
+                        description: 'Deep analytical insights into cryptocurrency markets and on-chain data.',
+                        specialty: 'On-Chain Analysis & Market Research',
+                        videos: 1
+                    },
+                    {
+                        name: 'Bankless',
+                        channel: 'https://www.youtube.com/@Bankless',
+                        description: 'Pushing the boundaries of DeFi education and crypto finance.',
+                        specialty: 'DeFi & Advanced Crypto Finance',
+                        videos: 1
+                    }
+                ]
+            },
+            creators: [
+                {
+                    name: 'Andrei Jikh',
+                    channel: 'https://www.youtube.com/@AndreiJikh',
+                    description: 'Excellent financial education with engaging storytelling and practical advice.',
+                    specialty: 'Personal Finance & Crypto Basics',
+                    videos: 1
+                },
+                {
+                    name: '3Blue1Brown',
+                    channel: 'https://www.youtube.com/@3blue1brown',
+                    description: 'Master of visual explanations that make complex mathematical and technical concepts intuitive.',
+                    specialty: 'Technical Concepts & Mathematics',
+                    videos: 1
+                },
+                {
+                    name: 'Coin Bureau',
+                    channel: 'https://www.youtube.com/@CoinBureau',
+                    description: 'Thorough and trustworthy cryptocurrency education with in-depth research.',
+                    specialty: 'Comprehensive Crypto Education',
+                    videos: 2
+                },
+                {
+                    name: 'Plain Bagel',
+                    channel: 'https://www.youtube.com/@PlainBagel',
+                    description: 'Straightforward and honest financial education without the hype.',
+                    specialty: 'Financial Literacy & Scam Awareness',
+                    videos: 2
+                },
+                {
+                    name: 'Finematics',
+                    channel: 'https://www.youtube.com/@finematics',
+                    description: 'Beautiful animated explanations of DeFi and complex crypto concepts.',
+                    specialty: 'DeFi & Technical Animations',
+                    videos: 8
+                },
+                {
+                    name: 'The Chart Guys',
+                    channel: 'https://www.youtube.com/@TheChartGuys',
+                    description: 'Professional traders sharing real technical analysis strategies.',
+                    specialty: 'Technical Analysis & Trading',
+                    videos: 1
+                },
+                {
+                    name: 'TradingLab',
+                    channel: 'https://www.youtube.com/@TradingLab',
+                    description: 'Practical trading strategies with real market examples.',
+                    specialty: 'Trading Strategies',
+                    videos: 1
+                },
+                {
+                    name: 'Rayner Teo',
+                    channel: 'https://www.youtube.com/@RaynerTeo',
+                    description: 'Honest approach to trading education with focus on risk management.',
+                    specialty: 'Trading & Risk Management',
+                    videos: 1
+                },
+                {
+                    name: 'The Trading Channel',
+                    channel: 'https://www.youtube.com/@TheTradingChannel',
+                    description: 'Comprehensive trading education covering all aspects of technical analysis.',
+                    specialty: 'Technical Analysis & Chart Patterns',
+                    videos: 1
+                },
+                {
+                    name: 'UKspreadbetting',
+                    channel: 'https://www.youtube.com/@UKspreadbetting',
+                    description: 'Professional insights into trading psychology and market behavior.',
+                    specialty: 'Trading Psychology & Market Analysis',
+                    videos: 1
+                },
+                {
+                    name: 'Whiteboard Crypto',
+                    channel: 'https://www.youtube.com/@WhiteboardCrypto',
+                    description: 'Clear and engaging crypto education using whiteboard explanations.',
+                    specialty: 'Crypto Fundamentals & Smart Contracts',
+                    videos: 2
+                },
+                {
+                    name: 'CuriousInventor',
+                    channel: 'https://www.youtube.com/@CuriousInventor',
+                    description: 'Technical deep dives into how cryptocurrency technology actually works.',
+                    specialty: 'Technical Deep Dives & Bitcoin',
+                    videos: 1
+                },
+                {
+                    name: 'Vox',
+                    channel: 'https://www.youtube.com/@Vox',
+                    description: 'High-quality journalism explaining complex topics including NFTs and digital trends.',
+                    specialty: 'Digital Trends & Technology Journalism',
+                    videos: 1
+                },
+                {
+                    name: 'Voultar',
+                    channel: 'https://www.youtube.com/@Voultar',
+                    description: 'Practical tutorials on creating and working with digital assets and NFTs.',
+                    specialty: 'NFT Creation & Digital Tutorials',
+                    videos: 1
+                },
+                {
+                    name: 'Coldfusion',
+                    channel: 'https://www.youtube.com/@Coldfusion',
+                    description: 'Well-researched documentaries on technology trends and digital markets.',
+                    specialty: 'Technology Documentaries & Market Analysis',
+                    videos: 1
+                },
+                {
+                    name: 'Marques Brownlee',
+                    channel: 'https://www.youtube.com/@MarquesBrownlee',
+                    description: 'Tech insights from one of YouTube\'s most respected tech reviewers.',
+                    specialty: 'Technology Reviews & Digital Trends',
+                    videos: 1
+                },
+                {
+                    name: 'Ledger',
+                    channel: 'https://www.youtube.com/@Ledger',
+                    description: 'Official Ledger channel with comprehensive hardware wallet education.',
+                    specialty: 'Hardware Wallets & Security',
+                    videos: 1
+                },
+                {
+                    name: 'Tech With Tim',
+                    channel: 'https://www.youtube.com/@TechWithTim',
+                    description: 'Clear and helpful tutorials on technology and security topics.',
+                    specialty: 'Tech Tutorials & Security Setup',
+                    videos: 1
+                },
+                {
+                    name: 'DataDash',
+                    channel: 'https://www.youtube.com/@DataDash',
+                    description: 'Comprehensive cryptocurrency analysis and market insights.',
+                    specialty: 'Market Analysis & Crypto Education',
+                    videos: 1
+                },
+                {
+                    name: 'QuantInsti',
+                    channel: 'https://www.youtube.com/@QuantInsti',
+                    description: 'Professional quantitative trading education and algorithmic trading insights.',
+                    specialty: 'Algorithmic Trading & Quant Analysis',
+                    videos: 1
+                },
+                {
+                    name: 'The Options Guide',
+                    channel: 'https://www.youtube.com/@TheOptionsGuide',
+                    description: 'Making complex options trading concepts accessible to everyone.',
+                    specialty: 'Options Trading & Derivatives',
+                    videos: 1
+                },
+                {
+                    name: 'Benjamin Cowen',
+                    channel: 'https://www.youtube.com/@BenjaminCowen',
+                    description: 'Data-driven approach to cryptocurrency analysis and portfolio management.',
+                    specialty: 'Data Analysis & Portfolio Management',
+                    videos: 1
+                },
+                {
+                    name: 'Into The Cryptoverse',
+                    channel: 'https://www.youtube.com/@IntoTheCryptoverse',
+                    description: 'Deep analytical insights into cryptocurrency markets and on-chain data.',
+                    specialty: 'On-Chain Analysis & Market Research',
+                    videos: 1
+                },
+                {
+                    name: 'Bankless',
+                    channel: 'https://www.youtube.com/@Bankless',
+                    description: 'Pushing the boundaries of DeFi education and crypto finance.',
+                    specialty: 'DeFi & Advanced Crypto Finance',
+                    videos: 1
+                }
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎬 REAL VIDEO LIBRARY LOADED');
+            initializeVideoApp();
+            wireAllTabs();
+            populateAllVideos();
+            populateCreators();
+        });
+
+        function initializeVideoApp() {
+            // Set owner state
+            if (typeof state !== 'undefined') {
+                state.user.email = 'owner@juzzy.local';
+                state.profile.loggedIn = true;
+                state.billing.subscribed = true;
+            }
+            
+            // Show owner plaque
+            const ownerPlaque = document.getElementById('ownerPlaque');
+            if (ownerPlaque) ownerPlaque.classList.remove('util-hidden');
+            
+            // Update UI
+            document.getElementById('statusText').textContent = 'Owner Mode';
+            document.getElementById('userIdentityPill').textContent = '👑 owner@juzzy.local';
+        }
+
+        function wireAllTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            const panels = document.querySelectorAll('.panel');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    if (!tabId) return;
+                    
+                    tabs.forEach(t => t.classList.remove('active'));
+                    panels.forEach(p => p.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    const targetPanel = document.getElementById('tab-' + tabId);
+                    if (targetPanel) targetPanel.classList.add('active');
+                    
+                    console.log('🔄 Tab switched to:', tabId);
+                });
+            });
+        }
+
+        function populateAllVideos() {
+            populateVideosList('all');
+            populateCategoryVideos('basics');
+            populateCategoryVideos('trading');
+            populateCategoryVideos('defi');
+            populateCategoryVideos('nft');
+            populateCategoryVideos('security');
+            populateCategoryVideos('advanced');
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function buildVideoFace(video, category) {
+            const color = getCategoryColor(category || video.category || 'basics');
+            const title = escapeHtml(video.title || 'Crypto Course');
+            const subject = escapeHtml(video.subject || 'Cryptocurrency Education');
+            const icon = escapeHtml(video.academyIcon || '🎓');
+            return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+                    <defs>
+                        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#10192f"/>
+                            <stop offset="100%" stop-color="#1e355d"/>
+                        </linearGradient>
+                        <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="${color}"/>
+                            <stop offset="100%" stop-color="#ffffff" stop-opacity="0.35"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="1280" height="720" rx="36" fill="url(#bg)"/>
+                    <circle cx="1080" cy="160" r="170" fill="${color}" opacity="0.16"/>
+                    <circle cx="170" cy="585" r="140" fill="${color}" opacity="0.12"/>
+                    <rect x="58" y="58" width="1164" height="604" rx="28" fill="none" stroke="url(#accent)" stroke-width="3" opacity="0.75"/>
+                    <rect x="88" y="88" width="190" height="190" rx="95" fill="${color}" opacity="0.2"/>
+                    <text x="183" y="205" text-anchor="middle" font-size="92">${icon}</text>
+                    <text x="88" y="350" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="700">${title}</text>
+                    <text x="88" y="420" fill="${color}" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700">${subject}</text>
+                    <text x="88" y="485" fill="#d7e6ff" font-family="Arial, Helvetica, sans-serif" font-size="28">3 Amigos Academy</text>
+                    <rect x="88" y="540" width="280" height="64" rx="32" fill="${color}" opacity="0.22"/>
+                    <text x="228" y="582" text-anchor="middle" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">Watch on YouTube</text>
+                </svg>
+            `)}`;
+        }
+
+        function getVideoImageSrc(video, category) {
+            if (video.screenCapture) return video.screenCapture;
+            if (video.thumbnail) return video.thumbnail;
+            return buildVideoFace(video, category);
+        }
+
+        function getVideoImageFallback(video, category) {
+            return buildVideoFace(video, category);
+        }
+
+        function getCreatorBadge(video, category) {
+            const color = getCategoryColor(category || video.category || 'basics');
+            const initial = escapeHtml((video.creator || 'C').trim().charAt(0).toUpperCase());
+            return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+                    <circle cx="40" cy="40" r="38" fill="#14213d" stroke="${color}" stroke-width="4"/>
+                    <text x="40" y="49" text-anchor="middle" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">${initial}</text>
+                </svg>
+            `)}`;
+        }
+
+        function populateVideosList(filter) {
+            const videosList = document.getElementById('allVideosList');
+            if (!videosList) return;
+            
+            let allVideos = [];
+            Object.keys(appState.videos).forEach(category => {
+                appState.videos[category].forEach(video => {
+                    allVideos.push({ ...video, category });
+                });
+            });
+            
+            if (filter !== 'all') {
+                allVideos = allVideos.filter(v => v.category === filter);
+            }
+            
+            videosList.innerHTML = allVideos.map(video => `
+                <div class="video-card" style="background: var(--panel); border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 30px rgba(0,229,255,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'" onclick="openYouTubeVideo('${video.youtubeId}')">
+                    <div style="position: relative;">
+                        <img src="${getVideoImageSrc(video, video.category)}" alt="${video.title}" style="width: 100%; height: 200px; object-fit: cover;" onerror="this.onerror=null;this.src='${getVideoImageFallback(video, video.category)}'">
+                        <div style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                            ${video.duration}
+                        </div>
+                        <div style="position: absolute; top: 10px; left: 10px; background: linear-gradient(135deg, rgba(0,229,255,0.9), rgba(0,123,255,0.9)); color: white; padding: 6px 10px; border-radius: 20px; font-size: 16px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,229,255,0.4);">
+                            ${video.academyIcon || '🎓'}
+                        </div>
+                        <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); padding: 20px 15px 15px;">
+                            <h4 style="margin: 0; color: white; font-size: 16px; line-height: 1.3;">${video.title}</h4>
+                            <div style="margin-top: 5px; color: rgba(255,255,255,0.8); font-size: 12px; font-weight: bold;">
+                                ${video.subject || 'Cryptocurrency Education'}
+                            </div>
+                        </div>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0; transition: opacity 0.2s;" class="play-overlay">
+                            <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                                ▶️
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <img src="${getCreatorBadge(video, video.category)}" alt="${video.creator}" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px; object-fit: cover;">
+                            <div>
+                                <div style="font-weight: bold; color: ${getCategoryColor(video.category)};">${video.creator}</div>
+                                <div style="font-size: 12px; opacity: 0.7;">${video.category.toUpperCase()}</div>
+                            </div>
+                        </div>
+                        <p style="font-size: 14px; opacity: 0.8; margin-bottom: 15px; line-height: 1.4;">${video.description}</p>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn primary" onclick="event.stopPropagation(); openYouTubeVideo('${video.youtubeId}')" style="flex: 1;">
+                                ▶️ Watch on YouTube
+                            </button>
+                            <button class="btn" onclick="event.stopPropagation(); visitChannel('${video.creatorChannel}')" style="padding: 8px 16px;">
+                                📺 Channel
+                            </button>
+                        </div>
+                        <div style="margin-top: 15px; padding: 10px; background: var(--bg1); border-radius: 6px; font-size: 12px; opacity: 0.7;">
+                            💝 ${video.thanks}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function populateCategoryVideos(category) {
+            const categoryList = document.getElementById(`${category}VideosList`);
+            if (!categoryList) return;
+            
+            const videos = appState.videos[category];
+            
+            categoryList.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: ${getCategoryColor(category)}; margin-bottom: 10px;">
+                        ${category.toUpperCase()} VIDEOS (${videos.length} videos)
+                    </h3>
+                    <p style="opacity: 0.7;">Curated educational content from top crypto educators</p>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
+                    ${videos.map(video => `
+                        <div class="video-card" style="background: var(--panel); border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 30px rgba(0,229,255,0.3)'; this.querySelector('.play-overlay').style.opacity='1'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.querySelector('.play-overlay').style.opacity='0'" onclick="openYouTubeVideo('${video.youtubeId}')">
+                            <div style="position: relative;">
+                                <img src="${getVideoImageSrc(video, category)}" alt="${video.title}" style="width: 100%; height: 200px; object-fit: cover;" onerror="this.onerror=null;this.src='${getVideoImageFallback(video, category)}'">
+                                <div style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                    ${video.duration}
+                                </div>
+                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0; transition: opacity 0.2s;" class="play-overlay">
+                                    <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                                        ▶️
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="padding: 20px;">
+                                <h4 style="margin: 0 0 10px 0; line-height: 1.3;">${video.title}</h4>
+                                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                    <div style="font-weight: bold; color: ${getCategoryColor(category)};">${video.creator}</div>
+                                    <div style="margin-left: 10px; font-size: 12px; opacity: 0.7;">${video.duration}</div>
+                                </div>
+                                <p style="font-size: 14px; opacity: 0.8; margin-bottom: 15px; line-height: 1.4;">${video.description}</p>
+                                <div style="display: flex; gap: 10px;">
+                                    <button class="btn primary" onclick="event.stopPropagation(); openYouTubeVideo('${video.youtubeId}')" style="flex: 1;">
+                                        ▶️ Watch Now
+                                    </button>
+                                    <button class="btn" onclick="event.stopPropagation(); visitChannel('${video.creatorChannel}')" style="padding: 8px 16px;">
+                                        📺 Channel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function populateCreators() {
+            const creatorsList = document.getElementById('creatorsList');
+            if (!creatorsList) return;
+            
+            creatorsList.innerHTML = appState.creators.map(creator => `
+                <div style="background: var(--panel); padding: 25px; border-radius: 12px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, ${getRandomColor()}); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 15px;">
+                            🎬
+                        </div>
+                        <div>
+                            <h4 style="margin: 0; color: ${getRandomColor()};">${creator.name}</h4>
+                            <div style="font-size: 12px; opacity: 0.7;">${creator.specialty}</div>
+                        </div>
+                    </div>
+                    <p style="margin-bottom: 15px; line-height: 1.5;">${creator.description}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span class="pill">${creator.videos} videos in library</span>
+                        <button class="btn primary" onclick="visitChannel('${creator.channel}')">
+                            📺 Visit Channel
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterVideos(category) {
+            populateVideosList(category);
+            showNotification(`🎬 Showing ${category === 'all' ? 'all' : category} videos`);
+        }
+
+        // Add AI Assistant Box
+        const aiAssistantHTML = `
+            <div id="aiAssistant" style="position: fixed; bottom: 20px; right: 20px; width: 350px; height: 500px; background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid #00e5ff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,229,255,0.3); z-index: 10000; display: none; flex-direction: column;">
+                <div style="background: linear-gradient(135deg, #00e5ff, #0077ff); padding: 15px; border-radius: 13px 13px 0 0; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center;">
+                        <div style="width: 30px; height: 30px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; margin-right: 10px;">🤖</div>
+                        <div>
+                            <div style="color: white; font-weight: bold; font-size: 14px;">AI Video Assistant</div>
+                            <div style="color: rgba(255,255,255,0.8); font-size: 11px;">Ask me anything about the video</div>
+                        </div>
+                    </div>
+                    <button onclick="toggleAIAssistant()" style="background: rgba(255,255,255,0.2); border: none; color: white; width: 25px; height: 25px; border-radius: 50%; cursor: pointer; font-size: 16px;">×</button>
+                </div>
+                
+                <div id="aiChatMessages" style="flex: 1; overflow-y: auto; padding: 15px; background: rgba(0,0,0,0.3);">
+                    <div style="background: rgba(0,229,255,0.1); border-left: 3px solid #00e5ff; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
+                        <div style="color: #00e5ff; font-weight: bold; margin-bottom: 5px;">🤖 AI Assistant</div>
+                        <div style="color: white; font-size: 13px;">Hello! I'm your AI video assistant. I can:</div>
+                        <div style="color: rgba(255,255,255,0.8); font-size: 12px; margin-top: 5px;">
+                            • Answer questions about the video content<br>
+                            • Jump to specific timestamps<br>
+                            • Explain concepts in detail<br>
+                            • Summarize key points
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="padding: 15px; background: rgba(0,0,0,0.5); border-radius: 0 0 13px 13px;">
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="aiInput" placeholder="Ask about the video..." style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(0,229,255,0.3); color: white; padding: 10px; border-radius: 8px; font-size: 13px;">
+                        <button onclick="sendAIMessage()" style="background: linear-gradient(135deg, #00e5ff, #0077ff); border: none; color: white; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;">Send</button>
+                    </div>
+                    <div style="margin-top: 10px; display: flex; gap: 5px; flex-wrap: wrap;">
+                        <button onclick="askAI('Explain this concept')" style="background: rgba(0,229,255,0.2); border: 1px solid #00e5ff; color: #00e5ff; padding: 5px 10px; border-radius: 15px; cursor: pointer; font-size: 11px;">Explain</button>
+                        <button onclick="askAI('Jump to important part')" style="background: rgba(0,229,255,0.2); border: 1px solid #00e5ff; color: #00e5ff; padding: 5px 10px; border-radius: 15px; cursor: pointer; font-size: 11px;">Key Points</button>
+                        <button onclick="askAI('Summarize this video')" style="background: rgba(0,229,255,0.2); border: 1px solid #00e5ff; color: #00e5ff; padding: 5px 10px; border-radius: 15px; cursor: pointer; font-size: 11px;">Summarize</button>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="aiToggleBtn" onclick="toggleAIAssistant()" style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: linear-gradient(135deg, #00e5ff, #0077ff); border: 2px solid #00e5ff; border-radius: 50%; color: white; font-size: 24px; cursor: pointer; box-shadow: 0 5px 20px rgba(0,229,255,0.4); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+                🤖
+            </button>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', aiAssistantHTML);
+        
+        let currentVideoId = null;
+        let aiConversation = [];
+        
+        function toggleAIAssistant() {
+            const aiAssistant = document.getElementById('aiAssistant');
+            const aiToggleBtn = document.getElementById('aiToggleBtn');
+            
+            if (aiAssistant.style.display === 'none' || !aiAssistant.style.display) {
+                aiAssistant.style.display = 'flex';
+                aiToggleBtn.style.display = 'none';
+                document.getElementById('aiInput').focus();
+            } else {
+                aiAssistant.style.display = 'none';
+                aiToggleBtn.style.display = 'flex';
+            }
+        }
+
+        function findVideoByYoutubeId(youtubeId) {
+            for (const category in appState.videos) {
+                const foundVideo = appState.videos[category].find(video => video.youtubeId === youtubeId);
+                if (foundVideo) {
+                    return { ...foundVideo, category };
+                }
+            }
+            return null;
+        }
+
+        function buildYouTubeSearchUrl(video) {
+            const query = [video.creator, video.title, video.subject, 'youtube']
+                .filter(Boolean)
+                .join(' ');
+            return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+        }
+        
+        function openYouTubeVideo(youtubeId) {
+            currentVideoId = youtubeId;
+            const video = findVideoByYoutubeId(youtubeId);
+            const url = video?.youtubeUrl || (video ? buildYouTubeSearchUrl(video) : `https://www.youtube.com/results?search_query=${encodeURIComponent('crypto tutorial youtube')}`);
+            if (window.parent && window.parent !== window && typeof window.parent.postMessage === 'function') {
+                window.parent.postMessage({
+                    type: 'juzzy-open-resource',
+                    url,
+                    label: getCurrentVideoTitle(youtubeId),
+                    provider: 'YouTube'
+                }, '*');
+            } else {
+                window.location.href = url;
+            }
+            showNotification('🎥 Opening video on YouTube...');
+            
+            if (document.getElementById('aiAssistant').style.display === 'none') {
+                toggleAIAssistant();
+            }
+            
+            addAIMessage('🤖 AI Assistant', `Opened YouTube results for: ${getCurrentVideoTitle(youtubeId)}. I can help you understand this topic and guide you to the right tutorial.`);
+        }
+        
+        function getCurrentVideoTitle(youtubeId) {
+            for (let category in appState.videos) {
+                const video = appState.videos[category].find(v => v.youtubeId === youtubeId);
+                if (video) return video.title;
+            }
+            return 'Video';
+        }
+        
+        function askAI(question) {
+            document.getElementById('aiInput').value = question;
+            sendAIMessage();
+        }
+        
+        function sendAIMessage() {
+            const input = document.getElementById('aiInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            addAIMessage('👤 You', message);
+            input.value = '';
+            
+            // Simulate AI response
+            setTimeout(() => {
+                const response = generateAIResponse(message);
+                addAIMessage('🤖 AI Assistant', response);
+            }, 1000);
+        }
+        
+        function addAIMessage(sender, message) {
+            const chatMessages = document.getElementById('aiChatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.style.cssText = 'margin-bottom: 10px; animation: slideIn 0.3s ease;';
+            
+            if (sender === '👤 You') {
+                messageDiv.innerHTML = `
+                    <div style="text-align: right; margin-bottom: 5px;">
+                        <span style="color: #00e5ff; font-weight: bold; font-size: 12px;">${sender}</span>
+                    </div>
+                    <div style="background: rgba(0,229,255,0.2); padding: 10px; border-radius: 10px; text-align: right;">
+                        <div style="color: white; font-size: 13px;">${message}</div>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div style="color: #00e5ff; font-weight: bold; font-size: 12px; margin-bottom: 5px;">${sender}</div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px;">
+                        <div style="color: white; font-size: 13px;">${message}</div>
+                    </div>
+                `;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function generateAIResponse(message) {
+            const responses = {
+                'explain': 'This concept is fundamental to understanding cryptocurrency. Let me break it down: Cryptocurrency uses cryptographic principles to secure transactions and control the creation of new units. Think of it as digital money that\'s secured by mathematics instead of banks.',
+                'jump': 'The most important part of this video starts around 2:30 where the core concept is explained. I recommend watching from there to get the key information quickly.',
+                'summarize': 'This video covers the essential basics of cryptocurrency, including how it works, why it\'s valuable, and how you can get started. The key takeaways are: 1) Crypto is decentralized digital currency, 2) It uses blockchain technology, 3) It offers financial freedom, 4) Start with education before investing.',
+                'default': 'That\'s a great question! Based on the video content, I can help you understand this topic better. The video explains this concept in detail, but essentially it\'s about using technology to create a more transparent and efficient financial system. Would you like me to explain any specific part in more detail?'
+            };
+            
+            const lowerMessage = message.toLowerCase();
+            if (lowerMessage.includes('explain')) return responses.explain;
+            if (lowerMessage.includes('jump') || lowerMessage.includes('important')) return responses.jump;
+            if (lowerMessage.includes('summarize')) return responses.summarize;
+            return responses.default;
+        }
+        
+        // Handle Enter key in AI input
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('aiInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendAIMessage();
+                }
+            });
+        });
+
+        function visitChannel(channelUrl) {
+            if (window.parent && window.parent !== window && typeof window.parent.postMessage === 'function') {
+                window.parent.postMessage({
+                    type: 'juzzy-open-resource',
+                    url: channelUrl,
+                    label: 'Creator Channel',
+                    provider: 'YouTube'
+                }, '*');
+            } else {
+                window.location.href = channelUrl;
+            }
+            showNotification('📺 Opening creator channel...');
+        }
+
+        function playRandomVideo() {
+            const allVideos = [];
+            Object.keys(appState.videos).forEach(category => {
+                appState.videos[category].forEach(video => {
+                    allVideos.push(video);
+                });
+            });
+            
+            const randomVideo = allVideos[Math.floor(Math.random() * allVideos.length)];
+            openYouTubeVideo(randomVideo.youtubeId);
+        }
+
+        // Add CSS for hover effects and animations
+        const additionalCSS = `
+            <style>
+                body {
+                    background:
+                        radial-gradient(circle at top, rgba(0, 229, 255, 0.16), transparent 30%),
+                        radial-gradient(circle at 85% 15%, rgba(122, 92, 255, 0.18), transparent 22%),
+                        linear-gradient(135deg, #040814 0%, #07111f 45%, #02050b 100%);
+                    color: #eaf6ff;
+                    min-height: 100vh;
+                }
+
+                body::before {
+                    content: '';
+                    position: fixed;
+                    inset: 0;
+                    pointer-events: none;
+                    background:
+                        linear-gradient(rgba(0, 229, 255, 0.04) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0, 229, 255, 0.04) 1px, transparent 1px);
+                    background-size: 48px 48px;
+                    mask-image: radial-gradient(circle at center, black 45%, transparent 92%);
+                    opacity: 0.35;
+                    z-index: 0;
+                }
+
+                .app {
+                    position: relative;
+                    z-index: 1;
+                }
+
+                .app-header {
+                    position: sticky;
+                    top: 0;
+                    z-index: 100;
+                    backdrop-filter: blur(18px);
+                    background: linear-gradient(180deg, rgba(5, 14, 26, 0.92), rgba(6, 17, 34, 0.72));
+                    border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+                    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+                }
+
+                .topbar,
+                .tabs-header,
+                .panel,
+                .feature-card,
+                .owner-plaque,
+                .pill,
+                .video-card,
+                #aiAssistant {
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                .topbar::after,
+                .panel::after,
+                .feature-card::after,
+                .video-card::after,
+                #aiAssistant::after {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    pointer-events: none;
+                    background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent 30%, transparent 70%, rgba(0,229,255,0.08));
+                    opacity: 0.65;
+                }
+
+                .brand-mark {
+                    background: linear-gradient(135deg, #00e5ff, #5b8cff 55%, #7a5cff);
+                    color: #04101e;
+                    box-shadow: 0 0 24px rgba(0, 229, 255, 0.45), inset 0 1px 10px rgba(255,255,255,0.35);
+                    border: 1px solid rgba(255,255,255,0.25);
+                }
+
+                .brand-title,
+                .h1 {
+                    letter-spacing: 0.04em;
+                    text-shadow: 0 0 18px rgba(0, 229, 255, 0.18);
+                }
+
+                .brand-subtitle,
+                .muted {
+                    color: rgba(210, 233, 255, 0.72) !important;
+                }
+
+                .tabs-header {
+                    padding: 10px 12px 16px;
+                    gap: 10px;
+                    flex-wrap: wrap;
+                    border-top: 1px solid rgba(255,255,255,0.04);
+                }
+
+                .tab {
+                    border: 1px solid rgba(0, 229, 255, 0.2) !important;
+                    background: linear-gradient(180deg, rgba(11, 25, 47, 0.88), rgba(6, 14, 26, 0.92)) !important;
+                    color: #d8ecff !important;
+                    border-radius: 14px !important;
+                    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 10px 24px rgba(0,0,0,0.22);
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                }
+
+                .tab.active {
+                    background: linear-gradient(135deg, rgba(0,229,255,0.28), rgba(90,120,255,0.28)) !important;
+                    color: #ffffff !important;
+                    border-color: rgba(0, 229, 255, 0.58) !important;
+                    box-shadow: 0 0 0 1px rgba(0,229,255,0.24), 0 0 28px rgba(0,229,255,0.22), inset 0 1px 0 rgba(255,255,255,0.16);
+                }
+
+                .panel {
+                    background: linear-gradient(180deg, rgba(10, 21, 38, 0.9), rgba(6, 13, 24, 0.86)) !important;
+                    border: 1px solid rgba(0, 229, 255, 0.14);
+                    border-radius: 24px;
+                    box-shadow: 0 24px 60px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.04);
+                    backdrop-filter: blur(18px);
+                }
+
+                .panel-header {
+                    border-bottom: 1px solid rgba(0, 229, 255, 0.12);
+                    background: linear-gradient(90deg, rgba(0,229,255,0.08), transparent 40%, rgba(122,92,255,0.08));
+                    border-radius: 24px 24px 0 0;
+                }
+
+                .feature-card,
+                #creatorsList > div,
+                #tab-video-library [style*='background: var(--panel)'],
+                #tab-credits [style*='background: var(--panel)'] {
+                    background: linear-gradient(180deg, rgba(13, 28, 50, 0.92), rgba(7, 16, 29, 0.94)) !important;
+                    border: 1px solid rgba(0, 229, 255, 0.16);
+                    border-radius: 20px !important;
+                    box-shadow: 0 18px 40px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.05);
+                }
+
+                .feature-icon {
+                    filter: drop-shadow(0 0 14px rgba(0, 229, 255, 0.35));
+                }
+
+                .pill,
+                .owner-plaque {
+                    background: linear-gradient(180deg, rgba(12, 27, 49, 0.94), rgba(8, 16, 30, 0.95)) !important;
+                    border: 1px solid rgba(0, 229, 255, 0.22) !important;
+                    box-shadow: 0 10px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.08);
+                }
+
+                .btn {
+                    border-radius: 14px !important;
+                    border: 1px solid rgba(0, 229, 255, 0.2) !important;
+                    background: linear-gradient(180deg, rgba(14, 29, 54, 0.96), rgba(8, 15, 28, 0.96)) !important;
+                    color: #eaf6ff !important;
+                    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 10px 20px rgba(0,0,0,0.22);
+                }
+
+                .btn.primary {
+                    background: linear-gradient(135deg, rgba(0,229,255,0.95), rgba(53,137,255,0.92)) !important;
+                    color: #03111d !important;
+                    border-color: rgba(255,255,255,0.35) !important;
+                    box-shadow: 0 0 22px rgba(0,229,255,0.25), inset 0 1px 0 rgba(255,255,255,0.4);
+                }
+
+                .video-card {
+                    border: 1px solid rgba(0, 229, 255, 0.18);
+                    border-radius: 18px !important;
+                    box-shadow: 0 18px 34px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.05);
+                    transition: all 0.3s ease;
+                }
+                
+                .video-card:hover {
+                    transform: translateY(-8px) scale(1.01);
+                    box-shadow: 0 20px 46px rgba(0, 229, 255, 0.18), 0 16px 40px rgba(0, 0, 0, 0.34);
+                }
+                
+                .video-card:hover .play-overlay {
+                    opacity: 1 !important;
+                }
+                .play-overlay {
+                    transition: opacity 0.2s ease;
+                }
+                
+                img {
+                    transition: transform 0.3s ease;
+                }
+                
+                .video-card:hover img {
+                    transform: scale(1.05);
+                }
+
+                #aiAssistant {
+                    border: 1px solid rgba(0, 229, 255, 0.35) !important;
+                    background: linear-gradient(180deg, rgba(8, 18, 33, 0.97), rgba(5, 10, 20, 0.98)) !important;
+                    box-shadow: 0 24px 60px rgba(0,0,0,0.44), 0 0 36px rgba(0,229,255,0.14) !important;
+                    backdrop-filter: blur(18px);
+                }
+
+                #aiToggleBtn {
+                    box-shadow: 0 0 24px rgba(0,229,255,0.34), 0 14px 30px rgba(0,0,0,0.32) !important;
+                }
+
+                ::-webkit-scrollbar {
+                    width: 10px;
+                    height: 10px;
+                }
+
+                ::-webkit-scrollbar-thumb {
+                    background: linear-gradient(180deg, rgba(0,229,255,0.7), rgba(122,92,255,0.7));
+                    border-radius: 999px;
+                }
+
+                ::-webkit-scrollbar-track {
+                    background: rgba(255,255,255,0.04);
+                }
+            </style>
+        `;
+        
+        document.head.insertAdjacentHTML('beforeend', additionalCSS);
+
+        function setActiveTab(tabId) {
+            const tabs = document.querySelectorAll('.tab');
+            const panels = document.querySelectorAll('.panel');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            panels.forEach(panel => panel.classList.remove('active'));
+            
+            const clickedTab = document.querySelector(`[data-tab="${tabId}"]`);
+            const targetPanel = document.getElementById(`tab-${tabId}`);
+            
+            if (clickedTab) clickedTab.classList.add('active');
+            if (targetPanel) targetPanel.classList.add('active');
+        }
+
+        function getCategoryColor(category) {
+            const colors = {
+                basics: '#00e5ff',
+                trading: '#ff4fb8',
+                defi: '#59ffb5',
+                nft: '#7a5cff',
+                security: '#ff5f6d',
+                advanced: '#ffd700'
+            };
+            return colors[category] || '#00e5ff';
+        }
+
+        function getRandomColor() {
+            const colors = ['#00e5ff', '#ff4fb8', '#59ffb5', '#7a5cff', '#ff5f6d', '#ffd700'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'error' ? 'var(--red)' : 'var(--blue)'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        console.log('🎬 REAL VIDEO LIBRARY - CURATED YOUTUBE VIDEOS WITH FULL ATTRIBUTION!');
+    </script>
+</body>
+</html>

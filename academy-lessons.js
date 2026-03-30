@@ -112,25 +112,221 @@ window.JUZZY_ACADEMY_LESSONS = (() => {
     return `<div class="academy-concept-panel" style="--panel-delay:${(moduleNumber % 4) * 0.35}s"><div class="academy-concept-badge">Interactive concept</div><div class="academy-concept-title">${escapeHtml(theme)}</div><div class="academy-concept-copy">This animated content panel keeps the learner active with moving visuals, guided prompts, and clickable pathways into the app.</div><div class="academy-hotspot-row"><button class="academy-hotspot" data-lesson-jump="brain">See AI activity</button><button class="academy-hotspot" data-lesson-jump="portfolio">View portfolio demo</button><button class="academy-hotspot" data-lesson-action="return">Stay in module</button></div></div>`;
   }
 
+  function buildYouTubeResource(track, cat, theme) {
+    const normalizedCategory = String(cat || '').toLowerCase();
+    const normalizedTrack = String(track.id || '').toLowerCase();
+
+    const resourcesByCategory = {
+      'crypto basics': {
+        title: 'But how does bitcoin actually work?',
+        creator: '3Blue1Brown',
+        url: 'https://www.youtube.com/watch?v=bBC-nXj3Ng4',
+      },
+      'using juzzy': {
+        title: 'How Does Bitcoin Work? With Scott Driscoll Of Curious Inventor',
+        creator: 'CuriousInventor',
+        url: 'https://www.youtube.com/watch?v=gq_r21Kg8yo',
+      },
+      'risk management': {
+        title: 'SAFEST WAY To Store Your Crypto!! DON\'T RISK IT!!',
+        creator: 'Coin Bureau',
+        url: 'https://www.youtube.com/watch?v=aUBid1zJC-U',
+      },
+      'trading strategies': {
+        title: 'The Complete Guide To Market Structure',
+        creator: 'The Trading Channel',
+        url: 'https://www.youtube.com/results?search_query=The+Trading+Channel+market+structure+trading',
+      },
+      'defi & on-chain': {
+        title: 'Introduction to Smart Contracts and Ethereum',
+        creator: 'Finematics',
+        url: 'https://www.youtube.com/watch?v=xeaDE8wgVVQ',
+      },
+      advanced: {
+        title: 'Introduction to Smart Contracts and Ethereum',
+        creator: 'Finematics',
+        url: 'https://www.youtube.com/watch?v=xeaDE8wgVVQ',
+      },
+      'app features': {
+        title: 'What Is Cryptocurrency? - Crypto Whiteboard 101',
+        creator: 'Whiteboard Crypto',
+        url: 'https://www.youtube.com/watch?v=k1aOoX5ucgc',
+      },
+    };
+
+    const resourcesByTrack = {
+      foundations: {
+        title: 'What Is Bitcoin & How Does It Work? (w/ Andrei Jikh)',
+        creator: 'Impaulsive / Andrei Jikh',
+        url: 'https://www.youtube.com/watch?v=jVkOpxluhBY',
+      },
+      safety: {
+        title: 'SAFEST WAY To Store Your Crypto!! DON\'T RISK IT!!',
+        creator: 'Coin Bureau',
+        url: 'https://www.youtube.com/watch?v=aUBid1zJC-U',
+      },
+      investing: {
+        title: 'Is Bitcoin a Store of Value? Digital Gold Explained',
+        creator: 'The Plain Bagel',
+        url: 'https://www.youtube.com/watch?v=b70MwTkV9t8',
+      },
+      advanced: {
+        title: 'Introduction to Smart Contracts and Ethereum',
+        creator: 'Finematics',
+        url: 'https://www.youtube.com/watch?v=xeaDE8wgVVQ',
+      },
+      'charting-analysis': {
+        title: 'The Complete Guide To Market Structure',
+        creator: 'The Trading Channel',
+        url: 'https://www.youtube.com/results?search_query=The+Trading+Channel+market+structure+trading',
+      },
+      'defi-yield-systems': {
+        title: 'Introduction to Smart Contracts and Ethereum',
+        creator: 'Finematics',
+        url: 'https://www.youtube.com/watch?v=xeaDE8wgVVQ',
+      },
+    };
+
+    const base = resourcesByTrack[normalizedTrack] || resourcesByCategory[normalizedCategory] || {
+      title: `${theme} on YouTube`,
+      creator: 'YouTube',
+      url: `https://www.youtube.com/results?search_query=${encodeURIComponent(`${track.title} ${theme}`)}`,
+    };
+
+    return {
+      ...base,
+      label: `Watch after finishing this lesson: ${base.title}`,
+      description: `This external resource supports the module topic "${theme}" after the learner completes the in-app lesson flow.`,
+    };
+  }
+
+  function buildScenario(theme, trackTitle, moduleNumber) {
+    return `You are stepping into module <strong>${moduleNumber}</strong> of <strong>${escapeHtml(trackTitle)}</strong>. Imagine a learner opens Juzzy after hearing strong opinions online about <strong>${escapeHtml(theme)}</strong>. The learner is curious, slightly overwhelmed, and trying to tell the difference between real understanding and noisy confidence. This module slows the moment down so the learner can see what matters, what is misleading, and what deserves a second look.`;
+  }
+
+  function buildCuriosityPrompt(theme) {
+    return `<div class="tip"><strong>Curiosity hook:</strong> If someone mentions <strong>${escapeHtml(theme)}</strong> with total confidence, what evidence would you want to see before trusting the claim?</div>`;
+  }
+
+  function buildLessonScene(theme, cat) {
+    return `<div class="academy-inline-visual"><strong>Scene setter:</strong> This lesson treats <strong>${escapeHtml(theme)}</strong> as a live user situation inside <strong>${escapeHtml(cat)}</strong> rather than a dry glossary entry. You are not just reading definitions. You are learning what to notice, what to question, and how to respond with better judgement.</div>`;
+  }
+
+  function buildMicroStory(theme, blueprint, moduleIndex) {
+    const labPrompt = blueprint.labs[moduleIndex % blueprint.labs.length];
+    return `<p>A typical beginner mistake is to rush past the meaning of <strong>${escapeHtml(theme)}</strong> and copy what louder users are doing. Juzzy flips that pattern. First, you understand the concept. Then you test it in a safer learning environment. Finally, you connect it to an action like: <strong>${escapeHtml(labPrompt)}</strong>.</p>`;
+  }
+
+  function buildDecisionGrid(theme) {
+    return `<ul><li><strong>Notice:</strong> What clues tell you this concept is actually present?</li><li><strong>Question:</strong> What could be misunderstood, exaggerated, or marketed badly?</li><li><strong>Act:</strong> What is the safest next learning move before taking any outside action related to <strong>${escapeHtml(theme)}</strong>?</li></ul>`;
+  }
+
+  function buildReflectionPrompt(theme) {
+    return `<div class="warn"><strong>Reflection prompt:</strong> If you had to teach <strong>${escapeHtml(theme)}</strong> to a smart friend in 30 seconds, which example would you use and which mistake would you warn them about first?</div>`;
+  }
+
+  function buildExternalLessonResources(track, cat, theme) {
+    const normalizedCategory = String(cat || '').toLowerCase();
+    const normalizedTrack = String(track.id || '').toLowerCase();
+    const categoryMap = {
+      'crypto basics': [
+        { label: 'Bitcoin explainer', provider: 'bitcoin.org', url: 'https://bitcoin.org/en/how-it-works' },
+        { label: 'Ethereum basics', provider: 'ethereum.org', url: 'https://ethereum.org/en/learn/' },
+      ],
+      'risk management': [
+        { label: 'Consumer safety guidance', provider: 'Coinbase Learn', url: 'https://www.coinbase.com/learn/crypto-basics/7-tips-to-invest-safely-in-crypto' },
+        { label: 'Crypto scam awareness', provider: 'Binance Academy', url: 'https://academy.binance.com/en/articles/common-crypto-scams-and-how-to-avoid-them' },
+      ],
+      'trading strategies': [
+        { label: 'Technical analysis primer', provider: 'Binance Academy', url: 'https://academy.binance.com/en/articles/a-beginners-guide-to-technical-analysis' },
+        { label: 'Market structure concepts', provider: 'Coinbase Learn', url: 'https://www.coinbase.com/learn/advanced-trading/what-is-technical-analysis' },
+      ],
+      'defi & on-chain': [
+        { label: 'DeFi fundamentals', provider: 'ethereum.org', url: 'https://ethereum.org/en/defi/' },
+        { label: 'Smart contract basics', provider: 'Chainlink Education Hub', url: 'https://chain.link/education/smart-contracts' },
+      ],
+      advanced: [
+        { label: 'Smart contract overview', provider: 'ethereum.org', url: 'https://ethereum.org/en/smart-contracts/' },
+        { label: 'Oracle system overview', provider: 'Chainlink Education Hub', url: 'https://chain.link/education' },
+      ],
+      'app features': [
+        { label: 'Learn crypto glossary', provider: 'Coinbase Learn', url: 'https://www.coinbase.com/learn/crypto-basics/what-is-cryptocurrency' },
+        { label: 'Crypto concepts library', provider: 'Binance Academy', url: 'https://academy.binance.com/en' },
+      ],
+      'using juzzy': [
+        { label: 'Market cap explainer', provider: 'CoinMarketCap Alexandria', url: 'https://coinmarketcap.com/alexandria/glossary/market-capitalization-market-cap-mcap' },
+        { label: 'CoinGecko Learn hub', provider: 'CoinGecko', url: 'https://www.coingecko.com/learn' },
+      },
+    };
+    const trackMap = {
+      safety: [
+        { label: 'Wallet security guide', provider: 'Ledger Academy', url: 'https://www.ledger.com/academy/basic-basics/2-how-to-own-crypto/what-is-a-crypto-wallet' },
+        { label: 'Phishing awareness', provider: 'Binance Academy', url: 'https://academy.binance.com/en/articles/how-to-avoid-phishing-attacks' },
+      ],
+      investing: [
+        { label: 'Dollar-cost averaging', provider: 'Coinbase Learn', url: 'https://www.coinbase.com/learn/crypto-basics/what-is-dollar-cost-averaging' },
+        { label: 'Portfolio basics', provider: 'CoinGecko Learn', url: 'https://www.coingecko.com/learn/crypto-portfolio-management' },
+      ],
+      'charting-analysis': [
+        { label: 'Candlestick basics', provider: 'Binance Academy', url: 'https://academy.binance.com/en/articles/how-to-read-candlestick-charts' },
+        { label: 'Support and resistance', provider: 'Coinbase Learn', url: 'https://www.coinbase.com/learn/advanced-trading/what-are-support-resistance-levels' },
+      ],
+      'defi-yield-systems': [
+        { label: 'What is staking?', provider: 'ethereum.org', url: 'https://ethereum.org/en/staking/' },
+        { label: 'Liquidity pool basics', provider: 'CoinMarketCap Alexandria', url: 'https://coinmarketcap.com/alexandria/glossary/liquidity-pool' },
+      ],
+      'global-regulation': [
+        { label: 'Global crypto policy overview', provider: 'Chainalysis', url: 'https://www.chainalysis.com/blog/' },
+        { label: 'Consumer investor alerts', provider: 'IOSCO', url: 'https://www.iosco.org/investor_protection/' },
+      },
+    };
+    const resources = trackMap[normalizedTrack] || categoryMap[normalizedCategory] || [
+      { label: `${theme} research results`, provider: 'Google Search', url: `https://www.google.com/search?q=${encodeURIComponent(`${track.title} ${theme} crypto learning`)}` },
+      { label: `${theme} glossary search`, provider: 'CoinMarketCap Alexandria', url: `https://coinmarketcap.com/alexandria/search?query=${encodeURIComponent(theme)}` },
+    ];
+    return resources.slice(0, 2);
+  }
+
+  function buildExternalResourceMarkup(resources) {
+    return `<div class="academy-inline-visual academy-lesson-links"><strong>Explore outside the lesson without losing your place:</strong><div class="academy-resource-link-grid">${resources.map((resource) => `<button class="academy-resource-link" data-lesson-resource-url="${escapeHtml(resource.url)}" data-lesson-resource-label="${escapeHtml(resource.label)}" data-lesson-resource-provider="${escapeHtml(resource.provider)}" type="button"><span class="academy-resource-link-title">${escapeHtml(resource.label)}</span><span class="academy-resource-link-meta">${escapeHtml(resource.provider)} · Opens inside Juzzy viewer</span><span class="academy-resource-link-return">Return to this lesson anytime</span></button>`).join('')}</div></div>`;
+  }
+
   function buildSteps(track, moduleIndex, moduleNumber, theme, blueprint) {
     const assessmentPrompt = blueprint.assessments[moduleIndex % blueprint.assessments.length];
     const labPrompt = blueprint.labs[moduleIndex % blueprint.labs.length];
+    const externalResourceMarkup = buildExternalResourceMarkup(buildExternalLessonResources(track, blueprint.categoryPool[moduleIndex % blueprint.categoryPool.length] || blueprint.categoryPool[0] || 'Crypto Basics', theme));
     return [
       {
         title: `Concept Focus — ${theme}`,
-        html: `${animatedConceptPanel(theme, track.title, moduleNumber)}<p>This module immerses the learner in <strong>${escapeHtml(theme)}</strong> inside <strong>${escapeHtml(track.title)}</strong>. It connects core ideas, practical crypto context, and the user behaviours that matter most when navigating this part of the market.</p><p>Each concept is framed for education, guided exploration, and better judgement rather than guaranteed outcomes.</p>`,
+        html: `${animatedConceptPanel(theme, track.title, moduleNumber)}${buildCuriosityPrompt(theme)}${buildLessonScene(theme, blueprint.categoryPool[moduleIndex % blueprint.categoryPool.length] || 'Crypto Basics')}<p>${buildScenario(theme, track.title, moduleNumber)}</p><p>This module immerses the learner in <strong>${escapeHtml(theme)}</strong> inside <strong>${escapeHtml(track.title)}</strong>. It connects core ideas, practical crypto context, and the user behaviours that matter most when navigating this part of the market.</p><p>Each concept is framed for education, guided exploration, and better judgement rather than guaranteed outcomes.</p>`,
+      },
+      {
+        title: 'Core Explanation',
+        html: `<div class="tip"><strong>What this module teaches:</strong> ${escapeHtml(theme)} is being taught as a real user skill, not just a theory label.</div><p>Start by identifying what problem this concept solves for the user. In crypto, almost every idea exists because users need a better way to store value, move value, verify trust, manage risk, or interpret market behaviour.</p><p>This lesson keeps the explanation grounded in first principles, user safety, and decision quality. The goal is for the learner to understand what the concept is, why it matters, and how it appears in real activity across wallets, exchanges, charts, communities, and protocols.</p>${buildMicroStory(theme, blueprint, moduleIndex)}${buildDecisionGrid(theme)}`,
       },
       {
         title: 'Visual Walkthrough',
-        html: `${visualSvg(track.title, moduleNumber, theme)}<p>This visual block anchors the learner in the module theme and keeps the lesson interactive and easy to follow. Users can ask AI questions, click into related app areas, and return to the module without losing context.</p>`,
+        html: `${visualSvg(track.title, moduleNumber, theme)}<p>This visual block anchors the learner in the module theme and keeps the lesson interactive and easy to follow. Users can ask AI questions, click into related app areas, and return to the module without losing context.</p><p>As you move through the visual, imagine narrating what is happening to a beginner: what part is the core mechanism, what part is a signal, and what part could easily confuse someone seeing this for the first time?</p>`,
+      },
+      {
+        title: 'Real-World Lens',
+        html: `<p>Now shift from definition to reality. Where would a user actually encounter <strong>${escapeHtml(theme)}</strong>? Maybe in a wallet decision, a platform screen, a chart move, a token page, a social post, or an AI-generated explanation. The important skill is not memorizing the term. The important skill is spotting the moment when the term becomes relevant.</p><div class="academy-hotspot-row"><button class="academy-hotspot" data-lesson-jump="leaders">Check live movers</button><button class="academy-hotspot" data-lesson-jump="reports">Open reports</button><button class="academy-hotspot" data-lesson-action="ask-ai">Ask for a real-world example</button></div><ol><li>Where does this concept show up first for a normal user?</li><li>How is it usually misunderstood online?</li><li>What extra information would make your interpretation stronger?</li></ol>${externalResourceMarkup}`,
+      },
+      {
+        title: 'Why It Matters For The User',
+        html: `<p>The learner should leave this section knowing how <strong>${escapeHtml(theme)}</strong> changes their decisions. Juzzy treats every lesson as a judgement tool: what should the user notice, compare, avoid, or practice differently after learning this idea?</p><div class="academy-hotspot-row"><button class="academy-hotspot" data-lesson-jump="leaders">See live examples</button><button class="academy-hotspot" data-lesson-jump="charts">Inspect market context</button><button class="academy-hotspot" data-lesson-action="ask-ai">Ask AI for a simpler explanation</button></div><ol><li>What signal should a beginner notice first?</li><li>What mistake does this concept help prevent?</li><li>What safer next action does this module encourage?</li></ol>${buildReflectionPrompt(theme)}`,
       },
       {
         title: 'Assessment Checkpoint',
-        html: `<div class="tip"><strong>Assessment task:</strong> ${escapeHtml(assessmentPrompt)}.</div><div class="academy-hotspot-row"><button class="academy-hotspot" data-lesson-action="ask-ai">Get AI hint</button><button class="academy-hotspot" data-lesson-jump="reports">Open review log</button></div><ol><li>Explain the lesson idea in your own words.</li><li>Name one pitfall or risk attached to this topic.</li><li>Describe how you would explore it safely inside Juzzy first.</li></ol>`,
+        html: `<div class="tip"><strong>Assessment task:</strong> ${escapeHtml(assessmentPrompt)}.</div><div class="academy-hotspot-row"><button class="academy-hotspot" data-lesson-action="ask-ai">Get AI hint</button><button class="academy-hotspot" data-lesson-jump="reports">Open review log</button></div><ol><li>Explain the lesson idea in your own words.</li><li>Name one pitfall or risk attached to this topic.</li><li>Describe how you would explore it safely inside Juzzy first.</li><li>Give one example that proves you understand the idea beyond just repeating the name.</li></ol>`,
       },
       {
         title: 'Practice Lab',
-        html: `<div class="warn"><strong>Practice lab:</strong> ${escapeHtml(labPrompt)}.</div><div class="academy-hotspot-row"><button class="academy-hotspot" data-lesson-jump="oracle">Run guided demo</button><button class="academy-hotspot" data-lesson-jump="charts">Inspect live chart</button><button class="academy-hotspot" data-lesson-action="return">Back to lesson flow</button></div><p>This lab is designed for guided clicking, dummy actions, and review. It keeps the learner engaged while reinforcing the module through action rather than passive reading.</p>`,
+        html: `<div class="warn"><strong>Practice lab:</strong> ${escapeHtml(labPrompt)}.</div><div class="academy-hotspot-row"><button class="academy-hotspot" data-lesson-jump="oracle">Run guided demo</button><button class="academy-hotspot" data-lesson-jump="charts">Inspect live chart</button><button class="academy-hotspot" data-lesson-action="return">Back to lesson flow</button></div><p>This lab is designed for guided clicking, dummy actions, and review. It keeps the learner engaged while reinforcing the module through action rather than passive reading.</p><p>Try to act like a calm analyst, not an impulsive user. Pause, observe the signal, note what is uncertain, and only then decide what the smartest practice action would be.</p>`,
+      },
+      {
+        title: 'Lesson Summary & Reflection',
+        html: `<div class="academy-inline-visual"><strong>End-of-lesson reflection:</strong> You should now be able to describe <strong>${escapeHtml(theme)}</strong>, explain why it matters, and practice it safely inside Juzzy before trusting outside noise.</div><p>Before moving on, summarize the lesson in your own words and compare what you believed before the module with what you understand now.</p><ul><li>State the concept plainly.</li><li>List one risk or misuse to watch for.</li><li>Describe one Juzzy tool that helps you learn or test this safely.</li><li>Name one question you would ask next if you wanted to go deeper.</li></ul><p>The best learners leave a module with sharper questions, not just more words. That is how this lesson becomes memorable instead of forgettable.</p>`,
       },
     ];
   }
@@ -149,6 +345,7 @@ window.JUZZY_ACADEMY_LESSONS = (() => {
         title: `${track.title} — ${theme} ${index + 1}`,
         desc: `${track.summary} Module ${index + 1} builds user understanding through visuals, assessment, and practice lab interaction.`,
         steps: buildSteps(track, index, moduleNumber, theme, blueprint),
+        youtubeResource: buildYouTubeResource(track, cat, theme),
       });
       moduleNumber += 1;
     }

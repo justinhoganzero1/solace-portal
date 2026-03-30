@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Conglomerate - Complete Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #00e5ff;
+            --secondary-color: #7a5cff;
+            --accent-color: #ffcc4d;
+            --dark-bg: #0a0e1a;
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --text-primary: rgba(234, 240, 255, 0.95);
+            --text-secondary: rgba(234, 240, 255, 0.7);
+            --text-muted: rgba(234, 240, 255, 0.5);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --gradient-1: linear-gradient(135deg, #00e5ff, #1488cc);
+            --gradient-2: linear-gradient(135deg, #7a5cff, #b14dff);
+            --gradient-3: linear-gradient(135deg, #ffcc4d, #ff8c42);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .main-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .ai-logo {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ai-core {
+            width: 24px;
+            height: 24px;
+            background: var(--gradient-1);
+            border-radius: 50%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .ai-ring {
+            position: absolute;
+            border: 2px solid;
+            border-radius: 50%;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .ring-1 {
+            width: 32px;
+            height: 32px;
+            border-color: rgba(0, 229, 255, 0.6);
+            animation-delay: 0s;
+        }
+
+        .ring-2 {
+            width: 40px;
+            height: 40px;
+            border-color: rgba(122, 92, 255, 0.4);
+            animation-delay: 1s;
+        }
+
+        .ring-3 {
+            width: 48px;
+            height: 48px;
+            border-color: rgba(255, 204, 77, 0.3);
+            animation-delay: 2s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 0.4; }
+        }
+
+        .brand-text h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            background: rgba(0, 229, 255, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+        }
+
+        .section {
+            display: none;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .app-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .app-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-color);
+            box-shadow: 0 16px 48px rgba(0, 229, 255, 0.15);
+        }
+
+        .app-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .app-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .app-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .launch-btn {
+            background: var(--gradient-1);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .launch-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 229, 255, 0.3);
+        }
+
+        /* Academy Section */
+        .academy-frame {
+            width: 100%;
+            height: calc(100vh - 120px);
+            border: none;
+            border-radius: 12px;
+            background: var(--card-bg);
+        }
+
+        /* Status Bar */
+        .status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #00ff7f;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-wrap: wrap;
+            }
+            
+            .nav-menu {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                margin-top: 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .app-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="ai-logo">
+                    <div class="ai-core"></div>
+                    <div class="ai-ring ring-1"></div>
+                    <div class="ai-ring ring-2"></div>
+                    <div class="ai-ring ring-3"></div>
+                </div>
+                <div class="brand-text">
+                    <h1>AI Conglomerate</h1>
+                </div>
+            </div>
+            
+            <div class="nav-menu">
+                <button class="nav-btn active" onclick="showSection('home')">Home</button>
+                <button class="nav-btn" onclick="showSection('academy')">3 Amigos Academy</button>
+                <button class="nav-btn" onclick="showSection('portfolio')">Portfolio</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <h1>🚀 AI Conglomerate Platform</h1>
+                <p>Your complete ecosystem of AI-powered applications</p>
+                
+                <div class="app-grid">
+                    <div class="app-card" onclick="showSection('academy')">
+                        <div class="app-icon">🎓</div>
+                        <div class="app-title">3 Amigos Academy</div>
+                        <div class="app-description">Revolutionary crypto education platform with AI-powered learning</div>
+                        <button class="launch-btn">Launch Academy</button>
+                    </div>
+                    
+                    <div class="app-card">
+                        <div class="app-icon">💰</div>
+                        <div class="app-title">Crypto Wealth Builder</div>
+                        <div class="app-description">AI-driven investment strategies and portfolio optimization</div>
+                        <button class="launch-btn" disabled>Coming Soon</button>
+                    </div>
+                    
+                    <div class="app-card">
+                        <div class="app-icon">🏥</div>
+                        <div class="app-title">Health AI Assistant</div>
+                        <div class="app-description">Personal medical insights and health monitoring</div>
+                        <button class="launch-btn" disabled>In Development</button>
+                    </div>
+                    
+                    <div class="app-card">
+                        <div class="app-icon">🎨</div>
+                        <div class="app-title">Creative Studio AI</div>
+                        <div class="app-description">AI-powered creative tools and content generation</div>
+                        <button class="launch-btn" disabled>In Development</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Academy Section -->
+        <section id="academy" class="section">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2 style="font-size: 2rem; font-weight: 800; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1rem;">3 Amigos Academy</h2>
+                <p style="color: var(--text-secondary);">Loading your crypto education platform...</p>
+            </div>
+            <iframe src="index.html" class="academy-frame" id="academyFrame"></iframe>
+        </section>
+
+        <!-- Portfolio Section -->
+        <section id="portfolio" class="section">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2 style="font-size: 2rem; font-weight: 800; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1rem;">Portfolio Details</h2>
+                <p style="color: var(--text-secondary);">Comprehensive information about our AI applications</p>
+            </div>
+            <iframe src="conglomerate.html" class="academy-frame" id="portfolioFrame"></iframe>
+        </section>
+    </main>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <span class="status-indicator"></span>
+        <span id="statusText">All systems operational • Platform running on single server</span>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update status
+            const statusText = document.getElementById('statusText');
+            switch(sectionId) {
+                case 'home':
+                    statusText.textContent = 'All systems operational • Platform running on single server';
+                    break;
+                case 'academy':
+                    statusText.textContent = '3 Amigos Academy loaded • Crypto education platform active';
+                    break;
+                case 'portfolio':
+                    statusText.textContent = 'Portfolio view loaded • Showcasing AI applications';
+                    break;
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 AI Conglomerate Platform loaded successfully!');
+            console.log('📊 All applications available from single server');
+        });
+    </script>
+</body>
+</html>

@@ -155,7 +155,7 @@ window.JUZZY_VIRAL_AI = {
       };
       
       return `
-        <button class="share-btn" onclick="window.open('${urls[platform]}', '_blank', 'width=600,height=400')" style="background: linear-gradient(135deg, #1DA1F2, #0d8bd9); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;">
+        <button class="share-btn" onclick="if(window.parent&&window.parent!==window&&typeof window.parent.postMessage==='function'){window.parent.postMessage({type:'juzzy-open-resource',url:'${urls[platform]}',label:'Share Achievement',provider:'Social Share'}, '*');}else{window.location.href='${urls[platform]}';}" style="background: linear-gradient(135deg, #1DA1F2, #0d8bd9); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;">
           <span>🐦</span> Share on Twitter
         </button>
       `;

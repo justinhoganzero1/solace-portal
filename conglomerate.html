@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Conglomerate - Innovation Powered by Artificial Intelligence</title>
+    <link rel="stylesheet" href="conglomerate-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- AI Navigation Header -->
+    <header class="ai-header">
+        <nav class="ai-nav">
+            <div class="nav-brand">
+                <div class="ai-logo">
+                    <div class="ai-core"></div>
+                    <div class="ai-ring ring-1"></div>
+                    <div class="ai-ring ring-2"></div>
+                    <div class="ai-ring ring-3"></div>
+                </div>
+                <div class="brand-text">
+                    <h1>AI Conglomerate</h1>
+                    <p>Innovation Ecosystem</p>
+                </div>
+            </div>
+            
+            <div class="nav-menu">
+                <button class="nav-item active" data-section="home">Home</button>
+                <button class="nav-item" data-section="portfolio">Portfolio</button>
+                <button class="nav-item" data-section="ai-lab">AI Lab</button>
+                <button class="nav-item" data-section="about">About</button>
+                <button class="nav-item" data-section="contact">Contact</button>
+            </div>
+
+            <div class="nav-actions">
+                <button class="ai-assistant-btn" id="aiAssistant">
+                    <span class="ai-icon">🤖</span>
+                    AI Assistant
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="ai-main">
+        <!-- Hero Section -->
+        <section class="hero-section" id="home">
+            <div class="hero-bg">
+                <div class="floating-particles"></div>
+                <div class="neural-network"></div>
+            </div>
+            
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">
+                        <span class="gradient-text">AI-Powered</span><br>
+                        Innovation Ecosystem
+                    </h1>
+                    <p class="hero-subtitle">
+                        Where artificial intelligence meets human creativity to build the next generation of digital experiences. 
+                        Our conglomerate spans education, finance, health, and beyond.
+                    </p>
+                    <div class="hero-actions">
+                        <button class="btn-primary" data-section="portfolio">Explore Portfolio</button>
+                        <button class="btn-secondary" id="startAiTour">AI-Guided Tour</button>
+                    </div>
+                </div>
+                
+                <div class="hero-visual">
+                    <div class="app-showcase">
+                        <div class="app-card floating" style="--delay: 0s;">
+                            <div class="app-icon">🎓</div>
+                            <div class="app-name">3 Amigos Academy</div>
+                        </div>
+                        <div class="app-card floating" style="--delay: 1s;">
+                            <div class="app-icon">💰</div>
+                            <div class="app-name">Crypto Wealth</div>
+                        </div>
+                        <div class="app-card floating" style="--delay: 2s;">
+                            <div class="app-icon">🏥</div>
+                            <div class="app-name">Health AI</div>
+                        </div>
+                        <div class="app-card floating" style="--delay: 3s;">
+                            <div class="app-icon">🎨</div>
+                            <div class="app-name">Creative Studio</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Section -->
+        <section class="portfolio-section" id="portfolio">
+            <div class="section-header">
+                <h2 class="section-title">Our Portfolio</h2>
+                <p class="section-subtitle">AI-driven applications transforming industries</p>
+            </div>
+
+            <div class="portfolio-grid">
+                <!-- 3 Amigos Academy -->
+                <div class="portfolio-card featured" data-app="amigos">
+                    <div class="card-header">
+                        <div class="app-logo">
+                            <div class="three-circles">
+                                <div class="circle main"></div>
+                                <div class="circle top-left"></div>
+                                <div class="circle bottom-right"></div>
+                            </div>
+                        </div>
+                        <div class="app-info">
+                            <h3>3 Amigos Academy</h3>
+                            <p class="app-category">Education • Crypto</p>
+                        </div>
+                        <div class="app-status live">Live</div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <p class="app-description">
+                            A revolutionary crypto education platform born from international collaboration. 
+                            Three visionaries across continents united to create the world's most comprehensive 
+                            blockchain learning ecosystem.
+                        </p>
+                        
+                        <div class="app-features">
+                            <div class="feature-tag">AI-Powered Learning</div>
+                            <div class="feature-tag">Global Community</div>
+                            <div class="feature-tag">Expert Tutorials</div>
+                        </div>
+                        
+                        <div class="app-metrics">
+                            <div class="metric">
+                                <span class="metric-value">5,824+</span>
+                                <span class="metric-label">AI Students</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">490</span>
+                                <span class="metric-label">Modules</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-value">24/7</span>
+                                <span class="metric-label">AI Support</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-actions">
+                        <button class="btn-primary" onclick="launchAcademy()">🚀 Launch Academy</button>
+                        <button class="btn-secondary" onclick="showAppDetails('amigos')">Learn More</button>
+                    </div>
+                </div>
+
+                <!-- Crypto Wealth Builder -->
+                <div class="portfolio-card" data-app="crypto">
+                    <div class="card-header">
+                        <div class="app-logo crypto-logo">💰</div>
+                        <div class="app-info">
+                            <h3>Crypto Wealth Builder</h3>
+                            <p class="app-category">Finance • Investment</p>
+                        </div>
+                        <div class="app-status beta">Beta</div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <p class="app-description">
+                            AI-driven investment strategies and portfolio optimization for cryptocurrency enthusiasts. 
+                            Machine learning algorithms analyze market trends to maximize returns.
+                        </p>
+                        
+                        <div class="app-features">
+                            <div class="feature-tag">AI Analytics</div>
+                            <div class="feature-tag">Risk Management</div>
+                            <div class="feature-tag">Auto-Trading</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-actions">
+                        <button class="btn-primary disabled">Coming Soon</button>
+                        <button class="btn-secondary" onclick="showAppDetails('crypto')">Details</button>
+                    </div>
+                </div>
+
+                <!-- Health AI Assistant -->
+                <div class="portfolio-card" data-app="health">
+                    <div class="card-header">
+                        <div class="app-logo health-logo">🏥</div>
+                        <div class="app-info">
+                            <h3>Health AI Assistant</h3>
+                            <p class="app-category">Healthcare • Wellness</p>
+                        </div>
+                        <div class="app-status developing">In Development</div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <p class="app-description">
+                            Personal health monitoring and AI-powered medical insights. 
+                            Symptom analysis, treatment recommendations, and wellness tracking.
+                        </p>
+                        
+                        <div class="app-features">
+                            <div class="feature-tag">Symptom Analysis</div>
+                            <div class="feature-tag">Health Tracking</div>
+                            <div class="feature-tag">AI Insights</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-actions">
+                        <button class="btn-primary disabled">Coming Soon</button>
+                        <button class="btn-secondary" onclick="showAppDetails('health')">Details</button>
+                    </div>
+                </div>
+
+                <!-- Creative Studio AI -->
+                <div class="portfolio-card" data-app="creative">
+                    <div class="card-header">
+                        <div class="app-logo creative-logo">🎨</div>
+                        <div class="app-info">
+                            <h3>Creative Studio AI</h3>
+                            <p class="app-category">Design • Content</p>
+                        </div>
+                        <div class="app-status developing">In Development</div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <p class="app-description">
+                            AI-powered creative tools for content generation, design automation, 
+                            and multimedia production. Transform your creative vision into reality.
+                        </p>
+                        
+                        <div class="app-features">
+                            <div class="feature-tag">AI Design</div>
+                            <div class="feature-tag">Content Gen</div>
+                            <div class="feature-tag">Video Tools</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-actions">
+                        <button class="btn-primary disabled">Coming Soon</button>
+                        <button class="btn-secondary" onclick="showAppDetails('creative')">Details</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Lab Section -->
+        <section class="ai-lab-section" id="ai-lab">
+            <div class="section-header">
+                <h2 class="section-title">AI Laboratory</h2>
+                <p class="section-subtitle">Where innovation meets intelligence</p>
+            </div>
+
+            <div class="lab-grid">
+                <div class="lab-card">
+                    <div class="lab-icon">🧠</div>
+                    <h3>Neural Networks</h3>
+                    <p>Advanced deep learning architectures powering our applications</p>
+                </div>
+                
+                <div class="lab-card">
+                    <div class="lab-icon">⚡</div>
+                    <h3>Real-time Processing</h3>
+                    <p>Lightning-fast AI inference for seamless user experiences</p>
+                </div>
+                
+                <div class="lab-card">
+                    <div class="lab-icon">🔮</div>
+                    <h3>Predictive Analytics</h3>
+                    <p>Forecasting trends and behaviors with machine learning</p>
+                </div>
+                
+                <div class="lab-card">
+                    <div class="lab-icon">🛡️</div>
+                    <h3>Ethical AI</h3>
+                    <p>Responsible AI development with safety and privacy first</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="about-section" id="about">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2 class="section-title">About AI Conglomerate</h2>
+                    <p class="about-description">
+                        We are a collective of AI-powered applications and platforms dedicated to transforming 
+                        industries through intelligent automation and enhanced human capabilities. Our ecosystem 
+                        spans education, finance, health, and creative industries.
+                    </p>
+                    <p class="about-description">
+                        Each application in our portfolio is designed with cutting-edge artificial intelligence, 
+                        user-centric design, and a commitment to solving real-world problems. We believe in the 
+                        synergy between human creativity and machine intelligence.
+                    </p>
+                    
+                    <div class="about-stats">
+                        <div class="stat">
+                            <span class="stat-number">4</span>
+                            <span class="stat-label">Active Applications</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">50K+</span>
+                            <span class="stat-label">Users Served</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">99.9%</span>
+                            <span class="stat-label">Uptime</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-visual">
+                    <div class="ai-ecosystem">
+                        <div class="ecosystem-center">AI</div>
+                        <div class="ecosystem-node" style="--angle: 0deg;">Education</div>
+                        <div class="ecosystem-node" style="--angle: 72deg;">Finance</div>
+                        <div class="ecosystem-node" style="--angle: 144deg;">Health</div>
+                        <div class="ecosystem-node" style="--angle: 216deg;">Creative</div>
+                        <div class="ecosystem-node" style="--angle: 288deg;">Research</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact-section" id="contact">
+            <div class="contact-content">
+                <h2 class="section-title">Connect With Us</h2>
+                <p class="section-subtitle">Have questions? Our AI assistant is here to help 24/7</p>
+                
+                <div class="contact-options">
+                    <div class="contact-card">
+                        <div class="contact-icon">🤖</div>
+                        <h3>AI Assistant</h3>
+                        <p>Get instant answers about our products and services</p>
+                        <button class="btn-primary" id="contactAi">Chat with AI</button>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-icon">📧</div>
+                        <h3>Email Support</h3>
+                        <p>Reach our human team for complex inquiries</p>
+                        <button class="btn-secondary">Send Email</button>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-icon">🔔</div>
+                        <h3>Stay Updated</h3>
+                        <p>Get the latest news about our AI innovations</p>
+                        <button class="btn-secondary">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- AI Assistant Modal -->
+    <div class="ai-modal" id="aiModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>AI Assistant</h3>
+                <button class="close-modal" id="closeModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="ai-chat">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message ai">
+                            <span class="message-text">Hello! I'm your AI assistant. How can I help you explore our innovative applications today?</span>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="chatInput" placeholder="Ask me anything about our apps...">
+                        <button id="sendMessage">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Details Modal -->
+    <div class="ai-modal" id="appModal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3 id="appModalTitle">Application Details</h3>
+                <button class="close-modal" id="closeAppModal">×</button>
+            </div>
+            <div class="modal-body" id="appModalBody">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="conglomerate-script.js"></script>
+</body>
+</html>

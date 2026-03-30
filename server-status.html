@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Status - AI Conglomerate</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0e1a;
+            color: rgba(234, 240, 255, 0.95);
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .status-container {
+            text-align: center;
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #00e5ff, #1488cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .server-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1rem 0;
+            backdrop-filter: blur(10px);
+        }
+        .server-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .server-status {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        .status-checking { color: #ffcc4d; }
+        .status-online { color: #00ff7f; }
+        .status-offline { color: #ff4757; }
+        .launch-btn {
+            background: linear-gradient(135deg, #00e5ff, #1488cc);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .launch-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 229, 255, 0.3);
+        }
+        .launch-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .instructions {
+            background: rgba(0, 229, 255, 0.1);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        .instructions h3 {
+            color: #00e5ff;
+            margin-bottom: 1rem;
+        }
+        .instructions p {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="status-container">
+        <h1>🚀 AI Conglomerate Server Status</h1>
+        
+        <div class="server-card">
+            <div class="server-name">📊 Portfolio Website</div>
+            <div class="server-status" id="portfolio-status">Checking...</div>
+            <button class="launch-btn" id="portfolio-btn" disabled>Launch Portfolio</button>
+        </div>
+        
+        <div class="server-card">
+            <div class="server-name">🎓 3 Amigos Academy</div>
+            <div class="server-status" id="academy-status">Checking...</div>
+            <button class="launch-btn" id="academy-btn" disabled>Launch Academy</button>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 Instructions</h3>
+            <p>• If servers show "Offline", run these commands in your terminal:</p>
+            <p><code>cd c:\Users\User\.windsurf\worktrees\2048-2\2048-2-0dc9db83</code></p>
+            <p><code>python -m http.server 8000</code> (for Academy)</p>
+            <p><code>python -m http.server 8080</code> (for Portfolio)</p>
+            <p>• Then refresh this page to check status again</p>
+        </div>
+    </div>
+
+    <script>
+        async function checkServer(port, name, statusId, btnId) {
+            const statusEl = document.getElementById(statusId);
+            const btnEl = document.getElementById(btnId);
+            
+            statusEl.textContent = 'Checking...';
+            statusEl.className = 'server-status status-checking';
+            btnEl.disabled = true;
+            
+            try {
+                const response = await fetch(`http://localhost:${port}`, {
+                    mode: 'no-cors',
+                    signal: AbortSignal.timeout(3000)
+                });
+                
+                // If we get here, server is responding
+                statusEl.textContent = '✅ Online';
+                statusEl.className = 'server-status status-online';
+                btnEl.disabled = false;
+                
+                btnEl.onclick = () => {
+                    window.open(`http://localhost:${port}`, '_blank');
+                };
+                
+            } catch (error) {
+                // Try alternative localhost
+                try {
+                    const response = await fetch(`http://127.0.0.1:${port}`, {
+                        mode: 'no-cors',
+                        signal: AbortSignal.timeout(3000)
+                    });
+                    
+                    statusEl.textContent = '✅ Online';
+                    statusEl.className = 'server-status status-online';
+                    btnEl.disabled = false;
+                    
+                    btnEl.onclick = () => {
+                        window.open(`http://127.0.0.1:${port}`, '_blank');
+                    };
+                    
+                } catch (altError) {
+                    statusEl.textContent = '❌ Offline';
+                    statusEl.className = 'server-status status-offline';
+                    btnEl.disabled = true;
+                }
+            }
+        }
+        
+        // Check both servers
+        checkServer(8080, 'Portfolio', 'portfolio-status', 'portfolio-btn');
+        checkServer(8000, 'Academy', 'academy-status', 'academy-btn');
+        
+        // Auto-refresh every 10 seconds
+        setInterval(() => {
+            checkServer(8080, 'Portfolio', 'portfolio-status', 'portfolio-btn');
+            checkServer(8000, 'Academy', 'academy-status', 'academy-btn');
+        }, 10000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3 Amigos Academy - Owner Auto-Login</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto;
+            background: #0a0a1f;
+            color: #eaf0ff;
+            overflow-x: hidden;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 229, 255, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(255, 79, 184, 0.25) 0%, transparent 50%),
+                linear-gradient(135deg, #0a0a1f 0%, #1a1a3e 25%, #0f0f2e 50%, #1a1a3e 75%, #0a0a1f 100%);
+        }
+        
+        .loading h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00e5ff, #ff4fb8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .loading p {
+            font-size: 18px;
+            color: rgba(234, 240, 255, 0.7);
+        }
+        
+        .owner-badge {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 140, 0, 0.1));
+            border: 2px solid rgba(255, 215, 0, 0.6);
+            border-radius: 12px;
+            padding: 10px 20px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .owner-icon {
+            font-size: 24px;
+        }
+        
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading">
+        <h1 class="pulse">👑 3 Amigos Academy</h1>
+        <div class="owner-badge">
+            <div class="owner-icon">👑</div>
+            <div>
+                <div style="font-weight: bold; color: #FFD700;">OWNER MODE</div>
+                <div style="font-size: 12px;">Auto-logging in...</div>
+            </div>
+        </div>
+        <p>Initializing your owner dashboard with full access...</p>
+        <p style="margin-top: 10px; font-size: 14px;">All features unlocked • No restrictions • Admin controls active</p>
+    </div>
+
+    <script>
+        // Auto-login as owner and redirect
+        setTimeout(() => {
+            // Set owner credentials in localStorage
+            localStorage.setItem('juzzy_owner_email', 'owner@juzzy.local');
+            localStorage.setItem('juzzy_owner_logged_in', 'true');
+            localStorage.setItem('juzzy_owner_name', 'Owner');
+            
+            // Redirect to main academy
+            window.location.href = 'index.html';
+        }, 2000);
+        
+        console.log('👑 Owner auto-login initiated...');
+        console.log('🎓 All features will be unlocked');
+        console.log('🔧 Admin controls will be active');
+    </script>
+</body>
+</html>
