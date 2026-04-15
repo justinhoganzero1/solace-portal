@@ -10,7 +10,7 @@ class ViralMarketingSystem {
   factory ViralMarketingSystem() => _instance;
   ViralMarketingSystem._internal();
 
-  static const String baseUrl = 'https://your-api-url.com';
+  static const String baseUrl = 'https://golden-vault-empire.lovable.app';
   static const List<String> targetPlatforms = [
     'facebook', 'twitter', 'instagram', 'linkedin', 'tiktok',
     'reddit', 'discord', 'telegram', 'whatsapp', 'youtube',

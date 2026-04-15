@@ -10,8 +10,8 @@ class MonetizationSystem {
   factory MonetizationSystem() => _instance;
   MonetizationSystem._internal();
 
-  static const String stripePublishableKey = 'pk_test_51234567890abcdef'; // Test key
-  static const String baseUrl = 'https://your-api-url.com';
+  static const String stripePublishableKey = 'pk_live_51SvNs0LGip9LWuvpRvng7l9I3NouqNEs7Bj6cNQ5Ugrq0FMfNq3O6ARqucNPtB6E6souVJM4AwXMhiKKqB4aQXmA00hDIJgPof';
+  static const String baseUrl = 'https://golden-vault-empire.lovable.app';
   
   // Pricing tiers
   static const double monthlyPrice = 10.0;
