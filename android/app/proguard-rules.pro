@@ -28,13 +28,19 @@
 -keep class io.flutter.** { *; }
 -keep class io.flutter.plugins.** { *; }
 
+# Google Play Core (deferred components - suppress missing class warnings)
+-dontwarn com.google.android.play.core.**
+-dontwarn com.google.android.play.core.splitcompat.**
+-dontwarn com.google.android.play.core.splitinstall.**
+-dontwarn com.google.android.play.core.tasks.**
+
 # Stripe specific rules to prevent R8 issues
--keep class com.stripe.android.** { *; }
--keep class com.stripe.android.pushProvisioning.** { *; }
--keep class com.reactnativestripesdk.** { *; }
 -dontwarn com.stripe.android.**
 -dontwarn com.stripe.android.pushProvisioning.**
 -dontwarn com.reactnativestripesdk.**
+-keep class com.stripe.android.** { *; }
+-keep class com.stripe.android.pushProvisioning.** { *; }
+-keep class com.reactnativestripesdk.** { *; }
 
 # Keep all model classes used by Stripe
 -keepclassmembers class * {
