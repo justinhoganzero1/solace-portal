@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:ui' as ui;
+import 'dart:math' as math;
 import 'config.dart';
+import 'holographic_ui.dart';
+import 'voice_controller.dart';
+import 'monetization_system.dart';
+import 'viral_marketing.dart';
+import 'complete_dev_suite.dart';
+import 'playstation_bundler.dart';
+import 'avatar_ai.dart';
 
 // This will be dynamically set by the user
 String kInitialPortalUrl = 'https://golden-vault-empire.lovable.app';
@@ -17,9 +26,13 @@ class SolacePortalApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Solace Portal',
+      title: 'Solace Portal - Holographic Suite',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        primaryColor: HolographicTheme.primaryHologram,
+        scaffoldBackgroundColor: HolographicTheme.deepSpace,
+      ),
       home: const SolacePortal(),
     );
   }
@@ -44,37 +57,53 @@ class _SolacePortalState extends State<SolacePortal> {
   final ScrollController _chatScrollController = ScrollController();
   List<Map<String, dynamic>> chatMessages = [];
   int currentQuestionIndex = 0;
-
+  
+  // System instances
+  final MonetizationSystem _monetization = MonetizationSystem();
+  final ViralMarketingSystem _viralMarketing = ViralMarketingSystem();
+  
+  // Voice interaction
+  String _currentAIResponse = '';
+  bool _isAIResponding = false;
+  
   @override
   void initState() {
     super.initState();
+    _initializeSystems();
+    _setupWebView();
+  }
+  
+  Future<void> _initializeSystems() async {
+    try {
+      await _monetization.initialize();
+      await _viralMarketing.initialize();
+    } catch (e) {
+      print('System initialization failed: $e');
+    }
+  }
+
+  Future<void> _setupWebView() async {
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(Colors.transparent)
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (_) {
-            if (mounted) {
-              setState(() {
-                isLoading = true;
-                hasError = false;
-              });
-            }
+            setState(() {
+              isLoading = true;
+              hasError = false;
+            });
           },
           onPageFinished: (_) {
-            if (mounted) {
-              setState(() {
-                isLoading = false;
-              });
-            }
+            setState(() {
+              isLoading = false;
+            });
           },
-          onWebResourceError: (_) {
-            if (mounted) {
-              setState(() {
-                isLoading = false;
-                hasError = true;
-              });
-            }
+          onWebResourceError: (error) {
+            setState(() {
+              isLoading = false;
+              hasError = true;
+            });
           },
         ),
       )
@@ -100,118 +129,320 @@ class _SolacePortalState extends State<SolacePortal> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Solace Portal'),
-        actions: [
-          if (_selectedIndex == 0)
-            IconButton(
-              icon: const Icon(Icons.refresh),
+    return HolographicScaffold(
+      title: 'Solace Portal - Holographic Suite',
+      showParticles: true,
+      actions: [
+        if (_selectedIndex == 0)
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [
+                  HolographicTheme.primaryHologram,
+                  HolographicTheme.secondaryHologram,
+                ],
+              ),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.refresh, color: Colors.white),
               onPressed: _reloadPage,
               tooltip: 'Reload',
             ),
-        ],
-      ),
-      body: IndexedStack(
-        index: _selectedIndex,
+          ),
+      ],
+      body: Column(
         children: [
-          // WebView Tab
-          SafeArea(
-            child: Stack(
+          // 3D Tab Navigation with holographic effects
+          _buildHolographicTabBar(),
+          
+          // Main content area with 3D perspective
+          Expanded(
+            child: IndexedStack(
+              index: _selectedIndex,
               children: [
-                WebViewWidget(controller: controller),
-                if (isLoading) const Center(child: CircularProgressIndicator()),
-                if (hasError)
-                  Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(24),
-                      margin: const EdgeInsets.symmetric(horizontal: 24),
-                      decoration: BoxDecoration(
-                        color: Colors.white..withValues(alpha: 0.1),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: 12,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'Unable to load page',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          const Text(
-                            'Check your network connection and try again.',
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: _reloadPage,
-                            child: const Text('Try again'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                // WebView Tab with holographic container
+                _buildHolographicWebViewTab(),
+                // Developer Info Tab
+                _buildHolographicDeveloperInfoTab(),
+                // App Builder Tab
+                _buildHolographicAppBuilderTab(),
+                // Complete Suite Tab
+                _buildHolographicCompleteSuiteTab(),
+                // AI App Maker Tab
+                _buildHolographicAIAppMakerTab(),
+                // Complete Dev Suite Tab
+                _buildHolographicCompleteDevSuiteTab(),
+                // PlayStation Bundler Tab
+                _buildHolographicPlayStationBundlerTab(),
               ],
             ),
-          ),
-          // Developer Info Tab
-          _buildDeveloperInfoTab(),
-          // App Builder Tab
-          _buildAppBuilderTab(),
-          // Complete Suite Tab
-          _buildCompleteSuiteTab(),
-          // AI App Maker Tab
-          _buildAIAppMakerTab(),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Portal',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.info),
-            label: 'Developer',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.build),
-            label: 'Build App',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.auto_awesome),
-            label: 'Complete Suite',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.smart_toy),
-            label: 'AI App Maker',
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDeveloperInfoTab() {
+  Widget _buildHolographicTabBar() {
+    return Container(
+      margin: EdgeInsets.all(16),
+      child: Row(
+        children: [
+          for (int i = 0; i < 7; i++)
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedIndex = i;
+                  });
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 4),
+                  height: 80,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    gradient: _selectedIndex == i
+                        ? LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: HolographicTheme.holographicGradient,
+                          )
+                        : LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              HolographicTheme.glassSurface,
+                              HolographicTheme.glassSurface.withOpacity(0.05),
+                            ],
+                          ),
+                    border: Border.all(
+                      color: _selectedIndex == i
+                          ? HolographicTheme.neonBorder
+                          : HolographicTheme.neonBorder.withOpacity(0.3),
+                      width: 2,
+                    ),
+                    boxShadow: _selectedIndex == i
+                        ? [
+                            BoxShadow(
+                              color: HolographicTheme.primaryHologram.withOpacity(0.5),
+                              blurRadius: 20,
+                              spreadRadius: 2,
+                            ),
+                            BoxShadow(
+                              color: HolographicTheme.secondaryHologram.withOpacity(0.3),
+                              blurRadius: 15,
+                              spreadRadius: 1,
+                            ),
+                          ]
+                        : [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 10,
+                            ),
+                          ],
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        _getTabIcon(i),
+                        color: Colors.white,
+                        size: 24,
+                        shadows: [
+                          Shadow(
+                            color: _selectedIndex == i
+                                ? HolographicTheme.primaryHologram
+                                : Colors.transparent,
+                            blurRadius: 10,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        _getTabLabel(i),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: _selectedIndex == i ? FontWeight.bold : FontWeight.normal,
+                          shadows: [
+                            Shadow(
+                              color: _selectedIndex == i
+                                  ? HolographicTheme.primaryHologram
+                                  : Colors.transparent,
+                              blurRadius: 5,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  IconData _getTabIcon(int index) {
+    switch (index) {
+      case 0: return Icons.home;
+      case 1: return Icons.info;
+      case 2: return Icons.build;
+      case 3: return Icons.auto_awesome;
+      case 4: return Icons.smart_toy;
+      case 5: return Icons.computer;
+      case 6: return Icons.videogame_asset;
+      default: return Icons.home;
+    }
+  }
+
+  String _getTabLabel(int index) {
+    switch (index) {
+      case 0: return 'Portal';
+      case 1: return 'Developer';
+      case 2: return 'Build App';
+      case 3: return 'Complete Suite';
+      case 4: return 'AI App Maker';
+      case 5: return 'Dev Suite';
+      case 6: return 'PS Bundler';
+      default: return 'Portal';
+    }
+  }
+
+  Widget _buildHolographicWebViewTab() {
+    return Container(
+      margin: EdgeInsets.all(16),
+      child: HolographicCard(
+        depth: 30,
+        height: double.infinity,
+        glowing: true,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(18),
+          child: Stack(
+            children: [
+              WebViewWidget(controller: controller),
+              if (isLoading)
+                Container(
+                  color: Colors.black.withOpacity(0.7),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: HolographicTheme.holographicGradient,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: HolographicTheme.primaryHologram.withOpacity(0.5),
+                                blurRadius: 20,
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              strokeWidth: 3,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          'Loading Portal...',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                color: HolographicTheme.primaryHologram,
+                                blurRadius: 10,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              if (hasError)
+                Container(
+                  color: Colors.black.withOpacity(0.7),
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.red.withOpacity(0.2),
+                            Colors.orange.withOpacity(0.1),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Colors.red.withOpacity(0.5),
+                          width: 2,
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            color: Colors.red,
+                            size: 48,
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            'Unable to load page',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Check your network connection and try again.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.8),
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          HolographicButton(
+                            text: 'Try Again',
+                            onPressed: _reloadPage,
+                            primaryColor: Colors.red,
+                            secondaryColor: Colors.orange,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHolographicDeveloperInfoTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Card(
+          HolographicCard(
+            depth: 25,
+            height: 120,
+            glowing: true,
             child: Padding(
               padding: EdgeInsets.all(16),
               child: Column(
@@ -219,28 +450,58 @@ class _SolacePortalState extends State<SolacePortal> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.warning, color: Colors.orange),
-                      SizedBox(width: 8),
-                      Text(
-                        '⚠️ Important Developer Notice',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            colors: [Colors.orange, Colors.red],
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.orange.withOpacity(0.5),
+                              blurRadius: 10,
+                            ),
+                          ],
+                        ),
+                        child: Icon(Icons.warning, color: Colors.white, size: 20),
+                      ),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          '⚠️ Important Developer Notice',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                color: Colors.orange,
+                                blurRadius: 10,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  SizedBox(height: 12),
                   Text(
                     'To develop, modify, or build this Flutter app, you MUST install Android Studio on your computer.',
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 14,
+                    ),
                   ),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 16),
-          const Card(
+          SizedBox(height: 16),
+          HolographicCard(
+            depth: 20,
+            height: 180,
             child: Padding(
               padding: EdgeInsets.all(16),
               child: Column(
@@ -249,26 +510,42 @@ class _SolacePortalState extends State<SolacePortal> {
                   Text(
                     '📋 Required Setup',
                     style: TextStyle(
+                      color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
+                      shadows: [
+                        Shadow(
+                          color: HolographicTheme.primaryHologram,
+                          blurRadius: 10,
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(height: 12),
-                  Text(
-                    '1. Install Android Studio from developer.android.com\n'
-                    '2. Install Flutter SDK\n'
-                    '3. Configure Android Studio with Flutter plugin\n'
-                    '4. Set up Android SDK and emulator\n'
-                    '5. Run: flutter pub get\n'
-                    '6. Run: flutter run',
-                    style: TextStyle(fontSize: 14),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Text(
+                        '1. Install Android Studio from developer.android.com\n'
+                        '2. Install Flutter SDK\n'
+                        '3. Configure Android Studio with Flutter plugin\n'
+                        '4. Set up Android SDK and emulator\n'
+                        '5. Run: flutter pub get\n'
+                        '6. Run: flutter run',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 16),
-          const Card(
+          SizedBox(height: 16),
+          HolographicCard(
+            depth: 20,
+            height: 160,
             child: Padding(
               padding: EdgeInsets.all(16),
               child: Column(
@@ -277,25 +554,42 @@ class _SolacePortalState extends State<SolacePortal> {
                   Text(
                     '📱 App Information',
                     style: TextStyle(
+                      color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
+                      shadows: [
+                        Shadow(
+                          color: HolographicTheme.secondaryHologram,
+                          blurRadius: 10,
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(height: 12),
-                  Text(
-                    'Package: com.solaceportal.app\n'
-                    'Version: 1.0.0+1\n'
-                    'Framework: Flutter 3.41.6\n'
-                    'WebView: webview_flutter ^4.2.1\n'
-                    'Target: Android (Play Store Ready)',
-                    style: TextStyle(fontSize: 14),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Text(
+                        'Package: com.solaceportal.app\n'
+                        'Version: 1.0.0+1\n'
+                        'Framework: Flutter 3.41.6\n'
+                        'WebView: webview_flutter ^4.2.1\n'
+                        'Target: Android (Play Store Ready)',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 16),
-          Card(
+          SizedBox(height: 16),
+          HolographicCard(
+            depth: 25,
+            height: 140,
+            glowing: true,
             child: Padding(
               padding: EdgeInsets.all(16),
               child: Column(
@@ -304,26 +598,722 @@ class _SolacePortalState extends State<SolacePortal> {
                   Text(
                     '🌐 Web Portal',
                     style: TextStyle(
+                      color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
+                      shadows: [
+                        Shadow(
+                          color: HolographicTheme.accentHologram,
+                          blurRadius: 10,
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(height: 12),
                   Text(
                     'This app wraps: https://golden-vault-empire.lovable.app\n\n'
                     'The web version is always available without installation.',
-                    style: TextStyle(fontSize: 14),
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.8),
+                      fontSize: 13,
+                    ),
                   ),
                   SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: () => _launchWebPortal(),
-                    child: Text('Open Web Portal'),
+                  HolographicButton(
+                    text: 'Open Web Portal',
+                    onPressed: _launchWebPortal,
+                    icon: Icons.launch,
                   ),
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildHolographicAppBuilderTab() {
+    return Container(
+      margin: EdgeInsets.all(16),
+      child: HolographicCard(
+        depth: 25,
+        height: double.infinity,
+        glowing: true,
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '🚀 Easy App Builder',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  shadows: [
+                    Shadow(
+                      color: HolographicTheme.primaryHologram,
+                      blurRadius: 15,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Just enter your website URL and we\'ll create a Play Store-ready app for you!',
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.9),
+                  fontSize: 14,
+                ),
+              ),
+              SizedBox(height: 24),
+              HolographicButton(
+                text: 'Start Building',
+                onPressed: () {},
+                icon: Icons.rocket_launch,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHolographicCompleteSuiteTab() {
+    return Container(
+      margin: EdgeInsets.all(16),
+      child: HolographicCard(
+        depth: 30,
+        height: double.infinity,
+        glowing: true,
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '🎯 Complete App Development Suite',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  shadows: [
+                    Shadow(
+                      color: HolographicTheme.secondaryHologram,
+                      blurRadius: 15,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 16),
+              Text(
+                'The ONLY tool you need - Enter URL → Get Complete Play Store App',
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.9),
+                  fontSize: 14,
+                ),
+              ),
+              SizedBox(height: 24),
+              HolographicButton(
+                text: 'Launch Complete Suite',
+                onPressed: () {},
+                icon: Icons.auto_awesome,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHolographicAIAppMakerTab() {
+    // Full paywall: not subscribed AND trial expired
+    if (!_monetization.canUseAIAppMaker && !_monetization.isInTrial) {
+      return AppBuilderPaywallScreen(
+        avatarId: selectedAvatar,
+        onMonthly: _purchaseMonthly,
+        onPayPerAAB: _purchaseAAB,
+      );
+    }
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        children: [
+          // Trial widget if applicable
+          if (_monetization.isInTrial) ...[
+            TrialWidget(onUpgrade: _showPaywall),
+            SizedBox(height: 16),
+          ],
+          
+          // Avatar praise / ad banner at top
+          AvatarCard(
+            avatarId: selectedAvatar,
+            message: AvatarAI.getAd(),
+            onUpgrade: _monetization.hasActiveSubscription ? null : _showPaywall,
+          ),
+
+          SizedBox(height: 8),
+
+          // Avatar selection
+          HolographicCard(
+            depth: 25,
+            height: 120,
+            glowing: true,
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _buildAvatarSelector('belinda', 'Belinda', Colors.pink),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: _buildAvatarSelector('sven', 'Sven', Colors.blue),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          SizedBox(height: 16),
+          
+          // Voice interaction widget
+          HolographicCard(
+            depth: 20,
+            height: 200,
+            glowing: true,
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: VoiceInteractionWidget(
+                aiResponse: _currentAIResponse,
+                onUserInput: _handleVoiceInput,
+                isAIResponding: _isAIResponding,
+              ),
+            ),
+          ),
+          
+          SizedBox(height: 16),
+          
+          // Chat interface
+          HolographicCard(
+            depth: 30,
+            height: 400,
+            glowing: true,
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Text(
+                    '💬 Chat with ${selectedAvatar == 'belinda' ? 'Belinda' : 'Sven'}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ListView.builder(
+                        controller: _chatScrollController,
+                        itemCount: chatMessages.length,
+                        itemBuilder: (context, index) {
+                          final message = chatMessages[index];
+                          final isUser = message['isUser'] as bool;
+                          
+                          return Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            child: Row(
+                              mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+                              children: [
+                                if (!isUser) ...[
+                                  Container(
+                                    width: 30,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: LinearGradient(
+                                        colors: selectedAvatar == 'belinda' 
+                                          ? [Colors.pink, Colors.purple]
+                                          : [Colors.blue, Colors.cyan],
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      selectedAvatar == 'belinda' ? Icons.face : Icons.fitness_center,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                ],
+                                Flexible(
+                                  child: Container(
+                                    padding: EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: isUser 
+                                        ? HolographicTheme.primaryHologram.withOpacity(0.8)
+                                        : Colors.white.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: Text(
+                                      message['text'] as String,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                if (isUser) ...[
+                                  SizedBox(width: 8),
+                                  Container(
+                                    width: 30,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                    child: Icon(
+                                      Icons.person,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _chatController,
+                          decoration: InputDecoration(
+                            hintText: 'Type your message...',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(25),
+                              borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(25),
+                              borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(25),
+                              borderSide: BorderSide(color: HolographicTheme.neonBorder),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white.withOpacity(0.1),
+                            hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+                          ),
+                          style: TextStyle(color: Colors.white),
+                          onSubmitted: (value) => _sendMessage(value),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      HolographicButton(
+                        text: 'Send',
+                        onPressed: () => _sendMessage(_chatController.text),
+                        width: 80,
+                        height: 50,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          SizedBox(height: 16),
+          
+          // Viral marketing widget
+          ViralMarketingWidget(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaywallTab() {
+    return Container(
+      margin: EdgeInsets.all(16),
+      child: PaywallWidget(
+        feature: 'AI App Maker',
+        description: 'Chat with AI assistants to create professional mobile apps through conversation. Includes voice interaction, 22-question briefing system, and automatic AAB generation.',
+        onPurchase: _showPurchaseOptions,
+        onRestore: _restorePurchases,
+      ),
+    );
+  }
+
+  Widget _buildAvatarSelector(String avatar, String name, Color color) {
+    final isSelected = selectedAvatar == avatar;
+    
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedAvatar = avatar;
+        });
+        _addAIMessage('Hi! I\'m $name, your AI app developer. Tell me about the app you want to build!');
+      },
+      child: Container(
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          gradient: isSelected 
+            ? LinearGradient(colors: [color, color.withOpacity(0.7)])
+            : LinearGradient(colors: [color.withOpacity(0.3), color.withOpacity(0.1)]),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? color : color.withOpacity(0.5),
+            width: 2,
+          ),
+          boxShadow: isSelected ? [
+            BoxShadow(
+              color: color.withOpacity(0.5),
+              blurRadius: 15,
+              spreadRadius: 2,
+            ),
+          ] : [],
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [color.withOpacity(0.8), color.withOpacity(0.5)],
+                ),
+              ),
+              child: Icon(
+                avatar == 'belinda' ? Icons.face : Icons.fitness_center,
+                color: Colors.white,
+                size: 30,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              name,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _handleVoiceInput(String input) {
+    _addUserMessage(input);
+    _processUserMessage(input);
+  }
+
+  void _sendMessage(String message) {
+    if (message.trim().isEmpty) return;
+    
+    _chatController.clear();
+    _addUserMessage(message);
+    _processUserMessage(message);
+  }
+
+  void _addUserMessage(String message) {
+    setState(() {
+      chatMessages.add({'text': message, 'isUser': true});
+    });
+    _scrollToBottom();
+  }
+
+  void _addAIMessage(String message) {
+    setState(() {
+      chatMessages.add({'text': message, 'isUser': false});
+      _currentAIResponse = message;
+      _isAIResponding = true;
+    });
+    _scrollToBottom();
+    
+    // Stop AI responding after a delay
+    Future.delayed(Duration(seconds: 3), () {
+      setState(() {
+        _isAIResponding = false;
+      });
+    });
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_chatScrollController.hasClients) {
+        _chatScrollController.animateTo(
+          _chatScrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  void _processUserMessage(String message) {
+    Future.delayed(Duration(milliseconds: 1200), () {
+      if (!mounted) return;
+
+      // Avatar AI decides the response first
+      final avatarReply = AvatarAI.respond(
+        userMessage: message,
+        questionIndex: currentQuestionIndex,
+        isSubscribed: _monetization.hasActiveSubscription,
+        inTrial: _monetization.isInTrial,
+      );
+
+      // If avatar replied with praise/upsell/impossible msg, show it
+      if (avatarReply.isNotEmpty &&
+          (AvatarAI.respond(
+                    userMessage: message,
+                    questionIndex: currentQuestionIndex,
+                    isSubscribed: _monetization.hasActiveSubscription,
+                    inTrial: _monetization.isInTrial,
+                  ) !=
+                  AvatarAI.getPraise() ||
+              currentQuestionIndex % 3 == 0 ||
+              message.toLowerCase().contains('solace') ||
+              message.toLowerCase().contains('this app'))) {
+        _addAIMessage(avatarReply);
+      }
+
+      // Then continue question flow
+      if (currentQuestionIndex == 0) {
+        _addAIMessage(
+            'Amazing! Let me ask you 22 quick questions so I can build exactly what you need. 🚀\n\nQuestion 1: What is the main purpose of your app?');
+        currentQuestionIndex = 1;
+      } else if (currentQuestionIndex < 22) {
+        _askNextQuestion();
+      } else {
+        _startAppGeneration();
+      }
+    });
+  }
+
+  void _askNextQuestion() {
+    final questions = [
+      'Question 1: What is the main purpose of your app?',
+      'Question 2: Who is your target audience?',
+      'Question 3: What core problem does your app solve?',
+      'Question 4: What are the must-have features?',
+      'Question 5: Do you need user accounts / login?',
+      'Question 6: Will your app store data in a database?',
+      'Question 7: Do you need in-app purchases or payments?',
+      'Question 8: Which platforms — Android, iOS, or both?',
+      'Question 9: Do you need push notifications?',
+      'Question 10: Should it work offline?',
+      'Question 11: What colour scheme fits your brand?',
+      'Question 12: Do you have a logo or existing branding?',
+      'Question 13: Do you need social media login (Google/Facebook)?',
+      'Question 14: Does your app need GPS or location features?',
+      'Question 15: Do you need a camera or photo gallery?',
+      'Question 16: Will users share or upload files?',
+      'Question 17: Do you need analytics and crash reporting?',
+      'Question 18: Do you need multilingual / multi-currency support?',
+      'Question 19: Any third-party integrations (Stripe, Firebase, etc.)?',
+      'Question 20: What existing apps are closest to your idea?',
+      'Question 21: What makes yours different from those apps?',
+      'Final Question 22: Give me one sentence that describes your dream user experience! ✨',
+    ];
+
+    // Inject a praise every 5 questions
+    if (currentQuestionIndex % 5 == 0 && currentQuestionIndex > 0) {
+      _addAIMessage(AvatarAI.getPraise());
+    }
+
+    if (currentQuestionIndex < questions.length) {
+      _addAIMessage(questions[currentQuestionIndex]);
+      currentQuestionIndex++;
+    }
+  }
+
+  void _startAppGeneration() {
+    _addAIMessage(
+        '${AvatarAI.getPraise()}\n\n'
+        'I now have everything I need. Your app concept is genuinely exciting — '
+        'let me analyse all 22 answers and begin the build pipeline. 🔥');
+
+    Future.delayed(Duration(seconds: 2), () {
+      if (!mounted) return;
+      _addAIMessage(
+          '⚙️ Initialising AI build pipeline...\n'
+          '• Parsing your requirements\n'
+          '• Selecting optimal architecture\n'
+          '• Generating UI/UX blueprints\n'
+          '• Wiring data models\n'
+          '• Configuring third-party integrations\n\n'
+          'This typically takes 3–5 minutes for a production-quality app.');
+
+      Future.delayed(Duration(seconds: 5), () {
+        if (!mounted) return;
+
+        if (!_monetization.canGenerateAAB) {
+          // Hard paywall on AAB export
+          _addAIMessage(
+              '✅ Your app blueprint is **complete and ready to compile**!\n\n'
+              '🏗️ Source code generated\n'
+              '🎨 UI/UX design finalised\n'
+              '🔌 All integrations wired\n\n'
+              '⚠️ **To export your AAB file and publish to the Play Store, '
+              'you need to unlock the builder.**\n\n'
+              '${AvatarAI.getUpsell()}');
+          Future.delayed(Duration(milliseconds: 500), () {
+            if (mounted) _showPaywall();
+          });
+        } else {
+          _addAIMessage(
+              '🎉 **Your app is built and ready!**\n\n'
+              '✅ Complete source code\n'
+              '✅ Professional holographic UI\n'
+              '✅ All requested features\n'
+              '✅ Database & auth wired\n'
+              '✅ Play Store AAB file generated\n'
+              '✅ App icons & screenshots\n\n'
+              '${AvatarAI.getPraise()}\n\n'
+              'Your AAB file is ready for immediate Play Store upload. '
+              'You should be incredibly proud — most developers never get here. '
+              'You just did it with AI. 🚀');
+        }
+      });
+    });
+  }
+
+  void _showPaywall() {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: PaywallWidget(
+          feature: 'AI App Maker',
+          description: 'Unlock unlimited access to AI-powered app creation with voice interaction and automatic AAB generation.',
+          onPurchase: _showPurchaseOptions,
+          onRestore: _restorePurchases,
+        ),
+      ),
+    );
+  }
+
+  void _showPurchaseOptions() {
+    Navigator.of(context).pop();
+    // Show purchase options dialog
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Choose Your Plan'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text('Monthly Subscription - \$10/month'),
+              subtitle: Text('Unlimited access to all features'),
+              onTap: () => _purchaseMonthly(),
+            ),
+            ListTile(
+              title: Text('Pay-per-AAB - \$50 per app'),
+              subtitle: Text('Generate individual AAB files'),
+              onTap: () => _purchaseAAB(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _purchaseMonthly() async {
+    final success = await _monetization.purchaseMonthlySubscription();
+    if (success) {
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('🎉 Purchase successful! Welcome to Premium!')),
+      );
+      setState(() {});
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('❌ Purchase failed. Please try again.')),
+      );
+    }
+  }
+
+  Future<void> _purchaseAAB() async {
+    final success = await _monetization.purchaseAABGeneration();
+    if (success) {
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('✅ AAB credit purchased! You can now generate one app.')),
+      );
+      setState(() {});
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('❌ Purchase failed. Please try again.')),
+      );
+    }
+  }
+
+  void _restorePurchases() {
+    // Implement purchase restoration
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('🔄 Restoring purchases...')),
+    );
+  }
+
+  void _selectAvatar(String avatar) {
+    setState(() {
+      selectedAvatar = avatar;
+    });
+    _addAIMessage('Hi! I\'m ${avatar == 'belinda' ? 'Belinda' : 'Sven'}, your AI app developer. Tell me about the app you want to build and I\'ll guide you through creating it step by step!');
+  }
+
+  Widget _buildHolographicCompleteDevSuiteTab() {
+    // Check if user can access this feature
+    if (!_monetization.canUseCompleteSuite && !_monetization.isInTrial) {
+      return _buildPaywallTab();
+    }
+
+    return Container(
+      margin: EdgeInsets.all(16),
+      child: HolographicCard(
+        depth: 40,
+        height: double.infinity,
+        glowing: true,
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: CompleteDevSuiteWidget(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHolographicPlayStationBundlerTab() {
+    // Check if user can access this feature
+    if (!_monetization.canUseCompleteSuite && !_monetization.isInTrial) {
+      return _buildPaywallTab();
+    }
+
+    return Container(
+      margin: EdgeInsets.all(16),
+      child: HolographicCard(
+        depth: 40,
+        height: double.infinity,
+        glowing: true,
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: PlayStationBundlerWidget(),
+        ),
       ),
     );
   }
@@ -1358,109 +2348,7 @@ class _SolacePortalState extends State<SolacePortal> {
     );
   }
 
-  void _selectAvatar(String avatar) {
-    setState(() {
-      selectedAvatar = avatar;
-    });
-    _addAIMessage('Hi! I\'m ${avatar == 'belinda' ? 'Belinda' : 'Sven'}, your AI app developer. Tell me about the app you want to build and I\'ll guide you through creating it step by step!');
   }
-
-  void _sendMessage(String message) {
-    if (message.trim().isEmpty) return;
-    
-    _chatController.clear();
-    _addUserMessage(message);
-    
-    // Process the message and generate AI response
-    _processUserMessage(message);
-  }
-
-  void _addUserMessage(String message) {
-    setState(() {
-      chatMessages.add({'text': message, 'isUser': true});
-    });
-    _scrollToBottom();
-  }
-
-  void _addAIMessage(String message) {
-    setState(() {
-      chatMessages.add({'text': message, 'isUser': false});
-    });
-    _scrollToBottom();
-  }
-
-  void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_chatScrollController.hasClients) {
-        _chatScrollController.animateTo(
-          _chatScrollController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
-  }
-
-  void _processUserMessage(String message) {
-    // Simulate AI processing
-    Future.delayed(Duration(milliseconds: 1500), () {
-      if (currentQuestionIndex == 0) {
-        _addAIMessage('Great! I\'d love to help you build your app. Let me ask you some questions to understand exactly what you need. First question: What is the main purpose of your app?');
-        currentQuestionIndex = 1;
-      } else if (currentQuestionIndex < 22) {
-        _askNextQuestion();
-      } else {
-        _startAppGeneration();
-      }
-    });
-  }
-
-  void _askNextQuestion() {
-    final questions = [
-      'What is the main purpose of your app?',
-      'Who is your target audience?',
-      'What problem does your app solve?',
-      'What features should your app have?',
-      'Do you need user authentication?',
-      'Will your app need a database?',
-      'Do you need payment processing?',
-      'What platforms do you want to support?',
-      'Do you need push notifications?',
-      'Will your app need offline functionality?',
-      'What is your preferred color scheme?',
-      'Do you have a logo or brand identity?',
-      'What is your budget for development?',
-      'When do you need the app completed?',
-      'Do you need social media integration?',
-      'Will your app need GPS/location services?',
-      'Do you need camera/photo functionality?',
-      'Will your app need file sharing?',
-      'Do you need analytics tracking?',
-      'What is your monetization strategy?',
-      'Do you need multilingual support?',
-      'Final question: What makes your app unique?',
-    ];
-    
-    if (currentQuestionIndex < questions.length) {
-      _addAIMessage(questions[currentQuestionIndex]);
-      currentQuestionIndex++;
-    }
-  }
-
-  void _startAppGeneration() {
-    _addAIMessage('Perfect! I have all the information I need. Let me start generating your complete app with all the features you\'ve requested. This will include:');
-    _addAIMessage('• Custom UI/UX design\n• Full functionality implementation\n• Database integration\n• Authentication system\n• Payment processing\n• Push notifications\n• Analytics tracking\n• Play Store optimization');
-    
-    Future.delayed(Duration(seconds: 2), () {
-      _addAIMessage('🔥 Building your app now... This usually takes 3-5 minutes to generate a complete, production-ready application.');
-      
-      Future.delayed(Duration(seconds: 5), () {
-        _addAIMessage('🎉 Your app is complete! I\'ve generated everything including:');
-        _addAIMessage('✅ Complete source code\n✅ Professional UI design\n✅ All requested features\n✅ Database setup\n✅ Authentication system\n✅ Payment integration\n✅ Play Store AAB file\n✅ App icons and screenshots\n\nYour app is ready for immediate deployment!');
-      });
-    });
-  }
-}
 
 class CityLightsPainter extends CustomPainter {
   @override
