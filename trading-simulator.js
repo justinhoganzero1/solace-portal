@@ -5,6 +5,7 @@ class CryptoTradingSimulator {
         this.portfolio = {};
         this.transactions = [];
         this.activityLog = [];
+        this.recentTrades = [];
         this.activePlatform = 'binance';
         this.scenario = 'balanced';
         this.speedMultiplier = 1;
@@ -28,6 +29,48 @@ class CryptoTradingSimulator {
             coinbase: { name: 'Coinbase', theme: '#0052FF', fee: 0.005, features: ['spot', 'staking', 'earn', 'learn'] },
             kraken: { name: 'Kraken', theme: '#62688F', fee: 0.002, features: ['spot', 'futures', 'staking', 'otc'] },
             kucoin: { name: 'KuCoin', theme: '#2FB577', fee: 0.001, features: ['spot', 'futures', 'staking', 'bot'] }
+        };
+        this.platformUi = {
+            binance: {
+                brandMark: 'B',
+                heroTitle: 'Binance-style Trading Simulator',
+                heroCopy: 'High-density spot layout with exchange-style depth, fast action buttons, and an order ticket that feels close to a pro trading screen.',
+                brandTitle: 'Binance-style trading workspace',
+                brandMeta: 'Spot-focused training clone with simulated balances, fills, and market movement.',
+                shellTabs: ['Spot', 'Markets', 'Orders', 'Wallet'],
+                tradeTabs: ['Spot', 'Margin', 'Futures'],
+                ticketTitle: 'Binance-style Order Ticket'
+            },
+            coinbase: {
+                brandMark: 'C',
+                heroTitle: 'Coinbase-style Trading Simulator',
+                heroCopy: 'Cleaner retail-first layout with portfolio context, simple trade controls, and a safer guided buy/sell flow feel.',
+                brandTitle: 'Coinbase-style trading workspace',
+                brandMeta: 'Simple buy/sell training clone with simulated account value, guided order flow, and clear portfolio context.',
+                shellTabs: ['Buy/Sell', 'Portfolio', 'Prices', 'Learn'],
+                tradeTabs: ['Buy', 'Sell', 'Convert'],
+                ticketTitle: 'Coinbase-style Trade Ticket'
+            },
+            kraken: {
+                brandMark: 'K',
+                heroTitle: 'Kraken-style Trading Simulator',
+                heroCopy: 'Professional dark-market layout with depth, execution tape, and a more analytical feel inspired by advanced trading screens.',
+                brandTitle: 'Kraken-style trading workspace',
+                brandMeta: 'Advanced trading clone with simulated market depth, fee logic, and pro-style order controls.',
+                shellTabs: ['Trade', 'Markets', 'Portfolio', 'History'],
+                tradeTabs: ['Spot', 'Margin', 'OTC'],
+                ticketTitle: 'Kraken-style Order Form'
+            },
+            kucoin: {
+                brandMark: 'K',
+                heroTitle: 'KuCoin-style Trading Simulator',
+                heroCopy: 'Fast-moving exchange skin with bot/futures cues, layered market panels, and a lively pro-style ticket workflow.',
+                brandTitle: 'KuCoin-style trading workspace',
+                brandMeta: 'Multi-feature training clone with simulated order flow, market tape, and exchange-specific feature cues.',
+                shellTabs: ['Spot', 'Futures', 'Trading Bot', 'Assets'],
+                tradeTabs: ['Spot', 'Margin', 'Bot'],
+                ticketTitle: 'KuCoin-style Order Ticket'
+            }
         };
         this.scenarioProfiles = {
             balanced: { label: 'Balanced', drift: 0, volatility: 1, pulse: 'Steady training flow' },
@@ -67,10 +110,102 @@ class CryptoTradingSimulator {
         this.cacheDom();
         this.bindEvents();
         this.seedActivityLog();
+        this.seedRecentTrades();
         this.setScenario(this.scenario, false);
         this.setSpeed(this.speedMultiplier, false);
+        this.applyPlatformSkin(false);
         this.startPriceUpdates();
         this.updateUI();
+    }
+
+    seedRecentTrades() {
+        const symbols = Object.keys(this.cryptos);
+        this.recentTrades = Array.from({ length: 12 }, (_, index) => {
+            const symbol = symbols[index % symbols.length];
+            const price = this.currentPrices[symbol];
+            return {
+                symbol,
+                side: index % 2 === 0 ? 'buy' : 'sell',
+                price,
+                amount: Number((Math.random() * 2 + 0.05).toFixed(4)),
+                timestamp: new Date(Date.now() - index * 18000)
+            };
+        });
+    }
+
+    applyPlatformSkin(notify = false) {
+        const platform = this.platforms[this.activePlatform];
+        const ui = this.platformUi[this.activePlatform] || this.platformUi.binance;
+        document.body.classList.remove('platform-binance', 'platform-coinbase', 'platform-kraken', 'platform-kucoin');
+        document.body.classList.add(`platform-${this.activePlatform}`);
+        if (this.els.heroTitle) this.els.heroTitle.textContent = ui.heroTitle;
+        if (this.els.heroCopy) this.els.heroCopy.textContent = ui.heroCopy;
+        if (this.els.platformBrandMark) this.els.platformBrandMark.textContent = ui.brandMark;
+        if (this.els.platformBrandTitle) this.els.platformBrandTitle.textContent = ui.brandTitle;
+        if (this.els.platformBrandMeta) this.els.platformBrandMeta.textContent = ui.brandMeta;
+        if (this.els.ticketPanelTitle) this.els.ticketPanelTitle.textContent = ui.ticketTitle;
+        if (this.els.platformShellTabs) {
+            this.els.platformShellTabs.innerHTML = ui.shellTabs.map((label, index) => `<button class="platform-shell-tab${index === 0 ? ' active' : ''}" type="button">${this.escapeHtml(label)}</button>`).join('');
+        }
+        if (this.els.exchangeTradeTabs) {
+            this.els.exchangeTradeTabs.innerHTML = ui.tradeTabs.map((label, index) => `<button class="exchange-trade-tab${index === 0 ? ' active' : ''}" type="button">${this.escapeHtml(label)}</button>`).join('');
+        }
+        if (this.els.platformFeatureRow) {
+            this.els.platformFeatureRow.innerHTML = platform.features.map((feature) => `<div class="platform-feature-chip">${this.escapeHtml(feature)}</div>`).join('');
+        }
+        if (notify) {
+            this.showNotification(`Platform theme changed to ${platform.name}. Still a training simulation only.`, 'info');
+            this.logActivity('system', `${platform.name} training skin active. Fee profile now ${(platform.fee * 100).toFixed(2)}%.`);
+        }
+    }
+
+    updateMarketMicrostructure() {
+        const symbol = this.els.selectedCrypto?.value || this.els.ticketSymbol?.value || 'BTC';
+        const current = this.currentPrices[symbol] || 0;
+        const history = this.priceHistory[symbol] || [];
+        const reference = history[history.length - 2] || current || 1;
+        const spreadBase = current * 0.0006;
+        const asks = [];
+        const bids = [];
+        for (let i = 0; i < 6; i += 1) {
+            const askPrice = current + spreadBase * (i + 1);
+            const bidPrice = Math.max(0.0001, current - spreadBase * (i + 1));
+            const askAmount = Number((Math.random() * 2.4 + 0.08).toFixed(4));
+            const bidAmount = Number((Math.random() * 2.4 + 0.08).toFixed(4));
+            asks.push({ price: askPrice, amount: askAmount, total: askPrice * askAmount });
+            bids.push({ price: bidPrice, amount: bidAmount, total: bidPrice * bidAmount });
+        }
+        if (this.els.orderbookSells) {
+            this.els.orderbookSells.innerHTML = asks.reverse().map((row) => `<div class="orderbook-row sell"><span>${this.formatCurrency(row.price)}</span><span>${row.amount.toFixed(4)}</span><span>${this.formatCompactCurrency(row.total)}</span></div>`).join('');
+        }
+        if (this.els.orderbookBuys) {
+            this.els.orderbookBuys.innerHTML = bids.map((row) => `<div class="orderbook-row buy"><span>${this.formatCurrency(row.price)}</span><span>${row.amount.toFixed(4)}</span><span>${this.formatCompactCurrency(row.total)}</span></div>`).join('');
+        }
+        if (this.els.orderbookMid) {
+            const delta = ((current - reference) / reference) * 100;
+            this.els.orderbookMid.textContent = `${this.formatCurrency(current)} · ${delta >= 0 ? '+' : ''}${delta.toFixed(2)}%`;
+            this.els.orderbookMid.style.color = delta >= 0 ? '#0ECB81' : '#F6465D';
+        }
+        this.recentTrades.unshift({
+            symbol,
+            side: current >= reference ? 'buy' : 'sell',
+            price: current,
+            amount: Number((Math.random() * 1.8 + 0.03).toFixed(4)),
+            timestamp: new Date()
+        });
+        this.recentTrades = this.recentTrades.slice(0, 16);
+        this.renderRecentTrades();
+    }
+
+    renderRecentTrades() {
+        if (!this.els.recentTradesList) return;
+        this.els.recentTradesList.innerHTML = this.recentTrades.map((trade) => `
+            <div class="trade-tape-row ${trade.side}">
+                <span class="trade-side">${String(trade.side).toUpperCase()}</span>
+                <span>${this.escapeHtml(trade.symbol)} · ${this.formatCurrency(trade.price)} · ${trade.amount.toFixed(4)}</span>
+                <span>${this.formatTime(trade.timestamp)}</span>
+            </div>
+        `).join('');
     }
 
     cacheDom() {
@@ -97,7 +232,20 @@ class CryptoTradingSimulator {
             ticketLimitPrice: document.getElementById('ticketLimitPrice'),
             ticketSummary: document.getElementById('ticketSummary'),
             ticketBuyBtn: document.getElementById('ticketBuyBtn'),
-            ticketSellBtn: document.getElementById('ticketSellBtn')
+            ticketSellBtn: document.getElementById('ticketSellBtn'),
+            heroTitle: document.getElementById('simHeroTitle'),
+            heroCopy: document.getElementById('simHeroCopy'),
+            platformBrandMark: document.getElementById('platformBrandMark'),
+            platformBrandTitle: document.getElementById('platformBrandTitle'),
+            platformBrandMeta: document.getElementById('platformBrandMeta'),
+            platformShellTabs: document.getElementById('platformShellTabs'),
+            exchangeTradeTabs: document.getElementById('exchangeTradeTabs'),
+            ticketPanelTitle: document.getElementById('ticketPanelTitle'),
+            platformFeatureRow: document.getElementById('platformFeatureRow'),
+            orderbookSells: document.getElementById('orderbookSells'),
+            orderbookMid: document.getElementById('orderbookMid'),
+            orderbookBuys: document.getElementById('orderbookBuys'),
+            recentTradesList: document.getElementById('recentTradesList')
         };
     }
 
@@ -184,6 +332,7 @@ class CryptoTradingSimulator {
         this.activityLog = [];
         this.currentPrices = this.generateRealisticPrices();
         this.priceHistory = this.initializePriceHistory();
+        this.seedRecentTrades();
         this.isPaused = false;
         if (this.els.ticketAmount) this.els.ticketAmount.value = '';
         if (this.els.ticketLimitPrice) this.els.ticketLimitPrice.value = '';
@@ -239,12 +388,13 @@ class CryptoTradingSimulator {
         if (!this.els.ticketSummary) return;
         const snapshot = this.getTicketSnapshot();
         const platform = this.platforms[this.activePlatform];
+        const feeLabel = this.activePlatform === 'coinbase' ? 'Estimated Coinbase fee' : this.activePlatform === 'kraken' ? 'Estimated Kraken fee' : this.activePlatform === 'kucoin' ? 'Estimated KuCoin fee' : 'Estimated Binance fee';
         this.els.ticketSummary.innerHTML = `
             <div class="ticket-summary-row"><span>Training Mode</span><strong>TRAINING SIMULATION ONLY</strong></div>
             <div class="ticket-summary-row"><span>Asset</span><strong>${snapshot.symbol}</strong></div>
             <div class="ticket-summary-row"><span>Market Price</span><strong>${this.formatCurrency(snapshot.marketPrice)}</strong></div>
             <div class="ticket-summary-row"><span>Estimated Fill</span><strong>${this.formatCurrency(snapshot.executionPrice)}</strong></div>
-            <div class="ticket-summary-row"><span>Estimated Fee</span><strong>${this.formatCurrency(snapshot.fee)} (${(platform.fee * 100).toFixed(2)}%)</strong></div>
+            <div class="ticket-summary-row"><span>${feeLabel}</span><strong>${this.formatCurrency(snapshot.fee)} (${(platform.fee * 100).toFixed(2)}%)</strong></div>
             <div class="ticket-summary-row"><span>Estimated Total</span><strong>${this.formatCurrency(snapshot.total)}</strong></div>
         `;
     }
@@ -333,10 +483,9 @@ class CryptoTradingSimulator {
     switchPlatform(platformName) {
         if (!this.platforms[platformName]) return;
         this.activePlatform = platformName;
+        this.applyPlatformSkin(true);
         this.updateTicketSummary();
         this.updateUI();
-        this.showNotification(`Platform theme changed to ${this.platforms[platformName].name}. Still a training simulation only.`, 'info');
-        this.logActivity('system', `${this.platforms[platformName].name} training skin active. Fee profile now ${(this.platforms[platformName].fee * 100).toFixed(2)}%.`);
     }
 
     showNotification(message, type = 'info') {
@@ -362,6 +511,7 @@ class CryptoTradingSimulator {
         this.updateTicketSummary();
         this.updatePortfolio();
         this.updatePriceTable();
+        this.updateMarketMicrostructure();
         this.updateCharts();
         this.renderActivityFeed();
     }
@@ -567,6 +717,10 @@ class CryptoTradingSimulator {
 
     formatCurrency(value) {
         return `$${Number(value || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: value >= 1 ? 2 : 6 })}`;
+    }
+
+    formatCompactCurrency(value) {
+        return `$${Number(value || 0).toLocaleString(undefined, { maximumFractionDigits: value >= 1000 ? 0 : 2 })}`;
     }
 
     formatTime(date) {

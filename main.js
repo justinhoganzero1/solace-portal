@@ -441,8 +441,14 @@
     claimIdeaRewardBtn: document.getElementById('claimIdeaRewardBtn'),
     shareTierSummary: document.getElementById('shareTierSummary'),
     shareInviteLink: document.getElementById('shareInviteLink'),
+    shareNativeBtn: document.getElementById('shareNativeBtn'),
     shareCopyInviteBtn: document.getElementById('shareCopyInviteBtn'),
+    shareCopyPackBtn: document.getElementById('shareCopyPackBtn'),
     shareFamilyPassBtn: document.getElementById('shareFamilyPassBtn'),
+    shareCopyTextBtn: document.getElementById('shareCopyTextBtn'),
+    shareCopyFamilyLinkBtn: document.getElementById('shareCopyFamilyLinkBtn'),
+    shareEmailPackBtn: document.getElementById('shareEmailPackBtn'),
+    shareSmsPackBtn: document.getElementById('shareSmsPackBtn'),
     shareOpenOwnerAccessBtn: document.getElementById('shareOpenOwnerAccessBtn'),
     sharePreviewOutput: document.getElementById('sharePreviewOutput'),
     ownerAccessTab: document.getElementById('ownerAccessTab'),
@@ -631,7 +637,8 @@
   const AI_GUIDE_NAME = 'Mira — Juzzy AI Guide';
   const AI_GUIDE_ADDRESS = 'ai.guide@juzzy.local';
   const lessonProfessorKey = 'juzzy_lesson_professor';
-  const OWNER_APPROVER_EMAILS = ['owner@juzzy.local'];
+  const OWNER_APPROVER_EMAILS = ['justinbretthogan@gmail.com'];
+  const OWNER_PASSWORD = 'juzzy2024owner';
   const AI_SERVICE_TEAMS = {
     learning: { name: 'Mira — Learning Support AI', address: 'learning@juzzy.internal.ai' },
     dean: { name: 'Dean Aurelius — Juzzy AI Dean', address: 'dean@juzzy.internal.ai' },
@@ -934,7 +941,7 @@
     const frame = document.getElementById('trading-simulator-frame');
     if (frame) {
       frame.innerHTML = `
-        <iframe src="trading-simulator.html?embedded=1"
+        <iframe src="trading-simulator.html?embedded=1&focus=1"
                 title="Juzzy Trading Simulator"
                 style="width: 100%; min-height: 980px; border: none; border-radius: 18px; background: #0D0D0D; box-shadow: 0 20px 48px rgba(0,0,0,0.28);"
                 allow="clipboard-read; clipboard-write"
@@ -1223,6 +1230,8 @@ function grantOwnerLifetimeAccess() {
     } catch {
       // ignore
     }
+    // ── Hide auth gate and reveal app ──
+    if (els.authGate) els.authGate.hidden = true;
     renderProfileUi();
     renderPortfolio();
     state.user.lastBillingFetchAt = 0;
@@ -1302,6 +1311,22 @@ function grantOwnerLifetimeAccess() {
     setAuthStatus('Direct install is not available in this browser context. Use "Download Desktop Shortcut" instead.', 'info');
   }
 
+  function seedOwnerAccount() {
+    // Ensure owner account always exists locally so sign-in works
+    const ownerEmail = OWNER_APPROVER_EMAILS[0];
+    if (!findLocalAccountByEmail(ownerEmail)) {
+      upsertLocalAccount({
+        name: 'Justin Hogan',
+        email: ownerEmail,
+        password: OWNER_PASSWORD,
+        country: 'AU',
+        language: 'en',
+        languageCustom: '',
+        createdAt: Date.now(),
+      });
+    }
+  }
+
   function signInProfile() {
     const email = String(els.authSignInEmail?.value || '').trim();
     const password = String(els.authSignInPassword?.value || '').trim();
@@ -1313,15 +1338,17 @@ function grantOwnerLifetimeAccess() {
       setAuthStatus('Enter a valid email address to sign in.', 'error');
       return;
     }
-    if (password.length < 4) {
+    if (password.length < 1) {
       appendTerminal('WARN', 'Sign-in requires a password.');
       setAuthStatus('Enter your password to sign in.', 'error');
       return;
     }
+    // Seed owner account on every sign-in attempt so it always exists
+    seedOwnerAccount();
     const account = findLocalAccountByEmail(email);
     if (!account) {
       appendTerminal('WARN', 'No local account found for that email.');
-      setAuthStatus('No account found for that email. Create an account first.', 'error');
+      setAuthStatus('No account found. Create an account first, or use Guest access.', 'error');
       return;
     }
     if (String(account.password || '') !== password) {
@@ -1329,29 +1356,20 @@ function grantOwnerLifetimeAccess() {
       setAuthStatus('Incorrect password. Please try again.', 'error');
       return;
     }
-    const country = selectedCountry || String(account.country || state.profile.country || '').toUpperCase();
-    if (!country) {
-      appendTerminal('WARN', 'Sign-in account is missing a saved country.');
-      setAuthStatus('Select your country before signing in.', 'error');
-      return;
-    }
-    if (!els.authLegalAgree?.checked) {
-      appendTerminal('WARN', 'Please accept your country legal requirements before signing in.');
-      setAuthStatus('Accept the legal confirmation before signing in.', 'error');
-      return;
-    }
+    const country = selectedCountry || String(account.country || state.profile.country || 'AU').toUpperCase();
     const fallbackName = account.name || state.profile.name || email.split('@')[0] || 'User';
     saveAuthProfile({
       name: fallbackName,
       email,
-      country: country || account.country,
+      country,
       language: language === 'custom' ? 'custom' : (language || account.language || 'en'),
       languageCustom: languageCustom || account.languageCustom || '',
       loggedIn: true,
     });
     appendTerminal('AUTH', `Signed in as ${email}.`);
     setAuthStatus(`Signed in as ${email}.`, 'success');
-    setActiveTab('home');
+    syncHeaderUi();
+    setActiveTab(OWNER_APPROVER_EMAILS.includes(email.toLowerCase()) ? 'owner-access' : 'home');
   }
 
   function signUpProfile() {
@@ -1410,6 +1428,7 @@ function grantOwnerLifetimeAccess() {
     });
     appendTerminal('AUTH', `Account ready for ${email}.`);
     setAuthStatus(`Account created for ${email}.`, 'success');
+    syncHeaderUi();
     setActiveTab('portfolio');
   }
 
@@ -1453,15 +1472,23 @@ function grantOwnerLifetimeAccess() {
     });
     setAuthStatus(`${source} sign-in is ready for ${email}.`, 'success');
     appendTerminal('AUTH', `${source} quick signup ready.`);
+    syncHeaderUi();
     setActiveTab('portfolio');
   }
 
   function signOutProfile() {
     state.profile.loggedIn = false;
     state.profile.legalAccepted = false;
+    state.user.email = '';
+    try { localStorage.removeItem('pos_email'); } catch { /* ignore */ }
     saveProfile();
+    // Show auth gate again
+    if (els.authGate) els.authGate.hidden = false;
+    if (els.authSignInEmail) els.authSignInEmail.value = '';
+    if (els.authSignInPassword) els.authSignInPassword.value = '';
+    syncHeaderUi();
     renderProfileUi();
-    setAuthStatus('Signed out. You can sign in again or create a new account.', 'info');
+    setAuthStatus('Signed out. Sign in again or continue as Guest.', 'info');
     appendTerminal('AUTH', 'Signed out.');
   }
 
@@ -1700,10 +1727,26 @@ function grantOwnerLifetimeAccess() {
     if (els.authLanguage) els.authLanguage.value = COMMON_LANGUAGES.includes(state.profile.language) ? state.profile.language : 'custom';
     if (els.authLanguageCustom) els.authLanguageCustom.value = state.profile.languageCustom || '';
     if (els.authLegalAgree) els.authLegalAgree.checked = Boolean(state.profile.legalAccepted);
-    if (els.authGate) els.authGate.hidden = state.profile.loggedIn && Boolean(state.profile.country) && Boolean(state.profile.legalAccepted);
+    // Auth gate: hidden whenever user is logged in (country/legal only required for new signups)
+    if (els.authGate) els.authGate.hidden = Boolean(state.profile.loggedIn);
+    syncHeaderUi();
     renderCountryLegal();
     renderGrowthRewards();
     renderOwnerAccessPanel();
+  }
+
+  function syncHeaderUi() {
+    const loggedIn = Boolean(state.profile.loggedIn);
+    const isOwner = isOwnerApprover();
+    // Sign-out only visible when logged in
+    if (els.authSignOutBtn) els.authSignOutBtn.style.display = loggedIn ? '' : 'none';
+    // Subscribe button hidden for owner (full access)
+    if (els.subscribeBtn) els.subscribeBtn.style.display = isOwner ? 'none' : '';
+    // Owner tab visibility
+    if (els.ownerAccessTab) els.ownerAccessTab.hidden = !isOwner;
+    if (els.oracleTab) els.oracleTab.hidden = !isOwner;
+    // Owner plaque
+    if (els.ownerPlaque) els.ownerPlaque.classList.toggle('util-hidden', !isOwner);
   }
 
   function computePortfolioValue() {
@@ -2708,6 +2751,12 @@ function grantOwnerLifetimeAccess() {
     return `${targetLine}Try Juzzy free with a guided ${starter.name.toLowerCase()} — ${starter.freeLessons} free lessons, curated freebies, selected community access, and premium previews without full unlocks. ${starter.upgradeHook} ${inviteLink}`;
   }
 
+  function buildSharePack(kind = 'starter', email = '') {
+    const link = buildInviteLink(kind, email, email ? String(email).split('@')[0] : '');
+    const text = buildShareCopy(kind, email);
+    return `${text}\n\nInvite link:\n${link}`;
+  }
+
   function formatInviteDisplayName(raw) {
     const normalized = String(raw || '').trim();
     if (!normalized) return 'Amego Family Member';
@@ -2780,12 +2829,37 @@ function grantOwnerLifetimeAccess() {
     return link;
   }
 
+  async function openNativeShare(kind = 'starter') {
+    const text = buildShareCopy(kind);
+    const url = buildInviteLink(kind);
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Try Juzzy',
+          text,
+          url,
+        });
+        if (els.sharePreviewOutput) els.sharePreviewOutput.textContent = buildSharePack(kind);
+        return;
+      } catch {
+        // fall through to copy fallback
+      }
+    }
+    await copyTextValue(buildSharePack(kind), 'Share pack ready');
+  }
+
+  function openShareUrlInNewTab(url) {
+    const targetUrl = String(url || '').trim();
+    if (!targetUrl) return;
+    window.open(targetUrl, '_blank', 'noopener,noreferrer');
+  }
+
   function openSharePlatform(platform) {
     const text = buildShareCopy(platform === 'family' ? 'family' : 'starter');
     const link = buildInviteLink(platform === 'family' ? 'family' : 'starter');
     const targetUrl = buildPlatformShareUrl(platform, text, link);
     if (els.sharePreviewOutput) {
-      els.sharePreviewOutput.textContent = `${text}`;
+      els.sharePreviewOutput.textContent = buildSharePack(platform === 'family' ? 'family' : 'starter');
     }
     if (platform === 'discord') {
       void copyTextValue(`${text}\n\n${link}`, 'Discord share copy ready');
@@ -2796,11 +2870,7 @@ function grantOwnerLifetimeAccess() {
       return;
     }
     if (targetUrl) {
-      openExternalResourceInApp({
-        url: targetUrl,
-        label: `Share via ${platform}`,
-        provider: 'Juzzy Share'
-      });
+      openShareUrlInNewTab(targetUrl);
     }
   }
 
@@ -2811,7 +2881,7 @@ function grantOwnerLifetimeAccess() {
       els.shareTierSummary.textContent = `${starter.name}: ${starter.freeLessons} free lessons, ${starter.premiumPreviewModules} premium preview unlocks, ${starter.communityMode}, freebies access, and a strong upgrade path into paid academy access.`;
     }
     if (els.shareInviteLink) els.shareInviteLink.value = inviteLink;
-    if (els.sharePreviewOutput) els.sharePreviewOutput.textContent = buildShareCopy('starter');
+    if (els.sharePreviewOutput) els.sharePreviewOutput.textContent = buildSharePack('starter');
   }
 
   function applySharedEntryContext() {
@@ -4741,54 +4811,64 @@ function grantOwnerLifetimeAccess() {
     }
     const activeGroup = groups.find((group) => group.trackKey === activeTrackKey) || groups[0];
     els.tutCatalog.innerHTML = `
-      <section class="tut-bubble-shell">
-        <div class="tut-bubble-header">
-          <div>
-            <div class="tut-track-eyebrow">Pathway bubbles</div>
-            <div class="tut-track-title">Choose a module group instead of scrolling through every lesson</div>
-            <div class="tut-track-meta">Each bubble opens a grouped module tab with its subtopics ready to launch in a focused lesson window.</div>
+      <section class="tut-directory-shell">
+        <aside class="tut-directory-sidebar">
+          <div class="tut-directory-header">
+            <div class="tut-track-eyebrow">Module directory</div>
+            <div class="tut-track-title">Find a pathway fast and open modules instantly</div>
+            <div class="tut-track-meta">The learning hub now opens the module list first, keeps every course visible, and launches a chosen module straight into the lesson reader.</div>
           </div>
-        </div>
-        <div class="tut-bubble-row">
-          ${groups.map((group) => `
-            <button class="tut-bubble-tab ${group.trackKey === activeTrackKey ? 'active' : ''}" type="button" data-track-toggle="${tutEscapeHtml(group.trackKey)}">
-              <div class="tut-bubble-tier">${group.tier}</div>
-              <div class="tut-bubble-title">${group.title}</div>
-              <div class="tut-bubble-meta">${group.lessons.length} modules · ${group.completedCount} complete</div>
-            </button>
-          `).join('')}
-        </div>
-      </section>
-      <section class="tut-track-group active" data-track-key="${tutEscapeHtml(activeGroup.trackKey)}">
-        <div class="tut-track-toggle static">
-          <div class="tut-track-summary">
-            <div class="tut-track-eyebrow">${activeGroup.tier} pathway</div>
-            <div class="tut-track-title-row">
-              <div class="tut-track-title">${activeGroup.title}</div>
-              <div class="tut-track-count">${activeGroup.lessons.length} subtopics</div>
-            </div>
-            <div class="tut-track-meta">${activeGroup.completedCount}/${activeGroup.lessons.length} completed · ${activeGroup.recommendedLessonId ? 'Best next lesson prioritized for this learner.' : 'Select a subtopic below to launch it instantly.'}</div>
+          <div class="tut-directory-list">
+            ${groups.map((group) => `
+              <button class="tut-directory-item ${group.trackKey === activeTrackKey ? 'active' : ''}" type="button" data-track-toggle="${tutEscapeHtml(group.trackKey)}">
+                <div class="tut-directory-item-top">
+                  <span class="tut-bubble-tier">${group.tier}</span>
+                  <span class="tut-directory-count">${group.lessons.length}</span>
+                </div>
+                <div class="tut-bubble-title">${group.title}</div>
+                <div class="tut-bubble-meta">${group.completedCount} completed${group.recommendedLessonId ? ' · recommended next step ready' : ''}</div>
+              </button>
+            `).join('')}
           </div>
-          <div class="tut-track-chevron">⬢</div>
-        </div>
-        <div class="tut-track-lessons">
-          ${activeGroup.lessons.map((t) => `
-            <div class="tut-card ${tutState.completed.includes(t.id) ? 'completed' : ''}" data-tut-id="${t.id}">
-              <div class="tut-card-cat">Module ${getLessonMeta(t.id).moduleNumber} · ${t.cat}</div>
-              <div class="tut-card-title">${t.title}</div>
-              <div class="tut-card-desc">${t.desc}</div>
-              <div class="tut-card-meta">
-                <span class="tut-card-badge ${tutState.completed.includes(t.id) ? 'done' : ''}">${tutState.completed.includes(t.id) ? '✓ Done' : getLessonMeta(t.id).tier}</span>
-                ${activeGroup.recommendedLessonId === t.id ? '<span class="tut-card-badge new">Recommended</span>' : ''}
-                <span>${t.steps.length} steps</span>
+        </aside>
+        <section class="tut-directory-main" data-track-key="${tutEscapeHtml(activeGroup.trackKey)}">
+          <div class="tut-directory-banner">
+            <div class="tut-track-summary">
+              <div class="tut-track-eyebrow">${activeGroup.tier} pathway</div>
+              <div class="tut-track-title-row">
+                <div class="tut-track-title">${activeGroup.title}</div>
+                <div class="tut-track-count">${activeGroup.completedCount}/${activeGroup.lessons.length} complete</div>
               </div>
-              <div class="tutorial-card-actions">
-                <button class="btn" type="button" data-tut-open="${t.id}">Launch Module Window</button>
-                ${isPaidLesson(t.id) ? '<button class="btn primary" type="button" data-tut-unlock="' + t.id + '">Unlock via Stripe</button>' : ''}
-              </div>
+              <div class="tut-track-meta">Choose any module card below to open it immediately. No long page scroll and no extra launch wall before the lesson starts.</div>
             </div>
-          `).join('')}
-        </div>
+          </div>
+          <div class="tut-track-lessons tut-track-lessons-compact">
+            ${activeGroup.lessons.map((t) => {
+              const meta = getLessonMeta(t.id);
+              const isDone = tutState.completed.includes(t.id);
+              const isRecommended = activeGroup.recommendedLessonId === t.id;
+              return `
+                <button class="tut-card tut-card-directory ${isDone ? 'completed' : ''}" type="button" data-tut-open="${t.id}">
+                  <div class="tut-card-topline">
+                    <div class="tut-card-cat">Module ${meta.moduleNumber} · ${t.cat}</div>
+                    <div class="tut-card-stepcount">${t.steps.length} steps</div>
+                  </div>
+                  <div class="tut-card-title">${t.title}</div>
+                  <div class="tut-card-desc">${t.desc}</div>
+                  <div class="tut-card-meta">
+                    <span class="tut-card-badge ${isDone ? 'done' : ''}">${isDone ? '✓ Done' : meta.tier}</span>
+                    ${isRecommended ? '<span class="tut-card-badge new">Recommended</span>' : ''}
+                    ${isPaidLesson(t.id) ? '<span class="tut-card-badge">Paid</span>' : '<span class="tut-card-badge">Open</span>'}
+                  </div>
+                  <div class="tutorial-card-actions">
+                    <span class="btn tutorial-card-inline-cta">Open Module</span>
+                    ${isPaidLesson(t.id) ? '<span class="btn primary tutorial-card-inline-cta" data-tut-unlock="' + t.id + '">Unlock via Stripe</span>' : ''}
+                  </div>
+                </button>
+              `;
+            }).join('')}
+          </div>
+        </section>
       </section>
     `;
     Array.from(els.tutCatalog.querySelectorAll('[data-track-toggle]')).forEach((el) => {
@@ -4796,15 +4876,10 @@ function grantOwnerLifetimeAccess() {
         toggleTutorialTrack(el.getAttribute('data-track-toggle'));
       });
     });
-    Array.from(els.tutCatalog.querySelectorAll('.tut-card')).forEach(el => {
-      el.addEventListener('click', () => {
-        const id = el.getAttribute('data-tut-id');
-        openTutLesson(id);
-      });
-    });
     Array.from(els.tutCatalog.querySelectorAll('[data-tut-open]')).forEach((el) => {
       el.addEventListener('click', (evt) => {
-        evt.stopPropagation();
+        const unlockTrigger = evt.target instanceof Element ? evt.target.closest('[data-tut-unlock]') : null;
+        if (unlockTrigger) return;
         openTutLesson(el.getAttribute('data-tut-open'));
       });
     });
@@ -5396,12 +5471,18 @@ function grantOwnerLifetimeAccess() {
       profile.lastActiveTab = 'tutorial';
       return profile;
     });
+    document.body.classList.add('lesson-overlay-open');
     els.tutCatalog.hidden = true;
-    els.tutModeChooser.hidden = false;
-    els.tutReader.hidden = true;
+    els.tutModeChooser.hidden = true;
+    els.tutReader.hidden = false;
     els.tutModeTitle.textContent = tut.title;
-    els.tutModeDesc.textContent = `Module ${meta.moduleNumber} of ${meta.totalModules} · ${meta.trackTitle} · ${meta.tier}. ${tut.desc}${isPaidLesson(id) ? ' This is a paid pathway module and can be unlocked via Stripe at any time.' : ''} This module opens in a focused lesson window so the user lands straight into the subpage instead of scrolling through the full academy.`;
+    els.tutModeDesc.textContent = `Module ${meta.moduleNumber} of ${meta.totalModules} · ${meta.trackTitle} · ${meta.tier}. ${tut.desc}${isPaidLesson(id) ? ' This is a paid pathway module and can be unlocked via Stripe at any time.' : ''}`;
+    tutTtsEnabled = false;
+    closeLessonExternalResource();
+    tutTtsUpdateBtn();
     tutChatClear();
+    tutChatGreet();
+    renderTutStep();
     initTutorialParticles();
   }
 
@@ -5412,6 +5493,7 @@ function grantOwnerLifetimeAccess() {
       promptStripeForModule(activeTutId);
       return;
     }
+    document.body.classList.add('lesson-overlay-open');
     els.tutModeChooser.hidden = true;
     els.tutReader.hidden = false;
     if (els.tutModeChooser) els.tutModeChooser.hidden = true;
@@ -5425,6 +5507,7 @@ function grantOwnerLifetimeAccess() {
   function closeTutLesson() {
     tutTtsStop();
     closeLessonExternalResource();
+    document.body.classList.remove('lesson-overlay-open');
     if (els.tutReader) els.tutReader.hidden = true;
     if (els.tutModeChooser) els.tutModeChooser.hidden = true;
     if (els.tutCatalog) els.tutCatalog.hidden = false;
@@ -5585,8 +5668,14 @@ function grantOwnerLifetimeAccess() {
     if (els.ideaFeedbackClear) els.ideaFeedbackClear.addEventListener('click', clearIdeaFeedback);
     if (els.registerReferralBtn) els.registerReferralBtn.addEventListener('click', registerReferral);
     if (els.claimIdeaRewardBtn) els.claimIdeaRewardBtn.addEventListener('click', claimIdeaReward);
+    if (els.shareNativeBtn) els.shareNativeBtn.addEventListener('click', () => { void openNativeShare('starter'); });
     if (els.shareCopyInviteBtn) els.shareCopyInviteBtn.addEventListener('click', () => { void copyTextValue(buildInviteLink('starter'), 'Starter invite copied'); });
+    if (els.shareCopyPackBtn) els.shareCopyPackBtn.addEventListener('click', () => { void copyTextValue(buildSharePack('starter'), 'Share pack copied'); });
     if (els.shareFamilyPassBtn) els.shareFamilyPassBtn.addEventListener('click', () => { void copyTextValue(buildShareCopy('family'), 'Family share message ready'); });
+    if (els.shareCopyTextBtn) els.shareCopyTextBtn.addEventListener('click', () => { void copyTextValue(buildShareCopy('starter'), 'Share text copied'); });
+    if (els.shareCopyFamilyLinkBtn) els.shareCopyFamilyLinkBtn.addEventListener('click', () => { void copyTextValue(buildInviteLink('family'), 'Family invite link copied'); });
+    if (els.shareEmailPackBtn) els.shareEmailPackBtn.addEventListener('click', () => openSharePlatform('email'));
+    if (els.shareSmsPackBtn) els.shareSmsPackBtn.addEventListener('click', () => openSharePlatform('sms'));
     if (els.shareOpenOwnerAccessBtn) els.shareOpenOwnerAccessBtn.addEventListener('click', () => setActiveTab(isOwnerApprover() ? 'owner-access' : 'share'));
     if (els.ownerGrantLifetimeBtn) els.ownerGrantLifetimeBtn.addEventListener('click', grantOwnerLifetimeAccess);
     if (els.ownerFamilyShareBtn) els.ownerFamilyShareBtn.addEventListener('click', createOwnerFamilyShareInvite);
@@ -5632,6 +5721,8 @@ function grantOwnerLifetimeAccess() {
     }
 
     if (els.authSignInBtn) els.authSignInBtn.addEventListener('click', signInProfile);
+    if (els.authSignInEmail) els.authSignInEmail.addEventListener('keydown', (e) => { if (e.key === 'Enter') signInProfile(); });
+    if (els.authSignInPassword) els.authSignInPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') signInProfile(); });
     if (els.authSignInGoogleBtn) els.authSignInGoogleBtn.addEventListener('click', () => socialSignUp('google'));
     if (els.authSignInAppleBtn) els.authSignInAppleBtn.addEventListener('click', () => socialSignUp('apple'));
     if (els.authGoogleBtn) els.authGoogleBtn.addEventListener('click', () => socialSignUp('google'));
@@ -6109,6 +6200,15 @@ function grantOwnerLifetimeAccess() {
 
     state.user.email = localStorage.getItem('pos_email') || '';
     els.email.value = state.user.email;
+
+    // Always seed owner account so sign-in works from first visit
+    seedOwnerAccount();
+
+    // Auto-restore session if previously logged in
+    if (state.profile.loggedIn && state.user.email) {
+      if (els.authGate) els.authGate.hidden = true;
+      syncHeaderUi();
+    }
 
     setSimpleMode(localStorage.getItem('pos_simple_mode') === '1');
 

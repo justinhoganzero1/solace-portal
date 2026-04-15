@@ -51,6 +51,13 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.25);
         }
 
+        body.focus-mode .simulation-banner {
+            position: relative;
+            top: auto;
+            padding: 8px 14px;
+            font-size: 11px;
+        }
+
         .sim-app-shell {
             position: sticky;
             top: 44px;
@@ -58,6 +65,11 @@
             padding: 14px 18px 0;
             backdrop-filter: blur(16px);
             background: linear-gradient(180deg, rgba(6, 7, 19, 0.92), rgba(6, 7, 19, 0.72));
+        }
+
+        body.focus-mode .sim-app-shell,
+        body.focus-mode .embedded-shell-bar {
+            display: none;
         }
 
         .sim-app-shell-inner {
@@ -174,8 +186,40 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 14px;
+        }
+
+        .focus-shell-bar {
+            display: none;
+            position: sticky;
+            top: 0;
+            z-index: 19;
+            padding: 10px 14px;
+            background: rgba(8, 14, 24, 0.94);
+            border-bottom: 1px solid rgba(255,255,255,0.10);
+            align-items: center;
+            justify-content: space-between;
             gap: 12px;
-            backdrop-filter: blur(14px);
+        }
+
+        body.focus-mode .focus-shell-bar {
+            display: flex;
+        }
+
+        .focus-shell-copy {
+            display: grid;
+            gap: 4px;
+        }
+
+        .focus-shell-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #f4f8ff;
+        }
+
+        .focus-shell-meta {
+            font-size: 12px;
+            color: rgba(234, 240, 255, 0.72);
         }
 
         .embedded-shell-copy {
@@ -267,6 +311,110 @@
         .platform-btn.kraken,
         .platform-btn.kucoin { color: rgba(244, 248, 255, 0.96); }
 
+        body.platform-binance {
+            --platform-accent: #f3ba2f;
+            --platform-accent-strong: #f0b90b;
+            --platform-bg-soft: #1e2329;
+            --platform-bg-panel: #0b0e11;
+        }
+
+        body.platform-coinbase {
+            --platform-accent: #0052ff;
+            --platform-accent-strong: #1652f0;
+            --platform-bg-soft: #ffffff;
+            --platform-bg-panel: #f5f7fb;
+        }
+
+        body.platform-kraken {
+            --platform-accent: #6c5ce7;
+            --platform-accent-strong: #5848d6;
+            --platform-bg-soft: #19192c;
+            --platform-bg-panel: #11111f;
+        }
+
+        body.platform-kucoin {
+            --platform-accent: #2fb577;
+            --platform-accent-strong: #21a366;
+            --platform-bg-soft: #0f201b;
+            --platform-bg-panel: #081410;
+        }
+
+        .platform-skin-shell {
+            max-width: 1400px;
+            margin: 16px auto 0;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .platform-skin-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 18px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(8, 14, 24, 0.92);
+            box-shadow: 0 18px 42px rgba(0,0,0,0.28);
+        }
+
+        .platform-branding {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .platform-brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            font-weight: 900;
+            color: #08111f;
+            background: var(--platform-accent, #7caaff);
+        }
+
+        .platform-brand-copy {
+            display: grid;
+            gap: 3px;
+        }
+
+        .platform-brand-title {
+            font-size: 15px;
+            font-weight: 900;
+            color: #f5f8ff;
+        }
+
+        .platform-brand-meta {
+            font-size: 12px;
+            color: rgba(220, 230, 245, 0.78);
+        }
+
+        .platform-shell-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .platform-shell-tab {
+            min-height: 38px;
+            padding: 0 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.04);
+            color: rgba(235, 242, 252, 0.88);
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .platform-shell-tab.active {
+            background: color-mix(in srgb, var(--platform-accent, #7caaff) 18%, rgba(255,255,255,0.04));
+            border-color: color-mix(in srgb, var(--platform-accent, #7caaff) 55%, rgba(255,255,255,0.12));
+            color: #fff;
+        }
+
         .trading-header {
             max-width: 1400px;
             margin: 18px auto 0;
@@ -346,12 +494,13 @@
             margin: 0 auto;
             padding: 20px;
             display: grid;
-            grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.9fr);
+            grid-template-columns: minmax(230px, 0.62fr) minmax(0, 1.28fr) minmax(320px, 0.9fr);
             gap: 20px;
             position: relative;
             z-index: 2;
         }
 
+        .market-rail,
         .workspace-stack,
         .trading-sidebar {
             display: flex;
@@ -360,6 +509,8 @@
         }
 
         .price-section,
+        .orderbook-section,
+        .recent-trades-section,
         .portfolio-section,
         .chart-section,
         .simulation-panel,
@@ -377,6 +528,199 @@
             font-weight: 600;
             margin-bottom: 20px;
             color: #EAECEF;
+        }
+
+        body.platform-coinbase .section-title,
+        body.platform-coinbase .balance-value,
+        body.platform-coinbase .current-price,
+        body.platform-coinbase .crypto-name {
+            color: #0f172a;
+        }
+
+        body.platform-coinbase .price-section,
+        body.platform-coinbase .orderbook-section,
+        body.platform-coinbase .recent-trades-section,
+        body.platform-coinbase .portfolio-section,
+        body.platform-coinbase .chart-section,
+        body.platform-coinbase .simulation-panel,
+        body.platform-coinbase .order-ticket,
+        body.platform-coinbase .activity-section,
+        body.platform-coinbase .trading-header,
+        body.platform-coinbase .platform-skin-bar {
+            background: rgba(255,255,255,0.96);
+            border-color: rgba(15, 23, 42, 0.08);
+        }
+
+        body.platform-coinbase .panel-kicker,
+        body.platform-coinbase .market-watch-meta,
+        body.platform-coinbase .balance-label,
+        body.platform-coinbase .portfolio-details,
+        body.platform-coinbase .platform-brand-meta,
+        body.platform-coinbase .platform-shell-tab {
+            color: rgba(71, 85, 105, 0.88);
+        }
+
+        body.platform-coinbase .price-item,
+        body.platform-coinbase .sim-card,
+        body.platform-coinbase .ticket-summary,
+        body.platform-coinbase .portfolio-item,
+        body.platform-coinbase .activity-item,
+        body.platform-coinbase .orderbook-card,
+        body.platform-coinbase .trade-tape {
+            background: #f8fafc;
+            border-color: rgba(148, 163, 184, 0.24);
+        }
+
+        body.platform-coinbase .sim-select,
+        body.platform-coinbase .sim-button,
+        body.platform-coinbase .ticket-field select,
+        body.platform-coinbase .ticket-field input,
+        body.platform-coinbase .chart-section select {
+            background: #ffffff;
+            color: #0f172a;
+            border-color: rgba(148, 163, 184, 0.38);
+        }
+
+        .clone-chart-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .clone-pair-block {
+            display: grid;
+            gap: 4px;
+        }
+
+        .clone-pair {
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .clone-pair-meta {
+            font-size: 12px;
+            color: #8ea4c7;
+        }
+
+        .clone-timeframes {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .clone-timeframe {
+            min-height: 34px;
+            padding: 0 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: rgba(255,255,255,0.04);
+            color: rgba(232, 239, 248, 0.88);
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .clone-timeframe.active {
+            background: color-mix(in srgb, var(--platform-accent, #7caaff) 18%, rgba(255,255,255,0.04));
+            border-color: color-mix(in srgb, var(--platform-accent, #7caaff) 55%, rgba(255,255,255,0.12));
+        }
+
+        .orderbook-card,
+        .trade-tape {
+            display: grid;
+            gap: 10px;
+            padding: 14px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .orderbook-list,
+        .recent-trades-list {
+            display: grid;
+            gap: 6px;
+        }
+
+        .orderbook-row,
+        .trade-tape-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 10px;
+            font-size: 12px;
+            align-items: center;
+        }
+
+        .orderbook-row.sell { color: #F6465D; }
+        .orderbook-row.buy { color: #0ECB81; }
+
+        .orderbook-mid {
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            text-align: center;
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        .trade-tape-row {
+            grid-template-columns: auto 1fr auto;
+            color: #dbe7f7;
+        }
+
+        .trade-tape-row.buy .trade-side { color: #0ECB81; }
+        .trade-tape-row.sell .trade-side { color: #F6465D; }
+
+        .orderbook-head,
+        .trade-tape-head {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 10px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #8ea4c7;
+        }
+
+        .exchange-trade-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .exchange-trade-tab {
+            flex: 1;
+            min-height: 38px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.04);
+            color: rgba(232, 239, 248, 0.82);
+            font-weight: 800;
+        }
+
+        .exchange-trade-tab.active {
+            background: color-mix(in srgb, var(--platform-accent, #7caaff) 18%, rgba(255,255,255,0.04));
+            color: #fff;
+        }
+
+        .platform-feature-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .platform-feature-chip {
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            font-size: 11px;
+            font-weight: 800;
+            color: #dbe7f7;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
         }
 
         .panel-head {
@@ -563,8 +907,6 @@
             border-radius: 14px;
             background: rgba(255,255,255,0.04);
             border: 1px solid rgba(255,255,255,0.08);
-            display: grid;
-            gap: 8px;
         }
 
         .ticket-summary-row {
@@ -812,6 +1154,20 @@
             }
         }
 
+        @media (max-width: 1100px) {
+            .trading-main {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content,
+            .platform-skin-bar,
+            .price-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
         @media (max-width: 640px) {
             .embedded-shell-bar,
             .platform-switcher {
@@ -836,12 +1192,26 @@
                 width: 100%;
                 justify-content: flex-end;
             }
+
+            .focus-shell-bar {
+                flex-wrap: wrap;
+            }
         }
     </style>
 </head>
 <body>
     <div class="simulation-watermark">TRAINING SIMULATION ONLY</div>
     <div class="simulation-banner">TRAINING SIMULATION ONLY · NO REAL MONEY · NO REAL ORDERS · EDUCATIONAL USE ONLY</div>
+
+    <div class="focus-shell-bar">
+        <div class="focus-shell-copy">
+            <div class="focus-shell-title">Juzzy Trading Simulator</div>
+            <div class="focus-shell-meta">Focused simulator view with a direct return to the app home screen.</div>
+        </div>
+        <div class="embedded-shell-actions">
+            <button class="embedded-shell-btn primary" type="button" data-parent-jump="home">⌂ Home</button>
+        </div>
+    </div>
 
     <div class="sim-app-shell">
         <div class="sim-app-shell-inner">
@@ -903,12 +1273,30 @@
         <button class="platform-btn kucoin" onclick="switchPlatform('kucoin')">🟢 KuCoin</button>
     </div>
 
+    <div class="platform-skin-shell">
+        <div class="platform-skin-bar">
+            <div class="platform-branding">
+                <div id="platformBrandMark" class="platform-brand-mark">B</div>
+                <div class="platform-brand-copy">
+                    <div id="platformBrandTitle" class="platform-brand-title">Binance-style trading workspace</div>
+                    <div id="platformBrandMeta" class="platform-brand-meta">Spot-focused training clone with simulated balances, fills, and market movement.</div>
+                </div>
+            </div>
+            <div id="platformShellTabs" class="platform-shell-tabs">
+                <button class="platform-shell-tab active" type="button">Spot</button>
+                <button class="platform-shell-tab" type="button">Markets</button>
+                <button class="platform-shell-tab" type="button">Orders</button>
+                <button class="platform-shell-tab" type="button">Wallet</button>
+            </div>
+        </div>
+    </div>
+
     <div class="trading-header">
         <div class="header-content">
             <div class="header-copy">
                 <div class="panel-kicker">Trading Sim · Practice Mode</div>
-                <h1 style="font-size: 30px; margin-bottom: 5px; line-height: 1.2;">Crypto Trading Simulator</h1>
-                <p style="color: rgba(234, 240, 255, 0.78); font-size: 14px;">A full in-browser training workspace designed to feel like the live Juzzy product while keeping every price, fill, order, and result simulated.</p>
+                <h1 id="simHeroTitle" style="font-size: 30px; margin-bottom: 5px; line-height: 1.2;">Binance-style Trading Simulator</h1>
+                <p id="simHeroCopy" style="color: rgba(234, 240, 255, 0.78); font-size: 14px;">A full in-browser training workspace designed to closely imitate the feel of a live exchange while keeping every price, fill, order, and result simulated.</p>
                 <div class="training-pill-row">
                     <div class="training-pill">TRAINING SIMULATION ONLY</div>
                     <div class="training-pill">Simulated balances</div>
@@ -934,6 +1322,37 @@
     </div>
 
     <div class="trading-main">
+        <div class="market-rail">
+            <div class="orderbook-section">
+                <div class="panel-head">
+                    <div>
+                        <div class="panel-kicker">Depth</div>
+                        <h2 class="section-title" style="margin-bottom:0;">Order Book</h2>
+                    </div>
+                    <div class="training-pill">SIMULATED DEPTH</div>
+                </div>
+                <div class="orderbook-card">
+                    <div class="orderbook-head"><span>Price</span><span>Size</span><span>Total</span></div>
+                    <div id="orderbookSells" class="orderbook-list"></div>
+                    <div id="orderbookMid" class="orderbook-mid">$0.00</div>
+                    <div id="orderbookBuys" class="orderbook-list"></div>
+                </div>
+            </div>
+
+            <div class="recent-trades-section">
+                <div class="panel-head">
+                    <div>
+                        <div class="panel-kicker">Tape</div>
+                        <h2 class="section-title" style="margin-bottom:0;">Recent Trades</h2>
+                    </div>
+                </div>
+                <div class="trade-tape">
+                    <div class="trade-tape-head"><span>Side</span><span>Price</span><span>Time</span></div>
+                    <div id="recentTradesList" class="recent-trades-list"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="workspace-stack">
             <div class="simulation-panel">
                 <div class="panel-head">
@@ -995,9 +1414,14 @@
                 <div class="panel-head">
                     <div>
                         <div class="panel-kicker">Order Ticket</div>
-                        <h2 class="section-title" style="margin-bottom:0;">Build a Simulated Trade</h2>
+                        <h2 id="ticketPanelTitle" class="section-title" style="margin-bottom:0;">Build a Simulated Trade</h2>
                     </div>
                     <div class="training-pill">NO REAL ORDERS</div>
+                </div>
+                <div id="exchangeTradeTabs" class="exchange-trade-tabs">
+                    <button class="exchange-trade-tab active" type="button">Spot</button>
+                    <button class="exchange-trade-tab" type="button">Margin</button>
+                    <button class="exchange-trade-tab" type="button">Futures</button>
                 </div>
                 <div class="ticket-grid">
                     <div class="ticket-row">
@@ -1039,6 +1463,7 @@
                         <button id="ticketBuyBtn" class="sim-button primary" type="button">Simulate Buy</button>
                         <button id="ticketSellBtn" class="sim-button" type="button">Simulate Sell</button>
                     </div>
+                    <div id="platformFeatureRow" class="platform-feature-row"></div>
                 </div>
             </div>
 
@@ -1114,6 +1539,11 @@
         
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const isFocusMode = params.get('focus') === '1';
+            if (isFocusMode) {
+                document.body.classList.add('focus-mode');
+            }
             simulator = initializeTradingSimulator();
 
             document.querySelectorAll('[data-parent-jump]').forEach((button) => {

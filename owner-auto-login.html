@@ -82,10 +82,29 @@
     <script>
         // Auto-login as owner and redirect
         setTimeout(() => {
-            // Set owner credentials in localStorage
-            localStorage.setItem('juzzy_owner_email', 'owner@juzzy.local');
-            localStorage.setItem('juzzy_owner_logged_in', 'true');
-            localStorage.setItem('juzzy_owner_name', 'Owner');
+            const ownerEmail = 'owner@juzzy.local';
+            const ownerProfile = {
+                loggedIn: true,
+                name: 'Owner',
+                country: 'US',
+                language: 'en',
+                languageCustom: '',
+                legalAccepted: true
+            };
+            const ownerAccount = {
+                name: 'Owner',
+                email: ownerEmail,
+                password: 'owner-access',
+                country: 'US',
+                language: 'en',
+                languageCustom: '',
+                createdAt: Date.now(),
+                provider: 'owner-auto-login'
+            };
+
+            localStorage.setItem('juzzy_profile', JSON.stringify(ownerProfile));
+            localStorage.setItem('pos_email', ownerEmail);
+            localStorage.setItem('juzzy_auth_accounts', JSON.stringify([ownerAccount]));
             
             // Redirect to main academy
             window.location.href = 'index.html';
