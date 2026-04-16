@@ -274,6 +274,7 @@ nav{
     <a href="#avatars">AI Team</a>
     <a href="#pricing">Pricing</a>
     <a href="#download">Download</a>
+    <a href="admin.html" style="color:rgba(255,215,0,0.6);text-decoration:none;font-size:13px;padding:7px 16px;border-radius:22px;border:1px solid rgba(255,215,0,0.2);transition:all 0.2s;" onmouseover="this.style.color='#FFD700'" onmouseout="this.style.color='rgba(255,215,0,0.6)'">&#128274; Admin</a>
     <a href="#" class="nav-cta" onclick="openModal();return false;">&#9889; Get Started Free</a>
   </div>
 </nav>
@@ -330,7 +331,7 @@ nav{
     <a href="#features" class="btn-3d secondary">&#9654; See Live Demo</a>
   </div>
   <div class="stats">
-    <div class="stat"><div class="stat-num">50K+</div><div class="stat-label">Apps Built</div></div>
+    <div class="stat"><div class="stat-num" id="pubTotalApps">8</div><div class="stat-label">&#127381; Apps Built</div></div>
     <div class="stat"><div class="stat-num">4.9&#9733;</div><div class="stat-label">Rating</div></div>
     <div class="stat"><div class="stat-num">2 Min</div><div class="stat-label">To First App</div></div>
     <div class="stat"><div class="stat-num">100%</div><div class="stat-label">AI Powered</div></div>
@@ -1362,8 +1363,26 @@ const observer=new IntersectionObserver((entries)=>{
 },{threshold:0.3});
 document.querySelectorAll('.feature-card').forEach(c=>observer.observe(c));
 
+// Load live public stats from admin DB
+(function(){
+  try{
+    var stats=JSON.parse(localStorage.getItem('sp_public_stats')||'null');
+    var db=JSON.parse(localStorage.getItem('sp_db')||'null');
+    var total=(db&&db.apps)?db.apps.length:(stats&&stats.total)||8;
+    var el=document.getElementById('pubTotalApps');
+    if(el){
+      var count=0;
+      var timer=setInterval(function(){
+        count+=Math.ceil(total/40);
+        if(count>=total){count=total;clearInterval(timer);}
+        el.textContent=count+(count>=total?'':'...');
+      },40);
+    }
+  }catch(e){}
+})();
+
 // Mobile nav
-window.addEventListener('resize',()=>{});
+window.addEventListener('resize',function(){});
 </script>
 </body>
 </html>

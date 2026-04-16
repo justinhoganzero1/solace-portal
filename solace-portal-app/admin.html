@@ -1,0 +1,370 @@
+﻿<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Solace Portal — Admin</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--red:#DC143C;--gold:#FFD700;--gold2:#FFA500;--teal:#00E5FF;--teal2:#00B4D8;--blue:#1565C0;--dark:#03030A;--dark2:#07070F;--card:#0A0A18;}
+html{scroll-behavior:smooth;}
+body{background:var(--dark);color:#fff;font-family:'Inter',sans-serif;overflow-x:hidden;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:linear-gradient(rgba(220,20,60,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 60% 50% at 10% 10%,rgba(220,20,60,0.15) 0%,transparent 55%),radial-gradient(ellipse 50% 40% at 90% 85%,rgba(0,180,216,0.12) 0%,transparent 55%);}
+@keyframes rf{0%{background-position:0% 50%;}100%{background-position:300% 50%;}}
+#loginScreen{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#03030A,#07070F,#0A0A18);display:flex;align-items:center;justify-content:center;}
+.login-box{width:min(420px,90vw);background:linear-gradient(145deg,#0A0A18,#060610);border:1px solid rgba(255,215,0,0.25);border-radius:26px;padding:44px;position:relative;box-shadow:0 40px 120px rgba(0,0,0,0.9);}
+.login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:26px 26px 0 0;background:linear-gradient(90deg,var(--red),var(--gold),var(--teal),var(--blue),var(--red));background-size:300%;animation:rf 4s linear infinite;}
+.admin-badge{display:inline-block;background:rgba(220,20,60,0.12);border:1px solid rgba(220,20,60,0.4);color:var(--red);padding:4px 14px;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:2px;margin-bottom:12px;}
+.login-title{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;text-align:center;margin-bottom:4px;background:linear-gradient(135deg,#FFD700,#FFA500);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.login-sub{color:rgba(255,255,255,0.4);font-size:13px;text-align:center;margin-bottom:28px;}
+.input-group{margin-bottom:14px;}
+.input-group label{display:block;font-size:11px;font-weight:700;color:rgba(255,215,0,0.6);margin-bottom:6px;letter-spacing:0.5px;}
+.input-group input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:13px 16px;border-radius:12px;font-size:14px;outline:none;transition:border-color 0.2s;font-family:'Inter',sans-serif;}
+.input-group input:focus{border-color:rgba(255,215,0,0.4);}
+.login-btn{width:100%;padding:14px;border-radius:13px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--red),var(--gold2),var(--blue));color:#fff;font-weight:800;font-size:15px;font-family:'Inter',sans-serif;}
+.login-err{color:var(--red);font-size:13px;text-align:center;margin-top:10px;display:none;}
+#adminUI{display:none;position:relative;z-index:1;}
+nav.admin-nav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;justify-content:space-between;align-items:center;padding:0 32px;background:linear-gradient(90deg,rgba(3,3,10,0.97),rgba(7,7,15,0.97));backdrop-filter:blur(40px);border-bottom:1px solid rgba(255,215,0,0.12);box-shadow:0 4px 40px rgba(0,0,0,0.7);height:62px;}
+.a-logo{display:flex;align-items:center;gap:10px;}
+.a-logo-text{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;background:linear-gradient(135deg,#FFD700,#FFA500);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.a-tabs{display:flex;gap:4px;height:100%;}
+.a-tab{display:flex;align-items:center;gap:8px;padding:0 20px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:13px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;transition:all 0.2s;font-family:'Inter',sans-serif;height:100%;}
+.a-tab:hover{color:#fff;background:rgba(255,215,0,0.04);}
+.a-tab.active{color:#fff;border-bottom-color:var(--gold);background:rgba(255,215,0,0.05);}
+.t-badge{background:var(--red);color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:10px;min-width:20px;text-align:center;}
+.a-user{display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.5);}
+.a-user-dot{width:8px;height:8px;border-radius:50%;background:#00FF88;box-shadow:0 0 6px #00FF88;}
+.admin-content{padding:82px 32px 40px;min-height:100vh;}
+.a-panel{display:none;}.a-panel.active{display:block;}
+.a-card{background:linear-gradient(145deg,#0A0A18,#060610);border:1px solid rgba(255,215,0,0.1);border-radius:20px;padding:28px;position:relative;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,215,0,0.05);}
+.a-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red),var(--gold),var(--teal),var(--blue),var(--red));background-size:300%;animation:rf 4s linear infinite;}
+.a-grid{display:grid;gap:20px;}.a-grid-4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}.a-grid-2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr));}
+.stat-big{font-family:'Orbitron',sans-serif;font-size:42px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--red));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 10px rgba(255,215,0,0.3));}
+.stat-lbl{font-size:12px;color:rgba(255,255,255,0.45);margin-top:6px;letter-spacing:1px;text-transform:uppercase;font-weight:600;}
+.a-h1{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;margin-bottom:6px;background:linear-gradient(135deg,#fff,rgba(255,255,255,0.7));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.a-h2{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px;color:rgba(255,215,0,0.8);}
+.a-sub{color:rgba(255,255,255,0.4);font-size:13px;margin-bottom:24px;line-height:1.6;}
+.row-flex{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:24px;}
+.btn-a{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:12px;border:none;cursor:pointer;font-weight:700;font-size:13px;transition:all 0.2s;font-family:'Inter',sans-serif;}
+.btn-a.gold{background:linear-gradient(135deg,var(--red),var(--gold2),var(--blue));color:#fff;box-shadow:0 4px 20px rgba(220,20,60,0.3);}
+.btn-a.teal{background:rgba(0,229,255,0.1);color:rgba(0,229,255,0.8);border:1px solid rgba(0,229,255,0.25);}
+</style>
+<style>
+.app-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;align-items:center;}
+.filter-btn{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.55);padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.filter-btn:hover,.filter-btn.active{background:rgba(255,215,0,0.1);border-color:rgba(255,215,0,0.4);color:#fff;}
+.filter-search{flex:1;min-width:200px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:8px 16px;border-radius:20px;font-size:13px;outline:none;font-family:'Inter',sans-serif;}
+.filter-search:focus{border-color:rgba(255,215,0,0.35);}
+.apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;}
+.app-card{background:linear-gradient(145deg,#0C0C1C,#080814);border:1px solid rgba(255,255,255,0.07);border-radius:18px;overflow:hidden;transition:all 0.25s;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,0.4);}
+.app-card:hover{border-color:rgba(255,215,0,0.3);transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,0.6),0 0 20px rgba(255,215,0,0.08);}
+.app-card-header{padding:18px 18px 14px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.app-icon-wrap{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:12px;box-shadow:0 6px 20px rgba(0,0,0,0.4);}
+.app-name{font-weight:800;font-size:15px;margin-bottom:4px;}
+.app-cat{font-size:11px;font-weight:600;padding:2px 10px;border-radius:10px;display:inline-block;}
+.app-card-body{padding:14px 18px;}
+.app-meta{display:flex;gap:12px;font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:10px;}
+.app-desc{font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:12px;}
+.app-actions{display:flex;gap:8px;}
+.app-btn{font-size:11px;font-weight:700;padding:6px 12px;border-radius:8px;border:none;cursor:pointer;transition:all 0.2s;}
+.app-btn.view{background:rgba(255,215,0,0.1);color:rgba(255,215,0,0.8);border:1px solid rgba(255,215,0,0.2);}
+.app-btn.dl{background:rgba(0,229,255,0.1);color:rgba(0,229,255,0.8);border:1px solid rgba(0,229,255,0.2);}
+.app-btn.del{background:rgba(220,20,60,0.1);color:rgba(220,20,60,0.7);border:1px solid rgba(220,20,60,0.2);}
+.cat-tree{padding:4px 0;}.cat-root{margin-bottom:8px;}
+.cat-header{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;cursor:pointer;transition:all 0.2s;border:1px solid transparent;}
+.cat-header:hover{background:rgba(255,255,255,0.03);border-color:rgba(255,215,0,0.1);}
+.cat-header.open{background:rgba(255,215,0,0.05);border-color:rgba(255,215,0,0.15);}
+.cat-icon{font-size:20px;width:32px;text-align:center;}.cat-name{font-weight:700;font-size:14px;flex:1;text-transform:capitalize;}
+.cat-count{font-size:11px;color:rgba(255,255,255,0.35);font-weight:600;}
+.cat-arrow{font-size:12px;color:rgba(255,255,255,0.3);transition:transform 0.2s;}
+.cat-header.open .cat-arrow{transform:rotate(90deg);}
+.sub-cats{display:none;padding:4px 0 4px 44px;}
+.cat-header.open+.sub-cats{display:block;}
+.sub-cat{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:10px;cursor:pointer;transition:all 0.2s;font-size:13px;color:rgba(255,255,255,0.55);}
+.sub-cat:hover{background:rgba(255,255,255,0.03);color:#fff;}
+.sub-cat.active{color:rgba(255,215,0,0.8);background:rgba(255,215,0,0.06);}
+.sub-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.comm-card{background:linear-gradient(145deg,#0C0C1C,#080814);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:20px;margin-bottom:14px;transition:all 0.2s;}
+.comm-card:hover{border-color:rgba(255,215,0,0.2);}
+.comm-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.comm-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;flex-shrink:0;}
+.comm-user{font-weight:700;font-size:14px;}.comm-time{font-size:11px;color:rgba(255,255,255,0.35);}
+.comm-app-preview{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:14px;}
+.comm-app-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.comm-actions{display:flex;gap:16px;font-size:12px;color:rgba(255,255,255,0.4);}
+.comm-action{cursor:pointer;display:flex;align-items:center;gap:4px;transition:color 0.2s;font-weight:600;}
+.comm-action:hover{color:rgba(255,215,0,0.8);}
+.a-table{width:100%;border-collapse:collapse;}
+.a-table th{text-align:left;font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.07);letter-spacing:0.5px;text-transform:uppercase;}
+.a-table td{padding:14px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;color:rgba(255,255,255,0.7);vertical-align:middle;}
+.a-table tr:hover td{background:rgba(255,255,255,0.02);}
+.status-badge{font-size:10px;font-weight:800;padding:3px 10px;border-radius:10px;letter-spacing:0.5px;}
+.status-live{background:rgba(0,255,136,0.12);color:#00FF88;border:1px solid rgba(0,255,136,0.25);}
+.status-draft{background:rgba(255,215,0,0.1);color:#FFD700;border:1px solid rgba(255,215,0,0.25);}
+.status-review{background:rgba(0,180,216,0.1);color:#00B4D8;border:1px solid rgba(0,180,216,0.25);}
+.mini-bar-chart{display:flex;align-items:flex-end;gap:6px;height:80px;padding-top:8px;}
+.mini-bar{flex:1;border-radius:4px 4px 0 0;min-width:10px;background:linear-gradient(180deg,rgba(255,215,0,0.8),rgba(220,20,60,0.6));box-shadow:0 0 8px rgba(255,215,0,0.2);transition:height 1s ease;}
+.chart-labels{display:flex;gap:6px;margin-top:6px;}
+.chart-label{flex:1;font-size:9px;color:rgba(255,255,255,0.3);text-align:center;}
+.notif{position:fixed;top:18px;right:32px;z-index:2000;background:linear-gradient(135deg,#DC143C,#FFD700);color:#000;font-size:12px;font-weight:900;padding:8px 18px;border-radius:25px;box-shadow:0 4px 20px rgba(220,20,60,0.4);display:none;animation:slideIn 0.3s ease;}
+@keyframes slideIn{from{transform:translateY(-20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+</style>
+</head>
+<body>
+<div id="notif" class="notif"></div>
+<div id="loginScreen">
+<div class="login-box">
+<div style="text-align:center;margin-bottom:20px;">
+<svg viewBox="0 0 100 115" width="56" height="56" style="filter:drop-shadow(0 0 14px rgba(255,215,0,0.6));"><defs><linearGradient id="lg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#B8860B"/></linearGradient><linearGradient id="lg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#DC143C"/><stop offset="100%" stop-color="#5B0010"/></linearGradient></defs><path d="M50 4 L92 22 L92 62 Q92 90 50 110 Q8 90 8 62 L8 22 Z" fill="url(#lg2)" stroke="#B8860B" stroke-width="1.5"/><path d="M50 10 L86 26 L86 62 Q86 86 50 104 Q14 86 14 62 L14 26 Z" fill="url(#lg1)" opacity="0.9"/><text x="50" y="74" font-size="52" font-weight="900" font-family="Arial Black" text-anchor="middle" fill="url(#lg1)" stroke="#8B6000" stroke-width="1">S</text><path d="M50 10 L86 26 L82 28 L50 14 L18 28 L14 26 Z" fill="rgba(255,255,255,0.25)"/></svg>
+</div>
+<div style="text-align:center;margin-bottom:8px;"><span class="admin-badge">&#128274; ADMIN ACCESS ONLY</span></div>
+<div class="login-title">Solace Admin Portal</div>
+<div class="login-sub">Authorised personnel only</div>
+<div class="input-group"><label>ADMIN EMAIL</label><input type="email" id="adminEmail" placeholder="admin@solaceportal.com"/></div>
+<div class="input-group"><label>PASSWORD</label><input type="password" id="adminPass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+<button class="login-btn" onclick="doLogin()">&#9889; Access Admin Portal</button>
+<div class="login-err" id="loginErr">&#10060; Invalid credentials</div>
+<div style="margin-top:16px;text-align:center;font-size:11px;color:rgba(255,255,255,0.2);">Demo: admin@solaceportal.com / solace2026</div>
+</div></div>
+<div id="adminUI">
+<nav class="admin-nav">
+<div class="a-logo">
+<svg viewBox="0 0 100 115" width="28" height="28" style="filter:drop-shadow(0 0 8px rgba(255,215,0,0.4));"><defs><linearGradient id="nv1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#B8860B"/></linearGradient><linearGradient id="nv2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#DC143C"/><stop offset="100%" stop-color="#5B0010"/></linearGradient></defs><path d="M50 4 L92 22 L92 62 Q92 90 50 110 Q8 90 8 62 L8 22 Z" fill="url(#nv2)" stroke="#B8860B" stroke-width="1.5"/><path d="M50 10 L86 26 L86 62 Q86 86 50 104 Q14 86 14 62 L14 26 Z" fill="url(#nv1)" opacity="0.9"/><text x="50" y="74" font-size="52" font-weight="900" font-family="Arial Black" text-anchor="middle" fill="url(#nv1)">S</text></svg>
+<span class="a-logo-text">ADMIN</span>
+<span style="background:rgba(220,20,60,0.15);border:1px solid rgba(220,20,60,0.3);color:#DC143C;font-size:10px;font-weight:800;padding:2px 8px;border-radius:8px;letter-spacing:1px;">SECURE</span>
+</div>
+<div class="a-tabs">
+<button class="a-tab active" onclick="showPanel('dashboard',this)"><span>&#127968;</span> Dashboard</button>
+<button class="a-tab" onclick="showPanel('library',this)"><span>&#128218;</span> App Library <span class="t-badge" id="libCount">0</span></button>
+<button class="a-tab" onclick="showPanel('categories',this)"><span>&#128193;</span> Categories</button>
+<button class="a-tab" onclick="showPanel('community',this)"><span>&#127757;</span> Community <span class="t-badge" id="commCount">0</span></button>
+<button class="a-tab" onclick="showPanel('users',this)"><span>&#128100;</span> Users</button>
+<button class="a-tab" onclick="showPanel('settings',this)"><span>&#9881;</span> Settings</button>
+</div>
+<div class="a-user">
+<span class="a-user-dot"></span>
+<span id="adminName">Admin</span>
+<span style="color:rgba(255,255,255,0.25);">|</span>
+<span style="cursor:pointer;color:rgba(220,20,60,0.7);" onclick="doLogout()">Logout</span>
+</div>
+</nav>
+<div class="admin-content">
+<!-- DASHBOARD -->
+<div class="a-panel active" id="panel-dashboard">
+<div class="row-flex"><div><div class="a-h1">&#128200; Dashboard</div><div class="a-sub">Live overview of all Solace Portal activity</div></div><button class="btn-a gold" onclick="addDemoApp();showPanel('library',document.querySelectorAll('.a-tab')[1])">&#43; Add App</button></div>
+<div class="a-grid a-grid-4" style="margin-bottom:24px;">
+<div class="a-card"><div class="stat-big" id="totalApps">0</div><div class="stat-lbl">&#127381; Total Apps Built</div></div>
+<div class="a-card"><div class="stat-big" id="totalUsers">0</div><div class="stat-lbl">&#128100; Registered Users</div></div>
+<div class="a-card"><div class="stat-big" id="totalShares">0</div><div class="stat-lbl">&#127757; Community Shares</div></div>
+<div class="a-card"><div class="stat-big" id="totalRevenue"></div><div class="stat-lbl">&#128176; Est. Revenue</div></div>
+</div>
+<div class="a-grid a-grid-2">
+<div class="a-card"><div class="a-h2">&#128202; Apps Built (Last 7 Days)</div><div class="mini-bar-chart" id="barChart"></div><div class="chart-labels" id="chartLabels"></div></div>
+<div class="a-card"><div class="a-h2">&#9889; Recent Activity</div><div id="activityFeed" style="display:flex;flex-direction:column;gap:10px;max-height:180px;overflow-y:auto;"></div></div>
+</div>
+<div class="a-card" style="margin-top:20px;"><div class="a-h2">&#128196; Latest Apps</div>
+<table class="a-table"><thead><tr><th>App</th><th>Creator</th><th>Category</th><th>Platform</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="latestBody"></tbody></table>
+</div></div>
+<!-- LIBRARY -->
+<div class="a-panel" id="panel-library">
+<div class="row-flex"><div><div class="a-h1">&#128218; App Library</div><div class="a-sub">Every app ever created — searchable, filterable, categorised</div></div><button class="btn-a gold" onclick="addDemoApp()">&#43; Add Demo App</button></div>
+<div class="app-filters">
+<input class="filter-search" id="libSearch" placeholder="Search apps..." oninput="filterApps()"/>
+<button class="filter-btn active" onclick="filterCat('all',this)">All</button>
+<button class="filter-btn" onclick="filterCat('productivity',this)">Productivity</button>
+<button class="filter-btn" onclick="filterCat('games',this)">Games</button>
+<button class="filter-btn" onclick="filterCat('health',this)">Health</button>
+<button class="filter-btn" onclick="filterCat('social',this)">Social</button>
+<button class="filter-btn" onclick="filterCat('finance',this)">Finance</button>
+<button class="filter-btn" onclick="filterCat('education',this)">Education</button>
+<button class="filter-btn" onclick="filterCat('entertainment',this)">Entertainment</button>
+</div>
+<div class="apps-grid" id="appsGrid"></div>
+</div>
+<!-- CATEGORIES -->
+<div class="a-panel" id="panel-categories">
+<div class="row-flex"><div><div class="a-h1">&#128193; Categories</div><div class="a-sub">Full taxonomy of every app ever invented on Solace Portal</div></div></div>
+<div class="a-grid a-grid-2">
+<div class="a-card"><div class="a-h2">&#128200; Category Tree</div><div class="cat-tree" id="catTree"></div></div>
+<div class="a-card"><div class="a-h2">&#128204; Distribution</div><div id="catStats" style="display:flex;flex-direction:column;gap:14px;"></div></div>
+</div></div>
+<!-- COMMUNITY -->
+<div class="a-panel" id="panel-community">
+<div class="row-flex"><div><div class="a-h1">&#127757; Community</div><div class="a-sub">Apps shared by users — moderated feed</div></div><button class="btn-a teal" onclick="approveAll()">&#10003; Approve All</button></div>
+<div id="communityFeed"></div></div>
+<!-- USERS -->
+<div class="a-panel" id="panel-users">
+<div class="row-flex"><div><div class="a-h1">&#128100; Users</div><div class="a-sub">All registered accounts</div></div></div>
+<div class="a-card"><table class="a-table"><thead><tr><th>Name</th><th>Email</th><th>Provider</th><th>Apps Built</th><th>Joined</th><th>Status</th></tr></thead><tbody id="usersBody"></tbody></table></div>
+</div>
+<!-- SETTINGS -->
+<div class="a-panel" id="panel-settings">
+<div class="a-h1" style="margin-bottom:24px;">&#9881; Settings</div>
+<div class="a-grid a-grid-2">
+<div class="a-card"><div class="a-h2">Admin Credentials</div>
+<div class="input-group"><label>EMAIL</label><input type="email" id="setEmail" value="admin@solaceportal.com" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:11px 14px;border-radius:10px;font-size:13px;outline:none;font-family:'Inter',sans-serif;"/></div>
+<div class="input-group" style="margin-top:12px;"><label>NEW PASSWORD</label><input type="password" id="setPass" placeholder="Leave blank to keep current" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:11px 14px;border-radius:10px;font-size:13px;outline:none;font-family:'Inter',sans-serif;"/></div>
+<button class="btn-a gold" style="margin-top:14px;" onclick="saveSettings()">&#10003; Save</button>
+</div>
+<div class="a-card"><div class="a-h2">Public Settings</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span style="font-size:13px;">Show total app count on public homepage</span><input type="checkbox" id="showTotal" checked style="width:18px;height:18px;cursor:pointer;accent-color:#FFD700;"/></div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span style="font-size:13px;">Enable community sharing</span><input type="checkbox" id="showComm" checked style="width:18px;height:18px;cursor:pointer;accent-color:#FFD700;"/></div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;"><span style="font-size:13px;">Auto-approve community posts</span><input type="checkbox" id="autoApprove" style="width:18px;height:18px;cursor:pointer;accent-color:#FFD700;"/></div>
+</div>
+</div>
+</div>
+</div></div>
+<script>
+var ADMIN_EMAIL='admin@solaceportal.com',ADMIN_PASS='solace2026';
+var DB={
+apps:[
+{id:1,name:'FitTrack Pro',cat:'health',subcat:'Fitness',platform:'Android',status:'live',creator:'Sarah M.',created:'2026-04-10',desc:'AI-powered fitness tracker with custom workouts.',icon:'&#127947;',color:'#00B050',downloads:1240,rating:4.8},
+{id:2,name:'BudgetWise',cat:'finance',subcat:'Budgeting',platform:'iOS',status:'live',creator:'James K.',created:'2026-04-11',desc:'Smart budget manager with AI spending insights.',icon:'&#128176;',color:'#FFD700',downloads:890,rating:4.6},
+{id:3,name:'SpeedRacer X',cat:'games',subcat:'Racing',platform:'Both',status:'review',creator:'Mike T.',created:'2026-04-12',desc:'Hyper-realistic racing game with AI opponents.',icon:'&#127950;',color:'#DC143C',downloads:0,rating:0},
+{id:4,name:'LearnBot',cat:'education',subcat:'AI Tutor',platform:'Android',status:'live',creator:'Priya S.',created:'2026-04-13',desc:'Personalised AI tutor for school subjects.',icon:'&#127891;',color:'#00E5FF',downloads:3200,rating:4.9},
+{id:5,name:'SocialVibe',cat:'social',subcat:'Networking',platform:'Both',status:'live',creator:'Alex W.',created:'2026-04-14',desc:'Next-gen social platform with AI content feeds.',icon:'&#127757;',color:'#8B45FF',downloads:5600,rating:4.7},
+{id:6,name:'MindSpace',cat:'health',subcat:'Meditation',platform:'iOS',status:'draft',creator:'Luna R.',created:'2026-04-15',desc:'Guided meditation with biometric mood tracking.',icon:'&#129496;',color:'#00B4D8',downloads:0,rating:0},
+{id:7,name:'TaskFlow AI',cat:'productivity',subcat:'Task Mgmt',platform:'Android',status:'live',creator:'David L.',created:'2026-04-15',desc:'AI task manager that learns your work habits.',icon:'&#9989;',color:'#FFA500',downloads:2100,rating:4.5},
+{id:8,name:'CryptoVault',cat:'finance',subcat:'Crypto',platform:'Android',status:'live',creator:'Wei C.',created:'2026-04-16',desc:'Secure crypto portfolio tracker with real-time alerts.',icon:'&#128142;',color:'#1565C0',downloads:780,rating:4.3}
+],
+users:[
+{name:'Sarah M.',email:'sarah@mail.com',provider:'Google',apps:3,joined:'2026-04-10'},
+{name:'James K.',email:'james@mail.com',provider:'Email',apps:1,joined:'2026-04-11'},
+{name:'Mike T.',email:'mike@mail.com',provider:'Apple',apps:2,joined:'2026-04-12'},
+{name:'Priya S.',email:'priya@mail.com',provider:'Google',apps:4,joined:'2026-04-13'},
+{name:'Alex W.',email:'alex@mail.com',provider:'Google',apps:1,joined:'2026-04-14'},
+{name:'Luna R.',email:'luna@mail.com',provider:'Email',apps:1,joined:'2026-04-15'},
+{name:'David L.',email:'david@mail.com',provider:'Apple',apps:2,joined:'2026-04-15'},
+{name:'Wei C.',email:'wei@mail.com',provider:'Google',apps:1,joined:'2026-04-16'}
+],
+community:[
+{user:'Sarah M.',color:'#FFD700',appId:1,caption:'Just shipped FitTrack Pro to Play Store! &#127881;',likes:24,comments:8,time:'2h ago'},
+{user:'Priya S.',color:'#00E5FF',appId:4,caption:'LearnBot hit 3000 downloads! Thank you Solace Portal &#128640;',likes:41,comments:15,time:'5h ago'},
+{user:'Alex W.',color:'#8B45FF',appId:5,caption:'SocialVibe is live on Android & iOS. Building the future!',likes:56,comments:22,time:'1d ago'},
+{user:'David L.',color:'#FFA500',appId:7,caption:'TaskFlow AI generated itself using Solace. Meta! &#129302;',likes:33,comments:11,time:'1d ago'}
+]
+};
+var CATS={productivity:{icon:'&#9889;',color:'#FFA500',sub:['Task Management','Note Taking','Calendar','Time Tracking','Project Management']},games:{icon:'&#127918;',color:'#DC143C',sub:['Action','Racing','Puzzle','Strategy','RPG','Sports']},health:{icon:'&#128138;',color:'#00B050',sub:['Fitness','Meditation','Nutrition','Sleep','Mental Health']},social:{icon:'&#127757;',color:'#8B45FF',sub:['Networking','Dating','Community','Messaging']},finance:{icon:'&#128176;',color:'#FFD700',sub:['Budgeting','Investment','Crypto','Banking','Tax']},education:{icon:'&#127891;',color:'#00E5FF',sub:['AI Tutor','Language','STEM','Test Prep','Kids']},entertainment:{icon:'&#127917;',color:'#FF6B9D',sub:['Music','Video','Podcasts','Art','Creative']}};
+function doLogin(){
+  var e=document.getElementById('adminEmail').value.trim();
+  var p=document.getElementById('adminPass').value;
+  var saved=JSON.parse(localStorage.getItem('sp_admin_creds')||'{}');
+  var ve=saved.email||ADMIN_EMAIL,vp=saved.pass||ADMIN_PASS;
+  if(e===ve&&p===vp){sessionStorage.setItem('sp_admin','1');document.getElementById('loginScreen').style.display='none';document.getElementById('adminUI').style.display='block';document.getElementById('adminName').textContent=e.split('@')[0];initAdmin();}
+  else{var err=document.getElementById('loginErr');err.style.display='block';setTimeout(function(){err.style.display='none';},3000);}
+}
+function doLogout(){sessionStorage.removeItem('sp_admin');location.reload();}
+window.addEventListener('load',function(){
+  var saved=JSON.parse(localStorage.getItem('sp_db')||'null');
+  if(saved)DB=saved;
+  if(sessionStorage.getItem('sp_admin')){document.getElementById('loginScreen').style.display='none';document.getElementById('adminUI').style.display='block';initAdmin();}
+});
+function saveDB(){localStorage.setItem('sp_db',JSON.stringify(DB));}
+function showPanel(id,btn){
+  document.querySelectorAll('.a-panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.a-tab').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('panel-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+}
+function initAdmin(){updateCounters();buildDashboard();buildLibrary();buildCategories();buildCommunity();buildUsers();buildBarChart();buildActivity();}
+function updateCounters(){
+  document.getElementById('totalApps').textContent=DB.apps.length;
+  document.getElementById('totalUsers').textContent=DB.users.length;
+  document.getElementById('totalShares').textContent=DB.community.length;
+  document.getElementById('totalRevenue').textContent='$'+(DB.apps.filter(function(a){return a.status==='live';}).length*29).toLocaleString();
+  document.getElementById('libCount').textContent=DB.apps.length;
+  document.getElementById('commCount').textContent=DB.community.length;
+  localStorage.setItem('sp_public_stats',JSON.stringify({total:DB.apps.length,users:DB.users.length,shares:DB.community.length}));
+}
+function buildDashboard(){
+  var tbody=document.getElementById('latestBody');tbody.innerHTML='';
+  DB.apps.slice(-5).reverse().forEach(function(a){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td><span style="margin-right:6px;">'+a.icon+'</span>'+a.name+'</td><td>'+a.creator+'</td><td>'+a.cat+'</td><td>'+a.platform+'</td><td><span class="status-badge status-'+a.status+'">'+a.status.toUpperCase()+'</span></td><td style="color:rgba(255,255,255,0.4);">'+a.created+'</td><td><button class="app-btn view" onclick="showNotif(\'Viewing \'+\''+a.name+'\')">View</button></td>';
+    tbody.appendChild(tr);
+  });
+}
+function buildBarChart(){
+  var chart=document.getElementById('barChart'),labels=document.getElementById('chartLabels');
+  chart.innerHTML='';labels.innerHTML='';
+  var days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],vals=[3,7,5,9,12,8,6],max=12;
+  days.forEach(function(d,i){
+    var bar=document.createElement('div');bar.className='mini-bar';bar.style.height='4px';bar.style.flexGrow='1';bar.title=vals[i]+' apps';chart.appendChild(bar);
+    var lbl=document.createElement('div');lbl.className='chart-label';lbl.textContent=d;labels.appendChild(lbl);
+    setTimeout(function(){bar.style.height=Math.max(8,(vals[i]/max)*76)+'px';},200+i*80);
+  });
+}
+function buildActivity(){
+  var feed=document.getElementById('activityFeed');feed.innerHTML='';
+  var acts=[{icon:'&#128640;',text:'FitTrack Pro went live on Play Store',time:'5m ago'},{icon:'&#128100;',text:'New user signed up via Google',time:'12m ago'},{icon:'&#127919;',text:'LearnBot reached 3000 downloads',time:'1h ago'},{icon:'&#128172;',text:'Alex shared SocialVibe in community',time:'3h ago'},{icon:'&#9889;',text:'8 apps built today',time:'6h ago'}];
+  acts.forEach(function(a){
+    var d=document.createElement('div');d.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);';
+    d.innerHTML='<span style="font-size:18px;">'+a.icon+'</span><div style="flex:1;font-size:13px;">'+a.text+'</div><span style="font-size:11px;color:rgba(255,255,255,0.3);">'+a.time+'</span>';
+    feed.appendChild(d);
+  });
+}
+var currentCatFilter='all';
+function buildLibrary(){renderApps(DB.apps);}
+function renderApps(apps){
+  var grid=document.getElementById('appsGrid');grid.innerHTML='';
+  if(!apps.length){grid.innerHTML='<div style="color:rgba(255,255,255,0.3);font-size:14px;padding:40px;text-align:center;grid-column:1/-1;">No apps found</div>';return;}
+  apps.forEach(function(a){
+    var card=document.createElement('div');card.className='app-card';
+    card.innerHTML='<div class="app-card-header"><div class="app-icon-wrap" style="background:'+a.color+'22;border:1px solid '+a.color+'44;">'+a.icon+'</div><div class="app-name">'+a.name+'</div><span class="app-cat" style="background:'+a.color+'18;color:'+a.color+';border:1px solid '+a.color+'33;">'+a.cat+'</span></div><div class="app-card-body"><div class="app-meta"><span>'+a.platform+'</span><span>'+( a.rating||'N/A')+'</span><span>'+( a.downloads||0)+' DL</span></div><div class="app-desc">'+a.desc+'</div><div style="margin-bottom:10px;"><span class="status-badge status-'+a.status+'">'+a.status.toUpperCase()+'</span></div><div class="app-actions"><button class="app-btn view" onclick="showNotif(\'Viewing '+a.name+'\')">&#128065; View</button><button class="app-btn dl" onclick="showNotif(\'Preparing download...\')">&#8659; APK</button><button class="app-btn del" onclick="deleteApp('+a.id+')">&#128465;</button></div></div>';
+    grid.appendChild(card);
+  });
+}
+function filterCat(cat,btn){currentCatFilter=cat;document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');filterApps();}
+function filterApps(){var q=document.getElementById('libSearch').value.toLowerCase();var apps=DB.apps;if(currentCatFilter!=='all')apps=apps.filter(function(a){return a.cat===currentCatFilter;});if(q)apps=apps.filter(function(a){return a.name.toLowerCase().includes(q)||a.desc.toLowerCase().includes(q);});renderApps(apps);}
+function deleteApp(id){if(!confirm('Delete this app?'))return;DB.apps=DB.apps.filter(function(a){return a.id!==id;});saveDB();buildLibrary();buildDashboard();updateCounters();showNotif('App deleted.');}
+function addDemoApp(){
+  var names=['PhotoEdit AI','VoiceClone','ShopBot','WeatherSense','DocuAI','GameMaster'];
+  var cats=['productivity','health','social','education','finance','games'];
+  var icons=['&#128444;','&#127908;','&#128717;','&#127750;','&#128196;','&#127918;'];
+  var i=Math.floor(Math.random()*names.length);
+  var newApp={id:Date.now(),name:names[i],cat:cats[i],subcat:'General',platform:['Android','iOS','Both'][Math.floor(Math.random()*3)],status:'draft',creator:'Solace AI',created:new Date().toISOString().split('T')[0],desc:'AI-generated app created with Solace Portal.',icon:icons[i],color:['#FFD700','#DC143C','#00E5FF','#00B050','#8B45FF','#FFA500'][i],downloads:0,rating:0};
+  DB.apps.push(newApp);saveDB();buildLibrary();buildDashboard();updateCounters();showNotif('New app added: '+newApp.name);
+}
+function buildCategories(){
+  var tree=document.getElementById('catTree');tree.innerHTML='';
+  var stats=document.getElementById('catStats');stats.innerHTML='';
+  Object.keys(CATS).forEach(function(key){
+    var cat=CATS[key];var count=DB.apps.filter(function(a){return a.cat===key;}).length;
+    var root=document.createElement('div');root.className='cat-root';
+    var hdr=document.createElement('div');hdr.className='cat-header';
+    hdr.innerHTML=cat.icon+' <span class="cat-name">'+key+'</span><span class="cat-count">'+count+' apps</span><span class="cat-arrow">&#9658;</span>';
+    hdr.onclick=function(){this.classList.toggle('open');};
+    var subs=document.createElement('div');subs.className='sub-cats';
+    cat.sub.forEach(function(s){
+      var sc=document.createElement('div');sc.className='sub-cat';
+      sc.innerHTML='<span class="sub-dot" style="background:'+cat.color+'"></span>'+s;
+      sc.onclick=function(){document.querySelectorAll('.sub-cat').forEach(function(x){x.classList.remove('active');});this.classList.add('active');};
+      subs.appendChild(sc);
+    });
+    root.appendChild(hdr);root.appendChild(subs);tree.appendChild(root);
+    var pct=DB.apps.length>0?Math.round((count/DB.apps.length)*100):0;
+    var sb=document.createElement('div');
+    sb.innerHTML='<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span>'+cat.icon+' '+key+'</span><span style="color:rgba(255,255,255,0.4);">'+count+'</span></div><div style="height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;"><div style="height:100%;width:'+pct+'%;background:'+cat.color+';border-radius:3px;box-shadow:0 0 8px '+cat.color+'66;transition:width 1s;"></div></div>';
+    stats.appendChild(sb);
+  });
+}
+function buildCommunity(){
+  var feed=document.getElementById('communityFeed');feed.innerHTML='';
+  DB.community.forEach(function(p,i){
+    var app=DB.apps.find(function(a){return a.id===p.appId;});
+    var card=document.createElement('div');card.className='comm-card';
+    var appHtml=app?'<div class="comm-app-icon" style="background:'+app.color+'22;">'+app.icon+'</div><div><div style="font-weight:700;font-size:14px;">'+app.name+'</div><div style="font-size:11px;color:rgba(255,255,255,0.4);">'+app.platform+' &middot; '+app.cat+'</div></div>':'';
+    card.innerHTML='<div class="comm-header"><div class="comm-avatar" style="background:'+p.color+'22;color:'+p.color+';">'+p.user[0]+'</div><div><div class="comm-user">'+p.user+'</div><div class="comm-time">'+p.time+'</div></div><div style="margin-left:auto;display:flex;gap:8px;"><button class="app-btn view" onclick="showNotif(\'Post approved!\')">&#10003; Approve</button><button class="app-btn del" onclick="removePost('+i+')">&#128465;</button></div></div><div class="comm-app-preview">'+appHtml+'</div><div style="font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:12px;">'+p.caption+'</div><div class="comm-actions"><span class="comm-action">&#10084; '+p.likes+'</span><span class="comm-action">&#128172; '+p.comments+'</span><span class="comm-action">&#128257; Share</span></div>';
+    feed.appendChild(card);
+  });
+}
+function removePost(i){DB.community.splice(i,1);saveDB();buildCommunity();updateCounters();}
+function approveAll(){showNotif('All posts approved!');}
+function buildUsers(){
+  var tbody=document.getElementById('usersBody');tbody.innerHTML='';
+  DB.users.forEach(function(u){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td><strong>'+u.name+'</strong></td><td style="color:rgba(255,255,255,0.5);">'+u.email+'</td><td>'+u.provider+'</td><td>'+u.apps+'</td><td style="color:rgba(255,255,255,0.4);">'+u.joined+'</td><td><span class="status-badge status-live">ACTIVE</span></td>';
+    tbody.appendChild(tr);
+  });
+}
+function saveSettings(){var e=document.getElementById('setEmail').value;var p=document.getElementById('setPass').value;if(e)localStorage.setItem('sp_admin_creds',JSON.stringify({email:e,pass:p||ADMIN_PASS}));showNotif('Settings saved!');}
+function showNotif(msg){var n=document.getElementById('notif');n.textContent=msg;n.style.display='block';setTimeout(function(){n.style.display='none';},3000);}
+</script></body></html>
