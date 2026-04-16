@@ -2417,7 +2417,9 @@ function switchTab(id,btn){
   document.getElementById('tab-'+id).classList.add('active');
   if(btn)btn.classList.add('active');
   if(id==='builder'){
-    setTimeout(()=>{_imgInit();buildCompList();},80);
+    // Reset _IMG.canvas so _imgInit always re-attaches to the live DOM element
+    _IMG.canvas=null;
+    setTimeout(()=>{_imgInit();buildCompList();},120);
   }
 }
 
@@ -4424,21 +4426,29 @@ const _IMG={
 
 function _imgInit(){
   const c=document.getElementById('imgCanvas');
-  if(!c||_IMG.canvas)return;
+  if(!c)return;
+  if(_IMG.canvas===c)return; // already initialised to this element
   _IMG.canvas=c;
   _IMG.ctx=c.getContext('2d');
-  c.width=640; c.height=420;
-  document.getElementById('imgSize').textContent='640 × 420';
-
+  if(!c.width||c.width<10){c.width=640;c.height=420;}
+  const sz=document.getElementById('imgSize');
+  if(sz)sz.textContent=c.width+' × '+c.height;
+  // Remove old listeners then add fresh ones
+  c.removeEventListener('mousedown',_imgDown);
+  c.removeEventListener('mousemove',_imgMove);
+  c.removeEventListener('mouseup',_imgUp);
+  c.removeEventListener('mouseleave',_imgUp);
+  c.removeEventListener('contextmenu',_imgNoCtx);
   c.addEventListener('mousedown',_imgDown);
   c.addEventListener('mousemove',_imgMove);
   c.addEventListener('mouseup',_imgUp);
   c.addEventListener('mouseleave',_imgUp);
-  c.addEventListener('click',_imgClick);
-  c.addEventListener('contextmenu',e=>e.preventDefault());
+  c.addEventListener('contextmenu',_imgNoCtx);
 }
+function _imgNoCtx(e){e.preventDefault();}
 
 function _imgPos(e){
+  if(!_IMG.canvas)return{x:0,y:0};
   const r=_IMG.canvas.getBoundingClientRect();
   const sx=_IMG.canvas.width/r.width;
   const sy=_IMG.canvas.height/r.height;
@@ -4446,24 +4456,31 @@ function _imgPos(e){
 }
 
 function _imgSave(){
-  _IMG.undoStack.push(_IMG.ctx.getImageData(0,0,_IMG.canvas.width,_IMG.canvas.height));
-  if(_IMG.undoStack.length>40)_IMG.undoStack.shift();
-  _IMG.redoStack=[];
+  if(!_IMG.ctx||!_IMG.canvas)return;
+  try{
+    _IMG.undoStack.push(_IMG.ctx.getImageData(0,0,_IMG.canvas.width,_IMG.canvas.height));
+    if(_IMG.undoStack.length>40)_IMG.undoStack.shift();
+    _IMG.redoStack=[];
+  }catch(ex){}
 }
 
 function _imgDown(e){
-  _imgInit();
+  if(!_IMG.canvas)return;
   const p=_imgPos(e);
-  _IMG.drawing=true; _IMG.lastX=p.x; _IMG.lastY=p.y;
   const t=_IMG.tool, ctx=_IMG.ctx;
-  if(t==='draw'||t==='erase'){_imgSave();ctx.beginPath();ctx.moveTo(p.x,p.y);}
-  if(t==='crop'||t==='rect'){_IMG.cropStart={x:p.x,y:p.y};}
-  if(t==='fill'){_imgSave();_imgFloodFill(p.x,p.y);}
+  if(t==='fill'){_imgSave();_imgFloodFill(p.x,p.y);return;} // fill: no drag needed
+  if(t==='text'){return;} // text handled on click
+  _IMG.drawing=true; _IMG.lastX=p.x; _IMG.lastY=p.y;
+  if(t==='draw'){_imgSave();ctx.beginPath();ctx.moveTo(p.x,p.y);}
+  if(t==='erase'){_imgSave();} // erase saves once, draws per move
+  if(t==='crop'||t==='rect'){_IMG.cropStart={x:p.x,y:p.y};_IMG.cropRect=null;}
 }
 
 function _imgMove(e){
+  if(!_IMG.canvas)return;
   const p=_imgPos(e);
-  document.getElementById('imgCoords').textContent='X:'+p.x+' Y:'+p.y;
+  const co=document.getElementById('imgCoords');
+  if(co)co.textContent='X:'+p.x+' Y:'+p.y;
   if(!_IMG.drawing)return;
   const t=_IMG.tool, ctx=_IMG.ctx;
   if(t==='draw'){
@@ -4475,22 +4492,36 @@ function _imgMove(e){
     _IMG.lastX=p.x;_IMG.lastY=p.y;
   }
   if(t==='erase'){
+    // Use arc-based erase per point — reliable regardless of path state
+    ctx.save();
     ctx.globalCompositeOperation='destination-out';
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,_IMG.brushSize,0,Math.PI*2);
+    ctx.fill();
+    // Also draw segment for smooth lines
+    ctx.beginPath();
+    ctx.moveTo(_IMG.lastX,_IMG.lastY);
+    ctx.lineTo(p.x,p.y);
     ctx.lineWidth=_IMG.brushSize*2;
     ctx.lineCap='round';
-    ctx.lineTo(p.x,p.y);ctx.stroke();
-    ctx.globalCompositeOperation='source-over';
+    ctx.stroke();
+    ctx.restore();
     _IMG.lastX=p.x;_IMG.lastY=p.y;
   }
   if((t==='crop'||t==='rect')&&_IMG.cropStart){
+    // Overlay is positioned inside imgCanvasWrap (the flex container)
     const ov=document.getElementById('cropOverlay');
-    const r=_IMG.canvas.getBoundingClientRect();
-    const sx=r.width/_IMG.canvas.width, sy=r.height/_IMG.canvas.height;
+    const wrap=document.getElementById('imgCanvasWrap');
+    const cr=_IMG.canvas.getBoundingClientRect();
+    const wr=wrap.getBoundingClientRect();
+    const sx=_IMG.canvas.width/cr.width, sy=_IMG.canvas.height/cr.height;
     const x1=Math.min(_IMG.cropStart.x,p.x), y1=Math.min(_IMG.cropStart.y,p.y);
     const w=Math.abs(p.x-_IMG.cropStart.x), h=Math.abs(p.y-_IMG.cropStart.y);
+    // Position relative to wrapper
+    const offX=cr.left-wr.left, offY=cr.top-wr.top;
     ov.style.display='block';
-    ov.style.left=(x1*sx)+'px'; ov.style.top=(y1*sy)+'px';
-    ov.style.width=(w*sx)+'px'; ov.style.height=(h*sy)+'px';
+    ov.style.left=(offX+x1/sx)+'px'; ov.style.top=(offY+y1/sy)+'px';
+    ov.style.width=(w/sx)+'px'; ov.style.height=(h/sy)+'px';
     _IMG.cropRect={x:x1,y:y1,w,h};
   }
 }
@@ -4498,43 +4529,58 @@ function _imgMove(e){
 function _imgUp(e){
   if(!_IMG.drawing)return;
   _IMG.drawing=false;
+  if(!_IMG.canvas)return;
   const t=_IMG.tool, ctx=_IMG.ctx;
-  if(t==='draw'||t==='erase'){ctx.closePath();}
-  if(t==='rect'&&_IMG.cropRect){
-    _imgSave();
+  if(t==='draw'){ctx.closePath();}
+  if(t==='erase'){/* arc-based, no path to close */}
+  if(t==='rect'&&_IMG.cropRect&&_IMG.cropRect.w>1&&_IMG.cropRect.h>1){
+    // Save *before* drawing the rect so undo removes it
+    ctx.save();
     ctx.strokeStyle=_IMG.colour;
-    ctx.lineWidth=_IMG.brushSize;
+    ctx.lineWidth=Math.max(1,_IMG.brushSize);
     ctx.strokeRect(_IMG.cropRect.x,_IMG.cropRect.y,_IMG.cropRect.w,_IMG.cropRect.h);
+    ctx.restore();
     document.getElementById('cropOverlay').style.display='none';
     _IMG.cropRect=null;
+    _IMG.cropStart=null;
   }
   if(t==='crop'&&_IMG.cropRect&&_IMG.cropRect.w>4&&_IMG.cropRect.h>4){
-    _imgSave();
     const {x,y,w,h}=_IMG.cropRect;
-    const tmp=ctx.getImageData(x,y,w,h);
-    ctx.clearRect(0,0,_IMG.canvas.width,_IMG.canvas.height);
-    ctx.putImageData(tmp,0,0);
+    // Create offscreen canvas to hold the cropped region
+    const tmp=document.createElement('canvas');
+    tmp.width=w;tmp.height=h;
+    tmp.getContext('2d').drawImage(_IMG.canvas,x,y,w,h,0,0,w,h);
+    _IMG.canvas.width=w;_IMG.canvas.height=h;
+    // After resize ctx is reset — must re-get
+    _IMG.ctx=_IMG.canvas.getContext('2d');
+    _IMG.ctx.drawImage(tmp,0,0);
     document.getElementById('cropOverlay').style.display='none';
-    document.getElementById('imgSize').textContent=w+' × '+h;
-    _IMG.cropRect=null;
+    const sz=document.getElementById('imgSize');
+    if(sz)sz.textContent=w+' × '+h;
+    _IMG.cropRect=null;_IMG.cropStart=null;
     showTabToast('Cropped to '+w+'×'+h,'#00E5FF');
   }
 }
 
 function _imgClick(e){
-  if(_IMG.tool==='text'){
-    const p=_imgPos(e);
-    const txt=prompt('Enter text:','Solace AI');
-    if(!txt)return;
-    _imgSave();
-    const ctx=_IMG.ctx;
-    ctx.font='bold '+(_IMG.brushSize*3+12)+'px Inter,sans-serif';
-    ctx.fillStyle=_IMG.colour;
-    ctx.shadowColor=_IMG.colour;ctx.shadowBlur=8;
-    ctx.fillText(txt,p.x,p.y);
-    ctx.shadowBlur=0;
-    _imgUpdateLayers('Text: '+txt);
-  }
+  // Only handle text on a true click (not end of a drag)
+  if(_IMG.tool!=='text')return;
+  if(!_IMG.canvas)return;
+  const p=_imgPos(e);
+  const txt=prompt('Enter text (will appear where you clicked):','Solace AI');
+  if(!txt)return;
+  _imgSave();
+  const ctx=_IMG.ctx;
+  const sz=Math.max(12,_IMG.brushSize*3);
+  ctx.save();
+  ctx.font='bold '+sz+'px Inter,system-ui,sans-serif';
+  ctx.fillStyle=_IMG.colour;
+  ctx.shadowColor=_IMG.colour;
+  ctx.shadowBlur=10;
+  ctx.fillText(txt,p.x,p.y);
+  ctx.restore();
+  _imgUpdateLayers('T '+txt.slice(0,20));
+  showTabToast('Text added','#8B3CF7');
 }
 
 // Flood fill (bucket tool)
@@ -4562,16 +4608,17 @@ function _hexToRgb(h){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),
 
 // ── Tool selector ──
 function setImgTool(t){
-  _imgInit();
   _IMG.tool=t;
+  _IMG.drawing=false; // cancel any in-progress stroke when switching tools
   document.querySelectorAll('.img-tool').forEach(b=>b.classList.remove('active'));
   const btn=document.getElementById('tool_'+t);
   if(btn)btn.classList.add('active');
   const labels={select:'SELECT',draw:'DRAW',erase:'ERASE',text:'TEXT',rect:'RECT',crop:'CROP',fill:'FILL'};
   const el=document.getElementById('imgToolLabel');
   if(el)el.textContent='TOOL: '+(labels[t]||t.toUpperCase());
-  const c=_IMG.canvas;
-  if(c)c.style.cursor=t==='draw'?'crosshair':t==='erase'?'cell':t==='text'?'text':t==='fill'?'copy':'default';
+  const cursors={draw:'crosshair',erase:'cell',text:'text',fill:'copy',crop:'se-resize',rect:'crosshair',select:'default'};
+  const c=_IMG.canvas||document.getElementById('imgCanvas');
+  if(c)c.style.cursor=cursors[t]||'default';
 }
 
 function imgSetColour(v){_IMG.colour=v;}
@@ -4594,6 +4641,7 @@ function imgRedo(){
 // ── Pixel-level adjustments ──
 function imgAdjust(type,amount){
   _imgInit();
+  if(!_IMG.canvas){showTabToast('Generate or load an image first','#FFA500');return;}
   _imgSave();
   const ctx=_IMG.ctx,c=_IMG.canvas;
   const id=ctx.getImageData(0,0,c.width,c.height);
@@ -4608,6 +4656,7 @@ function imgAdjust(type,amount){
 
 function imgFilter(type){
   _imgInit();
+  if(!_IMG.canvas){showTabToast('Generate or load an image first','#FFA500');return;}
   _imgSave();
   const ctx=_IMG.ctx,c=_IMG.canvas;
   const id=ctx.getImageData(0,0,c.width,c.height);
@@ -4624,12 +4673,12 @@ function imgFilter(type){
 
 function imgFlip(dir){
   _imgInit();
+  if(!_IMG.canvas)return;
   _imgSave();
   const ctx=_IMG.ctx,c=_IMG.canvas;
   const tmp=document.createElement('canvas');
   tmp.width=c.width;tmp.height=c.height;
-  const tc=tmp.getContext('2d');
-  tc.drawImage(c,0,0);
+  tmp.getContext('2d').drawImage(c,0,0);
   ctx.clearRect(0,0,c.width,c.height);
   ctx.save();
   if(dir==='h'){ctx.scale(-1,1);ctx.drawImage(tmp,-c.width,0);}
@@ -4640,54 +4689,71 @@ function imgFlip(dir){
 
 function imgRotate(){
   _imgInit();
-  _imgSave();
-  const ctx=_IMG.ctx,c=_IMG.canvas;
+  if(!_IMG.canvas)return;
+  // Snapshot current pixels before resize clears canvas
+  const src=document.createElement('canvas');
+  src.width=_IMG.canvas.width;src.height=_IMG.canvas.height;
+  src.getContext('2d').drawImage(_IMG.canvas,0,0);
+  const nw=src.height,nh=src.width;
   const tmp=document.createElement('canvas');
-  tmp.width=c.height;tmp.height=c.width;
+  tmp.width=nw;tmp.height=nh;
   const tc=tmp.getContext('2d');
-  tc.translate(c.height/2,c.width/2);
+  tc.translate(nw/2,nh/2);
   tc.rotate(Math.PI/2);
-  tc.drawImage(c,-c.width/2,-c.height/2);
-  c.width=tmp.width;c.height=tmp.height;
-  ctx.drawImage(tmp,0,0);
+  tc.drawImage(src,-src.width/2,-src.height/2);
+  _IMG.canvas.width=nw;_IMG.canvas.height=nh;
+  // Canvas resize resets context state — re-get ctx
+  _IMG.ctx=_IMG.canvas.getContext('2d');
+  _IMG.ctx.drawImage(tmp,0,0);
+  const sz=document.getElementById('imgSize');
+  if(sz)sz.textContent=nw+' × '+nh;
   showTabToast('Rotated 90°','#00E5FF');
 }
 
 // ── Clear canvas ──
 function imgClear(){
-  _imgInit();
   if(!confirm('Clear the canvas?'))return;
-  _imgSave();
-  _IMG.ctx.clearRect(0,0,_IMG.canvas.width,_IMG.canvas.height);
-  document.getElementById('imgCanvasMsg').style.display='block';
+  if(_IMG.canvas&&_IMG.ctx){
+    _imgSave();
+    _IMG.ctx.clearRect(0,0,_IMG.canvas.width,_IMG.canvas.height);
+  }
+  const msg=document.getElementById('imgCanvasMsg');
+  if(msg)msg.style.display='block';
   _IMG.layers=[];
-  document.getElementById('imgLayers').textContent='No layers yet';
+  const lay=document.getElementById('imgLayers');
+  if(lay)lay.textContent='No layers yet';
+  const sug=document.getElementById('imgSuggest');
+  if(sug)sug.innerHTML='';
   showTabToast('Canvas cleared','#888');
 }
 
 // ── Browse / Load file ──
 function imgLoadFile(input){
-  _imgInit();
   const file=input.files[0];if(!file)return;
   const reader=new FileReader();
-  reader.onload=function(e){
+  reader.onload=function(ev){
     const img=new Image();
     img.onload=function(){
-      _imgSave();
-      const c=_IMG.canvas,ctx=_IMG.ctx;
-      // Fit image to canvas
-      const scale=Math.min(c.width/img.width,c.height/img.height,1);
+      // Ensure canvas is ready — reset so _imgInit re-attaches
+      _IMG.canvas=null;
+      _imgInit();
+      if(!_IMG.canvas)return;
+      // Resize canvas to fit image (max 800×560)
+      const maxW=800,maxH=560;
+      const scale=Math.min(maxW/img.width,maxH/img.height,1);
       const w=Math.round(img.width*scale),h=Math.round(img.height*scale);
-      const x=Math.round((c.width-w)/2),y=Math.round((c.height-h)/2);
-      ctx.clearRect(0,0,c.width,c.height);
-      ctx.drawImage(img,x,y,w,h);
-      document.getElementById('imgCanvasMsg').style.display='none';
-      document.getElementById('imgSize').textContent=w+' × '+h;
-      _imgUpdateLayers('📁 '+file.name);
+      _IMG.canvas.width=w;_IMG.canvas.height=h;
+      _IMG.ctx=_IMG.canvas.getContext('2d');
+      _IMG.ctx.drawImage(img,0,0,w,h);
+      const msg=document.getElementById('imgCanvasMsg');
+      if(msg)msg.style.display='none';
+      const sz=document.getElementById('imgSize');
+      if(sz)sz.textContent=w+' × '+h;
+      _imgUpdateLayers('\uD83D\uDCC1 '+file.name);
       _imgUpdateSuggestions(file.name);
       showTabToast('Loaded: '+file.name,'#00E5FF');
     };
-    img.src=e.target.result;
+    img.src=ev.target.result;
   };
   reader.readAsDataURL(file);
   input.value='';
@@ -4696,7 +4762,7 @@ function imgLoadFile(input){
 // ── Download canvas ──
 function imgDownload(){
   _imgInit();
-  if(!_IMG.canvas)return;
+  if(!_IMG.canvas||!_IMG.ctx){showTabToast('Nothing to download — generate or load an image first','#FFA500');return;}
   const a=document.createElement('a');
   a.download='solace-studio-image.png';
   a.href=_IMG.canvas.toDataURL('image/png');
@@ -4721,10 +4787,13 @@ function imgAIGenerate(promptOverride){
   if(st)st.textContent='AI is creating: "'+prompt.slice(0,40)+(prompt.length>40?'...':'')+'"';
 
   setTimeout(()=>{
+    // Re-get ctx in case a previous crop/rotate changed it
+    if(_IMG.canvas)_IMG.ctx=_IMG.canvas.getContext('2d');
     _imgSave();
     const c=_IMG.canvas,ctx=_IMG.ctx;
     ctx.clearRect(0,0,c.width,c.height);
-    document.getElementById('imgCanvasMsg').style.display='none';
+    const canMsg=document.getElementById('imgCanvasMsg');
+    if(canMsg)canMsg.style.display='none';
 
     const p=prompt.toLowerCase();
     // ── Themed procedural art ──
