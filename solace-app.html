@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solace Portal — AI App Development Suite</title>
+  <style>
+    :root {
+      --primary: #7B2FFF;
+      --secondary: #00D4FF;
+      --accent: #FF006E;
+      --dark: #05050F;
+      --card: #0D0D1F;
+      --border: rgba(123,47,255,0.4);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.6);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── Animated background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 20%, rgba(123,47,255,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0,212,255,0.10) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 40px;
+      background: rgba(5,5,15,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-size: 22px;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white !important;
+      padding: 10px 24px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 14px !important;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 20px 60px;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(123,47,255,0.2);
+      border: 1px solid var(--primary);
+      color: var(--secondary);
+      padding: 6px 18px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      letter-spacing: 1px;
+    }
+    .hero h1 {
+      font-size: clamp(36px, 7vw, 80px);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, #fff 30%, var(--secondary) 70%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: clamp(16px, 2vw, 20px);
+      color: var(--muted);
+      max-width: 640px;
+      line-height: 1.7;
+      margin-bottom: 40px;
+    }
+    .hero-btns {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 60px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 16px 36px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 0 40px rgba(123,47,255,0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 60px rgba(123,47,255,0.7);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      padding: 16px 36px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      border: 2px solid var(--border);
+      transition: border-color 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--primary); }
+
+    /* ── Stats bar ── */
+    .stats {
+      display: flex;
+      gap: 48px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-size: 32px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    /* ── Section ── */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 80px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section-label {
+      text-align: center;
+      color: var(--secondary);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      text-align: center;
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      text-align: center;
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 600px;
+      margin: 0 auto 60px;
+      line-height: 1.7;
+    }
+
+    /* ── Feature grid ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .feature-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-4px);
+    }
+    .feature-icon {
+      font-size: 36px;
+      margin-bottom: 16px;
+    }
+    .feature-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .feature-desc { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    /* ── Pricing ── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      align-items: start;
+    }
+    .pricing-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 36px 28px;
+      position: relative;
+      transition: transform 0.3s;
+    }
+    .pricing-card:hover { transform: translateY(-4px); }
+    .pricing-card.featured {
+      border-color: var(--primary);
+      box-shadow: 0 0 60px rgba(123,47,255,0.3);
+    }
+    .pricing-badge {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 5px 18px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+      white-space: nowrap;
+    }
+    .pricing-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .pricing-price {
+      font-size: 48px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .pricing-per { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+    .pricing-perks { list-style: none; margin-bottom: 28px; }
+    .pricing-perks li {
+      color: var(--muted);
+      font-size: 14px;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pricing-perks li::before {
+      content: '✓';
+      color: #00ff88;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    .pricing-btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border-radius: 50px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+    }
+    .pricing-btn.solid {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 0 0 30px rgba(123,47,255,0.4);
+    }
+    .pricing-btn.outline {
+      background: transparent;
+      border: 2px solid var(--border);
+      color: white;
+    }
+
+    /* ── Download section ── */
+    .download-section {
+      background: linear-gradient(135deg, rgba(123,47,255,0.15), rgba(0,212,255,0.08));
+      border: 1px solid var(--border);
+      border-radius: 32px;
+      padding: 60px 40px;
+      text-align: center;
+      margin: 0 20px;
+    }
+    .download-btns {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 32px;
+    }
+    .download-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: white;
+      padding: 14px 28px;
+      border-radius: 16px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .download-btn:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+    .download-btn-icon { font-size: 28px; }
+    .download-btn-text { text-align: left; }
+    .download-btn-text small { display: block; color: var(--muted); font-size: 11px; font-weight: 400; }
+
+    /* ── Avatar section ── */
+    .avatars {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 48px;
+    }
+    .avatar-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      text-align: center;
+      width: 240px;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .avatar-card:hover { transform: translateY(-6px); border-color: var(--primary); }
+    .avatar-emoji { font-size: 64px; margin-bottom: 16px; }
+    .avatar-name { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .avatar-role { color: var(--muted); font-size: 13px; }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 40px 20px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    footer a { color: var(--secondary); text-decoration: none; }
+
+    /* ── Glow pulse animation ── */
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+    .glow { animation: pulse 3s ease-in-out infinite; }
+
+    /* ── Mobile ── */
+    @media (max-width: 600px) {
+      nav { padding: 14px 20px; }
+      .nav-links { display: none; }
+      .download-section { padding: 40px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">⚡ Solace Portal</div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#avatars">AI Assistants</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#download">Download</a>
+      <a href="#download" class="nav-cta">Get Started Free</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge glow">🚀 THE WORLD'S MOST ADVANCED AI APP BUILDER</div>
+    <h1>Build Any App.<br/>With Just Your Voice.</h1>
+    <p>
+      Solace Portal is the only holographic AI development suite on the planet.
+      Talk to Belinda or Sven, answer 22 questions, and watch your production-ready
+      Android app get built — complete with Play Store AAB file.
+    </p>
+    <div class="hero-btns">
+      <a href="#download" class="btn-primary">⬇️ Download Free — 2 Hour Trial</a>
+      <a href="#features" class="btn-secondary">See All Features</a>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">22</div>
+        <div class="stat-label">AI Questions to build your app</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">9</div>
+        <div class="stat-label">Platforms supported</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">$10</div>
+        <div class="stat-label">Per month — cheapest on market</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Apps you can build</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="section-label">What's Inside</div>
+    <h2 class="section-title">Everything You Need.<br/>Nothing You Don't.</h2>
+    <p class="section-sub">
+      Built over years of multi-AI engineering — Solace Portal packs more power
+      than tools costing 10× more, at the best price on the market.
+    </p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🎙️</div>
+        <div class="feature-title">Voice-Controlled Development</div>
+        <div class="feature-desc">Speak to your AI assistant. Describe your app out loud and watch it come to life. Full microphone and speaker integration built in.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <div class="feature-title">AI App Maker</div>
+        <div class="feature-desc">Choose Belinda or Sven as your AI developer. Answer 22 targeted questions and receive a complete, production-ready app.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <div class="feature-title">Play Store AAB Builder</div>
+        <div class="feature-desc">One-click AAB file generation. Your app is signed, bundled, and ready to upload directly to the Google Play Store.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎮</div>
+        <div class="feature-title">PlayStation Bundler</div>
+        <div class="feature-desc">Professional PS4 and PS5 package builder with support for Unity, Unreal Engine, Godot, and custom engines.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💻</div>
+        <div class="feature-title">Complete Dev Suite</div>
+        <div class="feature-desc">Android Studio integration, VS Code templates, Xbox dev kit, Nintendo Switch tools — all pre-configured and ready to go.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <div class="feature-title">Viral Marketing Engine</div>
+        <div class="feature-desc">Self-reproducing webhooks and AI web crawlers that promote your app across 15 social platforms automatically.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌐</div>
+        <div class="feature-title">9 Platform Support</div>
+        <div class="feature-desc">Android, iOS, Web, Windows, macOS, Linux, PlayStation, Xbox, and Nintendo Switch — all from one tool.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✨</div>
+        <div class="feature-title">Holographic 3D UI</div>
+        <div class="feature-desc">A cinematic holographic interface unlike anything else on the market. Developed with a proprietary multi-AI rendering pipeline.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💳</div>
+        <div class="feature-title">Stripe Payments Built In</div>
+        <div class="feature-desc">Add payments to your app instantly. Stripe is pre-wired — subscriptions, one-off payments, and trial periods all included.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AVATARS -->
+  <section id="avatars">
+    <div class="section-label">Your AI Team</div>
+    <h2 class="section-title">Meet Your AI Developers</h2>
+    <p class="section-sub">
+      Choose your AI assistant. They'll guide you through every step,
+      answer your questions, and build your app from start to finish.
+    </p>
+    <div class="avatars">
+      <div class="avatar-card">
+        <div class="avatar-emoji">👩‍💻</div>
+        <div class="avatar-name">Belinda</div>
+        <div class="avatar-role">Lead AI Developer<br/>Specialist in mobile & UX</div>
+      </div>
+      <div class="avatar-card">
+        <div class="avatar-emoji">👨‍💻</div>
+        <div class="avatar-name">Sven</div>
+        <div class="avatar-role">Senior AI Engineer<br/>Specialist in backend & cloud</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">The Cheapest Pro Builder<br/>On The Market</h2>
+    <p class="section-sub">
+      Premium features. Entry-level price. No compromise.
+    </p>
+    <div class="pricing-grid">
+
+      <div class="pricing-card">
+        <div class="pricing-title">🎯 Free Trial</div>
+        <div class="pricing-price">$0</div>
+        <div class="pricing-per">2 hours — no credit card needed</div>
+        <ul class="pricing-perks">
+          <li>Full app access for 2 hours</li>
+          <li>AI App Maker (Belinda & Sven)</li>
+          <li>Voice interaction</li>
+          <li>All 7 tabs unlocked</li>
+          <li>22-question build flow</li>
+        </ul>
+        <a href="#download" class="pricing-btn outline">Start Free Trial</a>
+      </div>
+
+      <div class="pricing-card featured">
+        <div class="pricing-badge">🔥 MOST POPULAR</div>
+        <div class="pricing-title">💎 Monthly Pro</div>
+        <div class="pricing-price">$10</div>
+        <div class="pricing-per">per month · min. 3-month commitment</div>
+        <ul class="pricing-perks">
+          <li>Everything in Free Trial</li>
+          <li>Unlimited AAB builds</li>
+          <li>PlayStation bundler</li>
+          <li>Complete Dev Suite</li>
+          <li>Android Studio integration</li>
+          <li>Viral marketing suite</li>
+          <li>Cloud build pipeline</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#download" class="pricing-btn solid">Get Monthly Pro</a>
+      </div>
+
+      <div class="pricing-card">
+        <div class="pricing-title">🎯 Pay Per Build</div>
+        <div class="pricing-price">$50</div>
+        <div class="pricing-per">per AAB Play Store file — one-time</div>
+        <ul class="pricing-perks">
+          <li>Single production AAB file</li>
+          <li>Play Store ready</li>
+          <li>App signing & bundling</li>
+          <li>Full build pipeline</li>
+          <li>No subscription needed</li>
+        </ul>
+        <a href="#download" class="pricing-btn outline">Pay Per Build</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- DOWNLOAD -->
+  <section id="download" style="max-width:900px;">
+    <div class="download-section">
+      <div class="section-label">Download</div>
+      <h2 class="section-title" style="margin-bottom:12px;">Get Solace Portal Free</h2>
+      <p style="color:var(--muted);font-size:16px;line-height:1.7;max-width:520px;margin:0 auto;">
+        Download the complete all-in-one development suite. 
+        2-hour free trial included — no credit card required.
+      </p>
+      <div class="download-btns">
+        <a href="https://github.com/justinhoganzero1/solace-portal/releases/latest/download/app-release.apk" class="download-btn">
+          <div class="download-btn-icon">🤖</div>
+          <div class="download-btn-text">
+            <small>Download for</small>
+            Android APK
+          </div>
+        </a>
+        <a href="https://github.com/justinhoganzero1/solace-portal" class="download-btn">
+          <div class="download-btn-icon">💻</div>
+          <div class="download-btn-text">
+            <small>Source code on</small>
+            GitHub
+          </div>
+        </a>
+        <a href="https://play.google.com/store" class="download-btn">
+          <div class="download-btn-icon">▶️</div>
+          <div class="download-btn-text">
+            <small>Coming soon to</small>
+            Google Play
+          </div>
+        </a>
+      </div>
+      <p style="color:var(--muted);font-size:12px;margin-top:24px;">
+        ⚠️ When installing the APK on Android, enable "Install from unknown sources" in Settings → Security
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p style="font-size:18px;font-weight:700;margin-bottom:8px;">⚡ Solace Portal</p>
+    <p style="margin-bottom:16px;">The world's most advanced AI app development suite.</p>
+    <p>
+      <a href="https://golden-vault-empire.lovable.app">Main Platform</a> &nbsp;·&nbsp;
+      <a href="https://github.com/justinhoganzero1/solace-portal">GitHub</a> &nbsp;·&nbsp;
+      <a href="#pricing">Pricing</a>
+    </p>
+    <p style="margin-top:16px;font-size:12px;">© 2026 Solace Portal. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
