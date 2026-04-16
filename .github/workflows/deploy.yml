@@ -1,158 +1,36 @@
-name: Deploy to GitHub Pages
+name: Deploy Solace Portal to GitHub Pages
 
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
-        
-    - name: Install dependencies
-      run: |
-        npm install -g netlify-cli
-        pip install beautifulsoup4 htmlmin
-        
-    - name: Optimize files
-      run: |
-        # Minify HTML files
-        python -c "
-import htmlmin
-import os
+      - name: Checkout
+        uses: actions/checkout@v4
 
-files_to_minify = ['index.html', 'conglomerate.html', 'all-in-one.html']
-for file in files_to_minify:
-    if os.path.exists(file):
-        with open(file, 'r', encoding='utf-8') as f:
-            content = f.read()
-        minified = htmlmin.minify(content, remove_comments=True, remove_empty_space=True)
-        with open(file, 'w', encoding='utf-8') as f:
-            f.write(minified)
-        print(f'Minified {file}')
-"
-        
-    - name: Optimize CSS
-      run: |
-        # Minify CSS files
-        python -c "
-import re
-import os
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
 
-def minify_css(css_content):
-    # Remove comments
-    css_content = re.sub(r'/\*.*?\*/', '', css_content, flags=re.DOTALL)
-    # Remove whitespace
-    css_content = re.sub(r'\s+', ' ', css_content)
-    css_content = re.sub(r';\s*}', '}', css_content)
-    css_content = re.sub(r'{\s*', '{', css_content)
-    css_content = re.sub(r';\s*', ';', css_content)
-    return css_content.strip()
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./solace-portal-app
 
-css_files = ['style.css', 'conglomerate-style.css', 'tutorial-animations.css']
-for file in css_files:
-    if os.path.exists(file):
-        with open(file, 'r', encoding='utf-8') as f:
-            content = f.read()
-        minified = minify_css(content)
-        with open(file, 'w', encoding='utf-8') as f:
-            f.write(minified)
-        print(f'Minified {file}')
-"
-        
-    - name: Optimize JavaScript
-      run: |
-        # Minify JS files
-        python -c "
-import re
-import os
-
-def minify_js(js_content):
-    # Remove comments (except // in strings)
-    js_content = re.sub(r'//.*?(?=[\n\r])', '', js_content)
-    js_content = re.sub(r'/\*.*?\*/', '', js_content, flags=re.DOTALL)
-    # Remove extra whitespace
-    js_content = re.sub(r'\s+', ' ', js_content)
-    js_content = re.sub(r';\s*', ';', js_content)
-    js_content = re.sub(r'{\s*', '{', js_content)
-    js_content = re.sub(r'}\s*', '}', js_content)
-    return js_content.strip()
-
-js_files = ['main.js', 'conglomerate-script.js', 'tutorials.js', 'tutorials2.js', 'app-tutorials.js']
-for file in js_files:
-    if os.path.exists(file):
-        with open(file, 'r', encoding='utf-8') as f:
-            content = f.read()
-        minified = minify_js(content)
-        with open(file, 'w', encoding='utf-8') as f:
-            f.write(minified)
-        print(f'Minified {file}')
-"
-        
-    - name: Add SEO meta tags
-      run: |
-        # Add SEO optimization to HTML files
-        python -c "
-import os
-
-seo_meta = '''
-    <meta name=\"description\" content=\"AI Conglomerate - Revolutionary crypto education platform and AI-powered applications. Learn cryptocurrency with 3 Amigos Academy, explore our portfolio of innovative AI tools.\">
-    <meta name=\"keywords\" content=\"crypto education, AI academy, blockchain learning, cryptocurrency courses, 3 amigos academy, AI applications, crypto tutorials\">
-    <meta name=\"author\" content=\"AI Conglomerate\">
-    <meta property=\"og:title\" content=\"AI Conglomerate - Crypto Education & AI Applications\">
-    <meta property=\"og:description\" content=\"Revolutionary crypto education platform with AI-powered learning and innovative applications.\">
-    <meta property=\"og:type\" content=\"website\">
-    <meta property=\"og:url\" content=\"https://yourusername.github.io/ai-conglomerate/\">
-    <meta name=\"twitter:card\" content=\"summary_large_image\">
-    <meta name=\"twitter:title\" content=\"AI Conglomerate - Crypto Education & AI Applications\">
-    <meta name=\"twitter:description\" content=\"Revolutionary crypto education platform with AI-powered learning.\">
-'''
-
-files_to_update = ['index.html', 'conglomerate.html', 'all-in-one.html']
-for file in files_to_update:
-    if os.path.exists(file):
-        with open(file, 'r', encoding='utf-8') as f:
-            content = f.read()
-        
-        # Insert SEO meta tags after <head>
-        if '<head>' in content:
-            content = content.replace('<head>', f'<head>{seo_meta}')
-            
-        with open(file, 'w', encoding='utf-8') as f:
-            f.write(content)
-        print(f'Added SEO to {file}')
-"
-        
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/main'
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./
-        
-    - name: Deploy to Netlify (Optional)
-      if: github.ref == 'refs/heads/main'
-      run: |
-        if [ -n "$NETLIFY_AUTH_TOKEN" ] && [ -n "$NETLIFY_SITE_ID" ]; then
-          netlify deploy --prod --auth=$NETLIFY_AUTH_TOKEN --site=$NETLIFY_SITE_ID --dir=.
-        else
-          echo "Netlify credentials not set, skipping Netlify deployment"
-        fi
-      env:
-        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
