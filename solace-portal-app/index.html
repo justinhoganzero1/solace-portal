@@ -364,7 +364,7 @@ nav{
     <a href="#pricing">Pricing</a>
     <a href="#download">Download</a>
     <a href="admin.html" style="color:rgba(255,215,0,0.6);text-decoration:none;font-size:13px;padding:7px 16px;border-radius:22px;border:1px solid rgba(255,215,0,0.2);transition:all 0.2s;" onmouseover="this.style.color='#FFD700'" onmouseout="this.style.color='rgba(255,215,0,0.6)'">&#128274; Admin</a>
-    <a href="#" class="nav-cta" onclick="openModal();return false;">&#9889; Get Started Free</a>
+    <a href="#" class="nav-cta" onclick="requireLogin();return false;">&#9889; Get Started Free</a>
   </div>
 </nav>
 
@@ -597,7 +597,7 @@ nav{
         <div class="gate-icon">&#9889;</div>
         <div class="gate-title">AI App Builder</div>
         <div class="gate-sub">Create an account to access Belinda AI and start building your first app in under 2 minutes.</div>
-        <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" data-gated onclick="openModal()">&#9889; Unlock Free &#8212; 2 Hour Trial</button>
+        <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" data-gated onclick="requireLogin()">&#9889; Unlock Free &#8212; 2 Hour Trial</button>
       </div>
     </div>
   </div>
@@ -624,7 +624,7 @@ nav{
         <div class="gate-icon">&#128241;</div>
         <div class="gate-title">Android Studio Suite</div>
         <div class="gate-sub">Full Android Studio integration with one-click APK builds. Unlock with a free account.</div>
-        <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" onclick="openModal()">&#9889; Unlock Free</button>
+        <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" onclick="requireLogin()">&#9889; Unlock Free</button>
       </div>
     </div>
   </div>
@@ -650,7 +650,7 @@ nav{
         <div class="gate-icon">&#127918;</div>
         <div class="gate-title">PlayStation Bundler</div>
         <div class="gate-sub">Bundle and publish your app to PlayStation Store. Premium feature &#8212; unlock with account.</div>
-        <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" onclick="openModal()">&#9889; Unlock Premium</button>
+        <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" onclick="requireLogin()">&#9889; Unlock Premium</button>
       </div>
     </div>
   </div>
@@ -1180,7 +1180,7 @@ nav{
       <ul class="price-list">
         <li>AI App Builder (2hr trial)</li><li>1 App Project</li><li>Android APK Export</li><li>Play Store Submission Guide</li><li>Belinda &amp; Sven AI Chat</li>
       </ul>
-      <button class="btn-3d secondary" style="width:100%;justify-content:center;font-size:14px;" data-gated onclick="openModal()">Start Free Trial</button>
+      <button class="btn-3d secondary" style="width:100%;justify-content:center;font-size:14px;" data-gated onclick="requireLogin()">Start Free Trial</button>
     </div>
     <div class="price-card hot">
       <div class="price-badge">&#9733; MOST POPULAR</div>
@@ -1190,7 +1190,7 @@ nav{
       <ul class="price-list">
         <li>Unlimited App Projects</li><li>Android APK &amp; AAB Export</li><li>iOS IPA &amp; App Store Wrapper</li><li>PlayStation Bundler</li><li>Android Studio Integration</li><li>Priority AI Support 24/7</li><li>Play Store Direct Submit</li><li>App Store Connect Link</li>
       </ul>
-      <button class="btn-3d primary" style="width:100%;justify-content:center;font-size:14px;" data-gated onclick="openModal()">&#9889; Get Pro Now</button>
+      <button class="btn-3d primary" style="width:100%;justify-content:center;font-size:14px;" data-gated onclick="requireLogin()">&#9889; Get Pro Now</button>
     </div>
     <div class="price-card">
       <div class="price-title">Enterprise</div>
@@ -1199,7 +1199,7 @@ nav{
       <ul class="price-list">
         <li>Everything in Pro</li><li>White-label branding</li><li>Team collaboration (up to 10)</li><li>Custom AI personality</li><li>Dedicated Sven &amp; Belinda</li><li>SLA &amp; priority builds</li>
       </ul>
-      <button class="btn-3d secondary" style="width:100%;justify-content:center;font-size:14px;" onclick="openModal()">Contact Sales</button>
+      <button class="btn-3d secondary" style="width:100%;justify-content:center;font-size:14px;" onclick="requireLogin()">Contact Sales</button>
     </div>
   </div>
 </section>
@@ -1897,7 +1897,7 @@ function showPaidWelcome(){
 
 // Intercept: require login + payment before any gated feature
 function requireAccess(callback){
-  if(!isLoggedIn()){openModal();return false;}
+  if(!isLoggedIn()){requireLogin(callback);return false;}
   if(!isPaid()){openPaywall();return false;}
   if(callback)callback();
   return true;
@@ -1976,21 +1976,16 @@ function showWelcome(name){
   setTimeout(()=>t.remove(),4000);
 }
 
-// Paywall intercept — all gated buttons call requireAccess()
-// Applied via event delegation: any button with data-gated attr
+// Gated button click delegation — use unified requireLogin
 document.addEventListener('click',function(e){
   const btn=e.target.closest('[data-gated]');
-  if(btn&&!isPaid()){
+  if(btn){
     e.preventDefault();e.stopPropagation();
-    if(!isLoggedIn()){openModal();}else{openPaywall();}
+    requireLogin(()=>{
+      if(!isPaid())openPaywall();
+    });
   }
 },true);
-
-// Also intercept openChat to require payment
-const _openChatOrig=window.openChat;
-window.openChat=function(avatar){
-  if(!requireAccess(()=>_openChatOrig(avatar)))return;
-};
 
 // Check login on load
 window.addEventListener('load',function(){
@@ -2291,7 +2286,7 @@ function downloadProject(){
 
 function sendDemo(){
   const u=localStorage.getItem('sp_user');
-  if(!u){openModal();return;}
+  if(!u){requireLogin(()=>sendDemo());return;}
   const inp=document.getElementById('demoInput');
   const val=inp.value.trim();if(!val)return;
   userMsg(val);inp.value='';
