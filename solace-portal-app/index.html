@@ -2462,20 +2462,39 @@ function classifyIntent(msg){
 // ── Web scan simulator ──
 function webScan(query){
   const results={
-    flutter:['Flutter 3.22 released Apr 2026 — Impeller rendering engine now default on Android','pub.dev top package: go_router 14.x for navigation','Material 3 tokens fully supported in Flutter 3.22'],
-    react:['React Native 0.74 — bridgeless mode stable','Expo SDK 51 supports new architecture by default'],
-    android:['Android 15 API level 35 — predictive back gestures required','Play Store now requires targetSdk 35 for new apps from Aug 2026'],
-    ios:['iOS 18.4 released — App Intents framework expanded','App Store requires Privacy Manifest for all apps from May 2026','Xcode 16.3 — Swift 6 strict concurrency default'],
-    ai:['Gemini 2.0 Flash API free tier — 1M tokens/min','OpenAI GPT-4o mini — best cost/performance ratio 2026','On-device AI via Core ML 8 and TFLite 2.17'],
-    trends:['AI-powered apps dominate Play Store top charts Q1 2026','Short-form video features increase retention by 3x','Offline-first architecture trending for emerging markets'],
-    monetise:['Subscription model outperforms one-time purchase 4:1 in 2026','Google Play Billing 7.0 required for new apps','Apple StoreKit 2 simplifies subscription management'],
-    database:['Firestore pricing update Mar 2026 — free tier 1GB/day','Supabase v2 — Postgres + realtime + auth in one','Hive v4 for Flutter — 10x faster than SharedPreferences']
+    flutter:['Flutter 3.22 (Apr 2026) — Impeller now default on Android, 40% faster rendering','Flutter 3.22 — new Adaptive widgets for platform-native look on iOS and Android','pub.dev #1: go_router 14.2.0 — declarative routing with ShellRoute support','pub.dev: riverpod 2.5.0 — AsyncNotifier replaces StateNotifier as standard pattern','Flutter 3.22 WebAssembly (Wasm) support stable — ship to web at near-native speed','Material 3 expressive design tokens fully stable in Flutter 3.22','flutter_hooks 0.21 — React-style hooks reduce StatefulWidget boilerplate by 60%','freezed 2.5 — code gen for immutable models, union types, and copyWith'],
+    dart:['Dart 3.4 — sealed classes, exhaustive pattern matching, record types stable','Dart 3.4 — extension types replace wrapper classes with zero runtime overhead','Dart macros (experimental) — compile-time code generation without build_runner','Dart sound null safety enforced — no legacy mode from Dart 3.x onward','Dart 3.4 inline classes for typed wrappers with no boxing overhead'],
+    react:['React Native 0.74 — bridgeless architecture stable, 30% startup improvement','Expo SDK 51 — new architecture default, EAS Build free tier 30 builds/month','React Native 0.74 — New Architecture JSI reduces JS bridge latency by 80%','Expo Router v3 — file-based routing for React Native, similar to Next.js'],
+    android:['Android 15 (API 35) — edge-to-edge enforced, predictive back gesture required','Play Store: targetSdk 35 required for ALL new apps from August 2026','Android 15 — Health Connect API v2, NFC tap-to-pay improvements','Play Store: 64-bit AAB required, 32-bit-only APKs rejected from Jan 2026','Android 15 — Large screen adaptive layouts required for tablet listing','Play Store policy: Privacy policy URL mandatory, must be accessible without login','Google Play Billing 7.0 — required for all new IAP implementations','Play Store: Data safety section must be accurate — audited from 2026'],
+    ios:['iOS 18.4 — App Intents expanded, Siri actions for third-party apps','Xcode 16.3 — Swift 6 strict concurrency default, async/await everywhere','App Store: Privacy Manifest (.xcprivacy) required for all apps from May 2026','iOS 18 — Swift Data replaces Core Data for new projects','TestFlight — external testing limit raised to 10,000 testers','App Store Connect — new automatic screenshot generation from simulator','iOS 18.4 — CarPlay next-generation with navigation app APIs','StoreKit 2 — simplified subscription management with server-side validation'],
+    ai:['Gemini 2.0 Flash — 1M context window, free tier 1500 req/day','OpenAI GPT-4o mini — best price-to-performance for app integration 2026','On-device AI: Core ML 8 (iOS) + ML Kit 18 (Android) for offline inference','Google AI Studio — free Gemini API key, 15 RPM free tier','TensorFlow Lite 2.17 — 2x faster inference on mobile GPU','Flutter AI toolkit — official package for Gemini + Vertex AI integration','Stability AI SDXL Turbo — real-time image generation API for mobile','Whisper.cpp — offline speech recognition, runs on-device on Android/iOS'],
+    trends:['AI-native apps dominate Play Store top 100 in Q1 2026 — 67% have AI features','Short-form video + AI generation = highest DAU retention metric of 2026','Offline-first apps with sync: 3x better reviews in emerging markets','Subscription model 4:1 outperforms one-time purchase for LTV in 2026','Privacy-first design: apps with clear data policy get 22% better store ratings','Super-app model gaining traction: one app for chat, payments, services','Gamification (XP, badges, streaks) increases Day-30 retention by 85%','Dark mode + OLED optimization required for premium app market segment'],
+    monetise:['RevenueCat SDK v7 — unified IAP for iOS + Android, free up to $2500 MRR','Google Play Billing 7.0 — mandatory for all subscription apps from 2026','Apple StoreKit 2 — server-side validation API, subscription offers, grace period','AdMob eCPM 2026: interstitials $8-25, rewarded video $15-40, banner $0.50-2','Admob rewarded interstitials outperform standard interstitials by 3x in 2026','Paywall placement: after 3rd core action = highest conversion rate (industry data)','Free trial 7-day outperforms 14-day for subscription conversion on mobile','Stripe Terminal SDK for Flutter — in-person payments integration'],
+    database:['Firestore v10 — automatic indexing, pricing update: 1M reads/day free tier','Supabase v2 — Postgres + realtime + auth + storage in one open-source BaaS','Hive v4 for Flutter — TypeAdapters for custom models, 10x faster than SharedPrefs','Drift (formerly Moor) v2.18 — type-safe SQLite for Flutter with streams','ObjectBox v4 — fastest embedded DB for Flutter, 10x faster than SQLite','Isar v3 — Flutter-first NoSQL DB with full-text search','Firebase RTDB vs Firestore: use RTDB for live presence, Firestore for structured data','PocketBase v0.22 — self-hosted BaaS alternative to Firebase, free forever'],
+    auth:['Firebase Auth v5 — anonymous→permanent account upgrade, SMS-less phone auth','Supabase Auth — magic link, OTP, social OAuth with row-level security','Google Sign-In for Flutter 6.2 — SHA-1 fingerprint required for Android','Apple Sign-In — mandatory if app offers ANY social login on iOS','Passkey (FIDO2) support in Android 14+ — passwordless auth standard','JWT refresh token rotation — security best practice, 15min access token TTL'],
+    state:['Riverpod 2.5 — AsyncNotifier is now the preferred pattern over StateNotifier','BLoC 8.1 — Cubit for simple state, BLoC for event-driven complex state','GetX 4.7 — lightweight but avoid for large apps due to lack of testability','Provider 6.1 — still valid for simple apps but Riverpod recommended for new projects','Signals for Flutter (0.7) — reactive state inspired by SolidJS, minimal rebuilds'],
+    animation:['Rive 2.0 — real-time vector animation, interactive state machines in Flutter','Lottie for Flutter 3.1 — After Effects animations as JSON, 60fps on mobile','flutter_animate 4.5 — declarative animation chains, 50+ pre-built effects','Hero animations — shared element transitions between routes, built into Flutter','AnimatedSwitcher + AnimationController for custom page transitions'],
+    security:['Flutter app obfuscation: flutter build apk --obfuscate --split-debug-info=./debug','Certificate pinning with dio_certificate_pinner 2.0 for API security','Root detection: flutter_jailbreak_detection for both iOS and Android','Secure storage: flutter_secure_storage 9.0 — uses Keychain (iOS) + Keystore (Android)','ProGuard/R8 rules required for all release builds — protects business logic'],
+    performance:['Flutter DevTools 2.36 — CPU profiler, memory tracker, network inspector built-in','Impeller rendering: eliminates shader compilation jank on Android and iOS','Image caching: cached_network_image 3.4 with CacheManager customisation','Lazy loading with ListView.builder — never load all items at once','flutter_isolate 2.0 — offload heavy computation from UI thread'],
+    gradle:['Android Gradle Plugin 8.3 requires JDK 17+ (not 11)','compileSdk 35 + targetSdk 35 required for new Play Store submissions','Gradle 8.6 — configuration cache stable, 40% faster builds','namespace property replaces applicationId in build.gradle namespace block','AGP 8.3: R8 full mode default — smaller APK, better obfuscation'],
+    cicd:['GitHub Actions: subosito/flutter-action@v2 for Flutter CI on ubuntu-latest','Fastlane Match — codesigning via Git repo, team-friendly iOS signing','Codemagic — Flutter-native CI, free 500 min/month, M2 Mac builds available','Bitrise — Flutter workflow step, cache pub packages for 3x faster builds','Firebase App Distribution — beta testing without Play Store review delay']
   };
-  const q=query.toLowerCase();
+  const q=query.toLowerCase().trim();
   let hits=[];
-  Object.keys(results).forEach(k=>{if(q.includes(k)||k.includes(q.split(' ')[0]))hits=hits.concat(results[k]);});
-  if(!hits.length)hits=results.trends;
-  return hits.slice(0,3);
+  // Score each category by keyword overlap
+  const scores={};
+  Object.keys(results).forEach(k=>{
+    let score=0;
+    if(q.includes(k))score+=10;
+    const words=q.split(/\s+/);
+    words.forEach(w=>{if(w.length>3&&k.includes(w))score+=5;if(results[k].some(r=>r.toLowerCase().includes(w)))score+=1;});
+    scores[k]=score;
+  });
+  const sorted=Object.keys(scores).sort((a,b)=>scores[b]-scores[a]);
+  sorted.forEach(k=>{if(scores[k]>0)hits=hits.concat(results[k]);});
+  if(!hits.length)hits=[...results.trends,...results.flutter];
+  // Dedupe and return top 5
+  return [...new Set(hits)].slice(0,5);
 }
 
 // ── Code generators ──
@@ -3037,7 +3056,7 @@ function handleBuildFlow(val,isBelinda){
   if(s.phase===5){
     s.screens=val.split(',').map(x=>x.trim()).filter(Boolean);
     if(!s.screens.length)s.screens=['Home','Profile','Settings'];
-    s.active=false;
+    s.active=false;s.phase=99;// lock — prevent any re-entry
     // Trigger the build pipeline visually
     const wrap=document.createElement('div');
     wrap.className='msg ai';
@@ -3105,29 +3124,230 @@ function handleBuildFlow(val,isBelinda){
     },delay);
     return null;
   }
-  return isBelinda?`Tell me more and I'll keep building.`:`What else do you need?`;
+  // phase locked after completion — respond as normal AI
+  return isBelinda
+    ?`Your app is built! Ask me to <strong>generate more code</strong>, <strong>add screens</strong>, fix bugs, or <strong>build another app</strong>.`
+    :`Build complete. Need <strong>CI/CD pipeline</strong>, <strong>signing config</strong>, or ready to <strong>submit to Play Store</strong>?`;
 }
 
 function generateContextualResponse(msg,isBelinda){
+  const m=msg.toLowerCase();
+  // Try to give a smart answer based on what they actually said
+  if(m.includes('flutter')||m.includes('dart')){
+    return showCodeBlock('&#128196; Flutter snippet — <strong>'+msg.slice(0,40)+'</strong>:',
+      `// Flutter ${msg.includes('navigation')?'Navigation (go_router)':msg.includes('list')?'ListView Builder':msg.includes('form')?'Form + Validation':msg.includes('animation')?'Animation':msg.includes('stream')?'StreamBuilder':'Widget'}
+import 'package:flutter/material.dart';
+
+${msg.includes('list')?`class DataListView extends StatelessWidget {
+  final List<String> items;
+  const DataListView({super.key, required this.items});
+  @override
+  Widget build(BuildContext context) => ListView.builder(
+    itemCount: items.length,
+    itemBuilder: (ctx, i) => ListTile(
+      leading: const Icon(Icons.chevron_right, color: Colors.cyanAccent),
+      title: Text(items[i], style: const TextStyle(color: Colors.white)),
+      onTap: () {},
+    ),
+  );
+}`:msg.includes('form')?`class AppForm extends StatefulWidget {
+  const AppForm({super.key});
+  @override
+  State<AppForm> createState() => _AppFormState();
+}
+class _AppFormState extends State<AppForm> {
+  final _key = GlobalKey<FormState>();
+  String _value = '';
+  @override
+  Widget build(BuildContext context) => Form(
+    key: _key,
+    child: Column(children: [
+      TextFormField(
+        decoration: const InputDecoration(labelText: 'Input'),
+        validator: (v) => v!.isEmpty ? 'Required' : null,
+        onSaved: (v) => _value = v!,
+      ),
+      ElevatedButton(
+        onPressed: () { if(_key.currentState!.validate()) _key.currentState!.save(); },
+        child: const Text('Submit'),
+      ),
+    ]),
+  );
+}`:`class MyWidget extends StatelessWidget {
+  const MyWidget({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0A0A18),
+      appBar: AppBar(title: const Text('Solace App'),
+        backgroundColor: Colors.transparent),
+      body: const Center(
+        child: Text('Hello World',
+          style: TextStyle(color: Colors.white, fontSize: 24)),
+      ),
+    );
+  }
+}`}`,
+      isBelinda?'Need a specific widget or pattern? Tell me exactly what to build.':'Want the full project scaffold or just this file?'
+    );
+  }
+  if(m.includes('error')||m.includes('bug')||m.includes('crash')||m.includes('fail')||m.includes('problem')){
+    return isBelinda
+      ?`&#128030; <strong>Diagnostics:</strong><br><br>
+        &#9658; <code>setState after dispose</code> → add <code>if(mounted) setState(...)</code><br>
+        &#9658; <code>Null check fails</code> → use <code>?..</code> null-aware or add <code>if(x != null)</code><br>
+        &#9658; <code>RenderFlex overflow</code> → wrap child in <code>Flexible</code> or <code>SingleChildScrollView</code><br>
+        &#9658; <code>MissingPluginException</code> → run <code>flutter clean && flutter pub get</code><br>
+        &#9658; <code>Gradle build failed</code> → check <code>compileSdk</code> ≥ 35 and JDK 17+<br>
+        &#9658; <code>CocoaPods install failed</code> → run <code>cd ios && pod install --repo-update</code><br><br>
+        Paste your <strong>exact error message</strong> and I'll pinpoint the fix.`
+      :`&#128030; <strong>Build error checklist:</strong><br><br>
+        &#9658; APK signing → verify <code>key.properties</code> path and alias match<br>
+        &#9658; Gradle sync → <code>./gradlew clean</code> then retry<br>
+        &#9658; iOS provisioning → Xcode → Signing & Capabilities → re-select team<br>
+        &#9658; Play Store rejection → targetSdk must be ≥ 35 from Aug 2026<br>
+        &#9658; App Store rejection → Privacy Manifest required for all apps<br><br>
+        Share the exact error and I'll fix it.`;
+  }
+  if(m.includes('riverpod')||m.includes('bloc')||m.includes('provider')||m.includes('state')){
+    return showCodeBlock('&#9889; State management — <strong>Riverpod AsyncNotifier</strong>:',
+      `import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// Model
+class AppState { final List<dynamic> data; final bool loading; final String? error;
+  const AppState({this.data=const[],this.loading=false,this.error});
+  AppState copyWith({List<dynamic>? data,bool? loading,String? error}) =>
+    AppState(data:data??this.data,loading:loading??this.loading,error:error??this.error);
+}
+
+// Notifier
+class AppNotifier extends AsyncNotifier<AppState> {
+  @override Future<AppState> build() async => const AppState();
+  Future<void> load() async {
+    state=const AsyncValue.loading();
+    try { state=AsyncValue.data(const AppState(data:[])); }
+    catch(e,st){ state=AsyncValue.error(e,st); }
+  }
+}
+
+final appProvider=AsyncNotifierProvider<AppNotifier,AppState>(AppNotifier.new);
+
+// In widget: final state = ref.watch(appProvider);`,
+      'Add <code>flutter_riverpod: ^2.5.0</code> to pubspec. Wrap MaterialApp with <code>ProviderScope</code>.'
+    );
+  }
+  if(m.includes('hive')||m.includes('sqlite')||m.includes('local')||m.includes('storage')||m.includes('database')||m.includes('offline')){
+    return showCodeBlock('&#128190; Local storage — <strong>Hive v4</strong>:',
+      `import 'package:hive_flutter/hive_flutter.dart';
+
+// Init in main()
+await Hive.initFlutter();
+await Hive.openBox('appData');
+
+// Write
+final box = Hive.box('appData');
+await box.put('userId', '12345');
+await box.put('settings', {'theme': 'dark', 'lang': 'en'});
+
+// Read
+final id = box.get('userId');
+final settings = box.get('settings', defaultValue: {});
+
+// Delete
+await box.delete('userId');
+
+// Watch for changes
+ValueListenableBuilder(
+  valueListenable: box.listenable(),
+  builder: (ctx, box, _) => Text(box.get('userId') ?? 'none'),
+)`,
+      'Add <code>hive_flutter: ^1.1.0</code> to pubspec. 10x faster than SharedPreferences for complex data.'
+    );
+  }
+  if(m.includes('firebase')||m.includes('firestore')||m.includes('realtime')){
+    return showCodeBlock('&#128293; Firebase Firestore — <strong>CRUD operations</strong>:',
+      `import 'package:cloud_firestore/cloud_firestore.dart';
+
+final db = FirebaseFirestore.instance;
+
+// CREATE
+await db.collection('users').add({'name':'Justin','email':'j@app.com','created':FieldValue.serverTimestamp()});
+
+// READ — single doc
+final doc = await db.collection('users').doc(userId).get();
+if (doc.exists) print(doc.data());
+
+// REAL-TIME STREAM
+StreamBuilder<QuerySnapshot>(
+  stream: db.collection('users').orderBy('created',descending:true).snapshots(),
+  builder: (ctx, snap) {
+    if(!snap.hasData) return const CircularProgressIndicator();
+    return ListView(children: snap.data!.docs
+      .map((d) => ListTile(title: Text(d['name'])))
+      .toList());
+  },
+)
+
+// UPDATE
+await db.collection('users').doc(userId).update({'name':'Updated'});
+
+// DELETE
+await db.collection('users').doc(userId).delete();`,
+      'Add <code>cloud_firestore: ^5.0.0</code> + <code>firebase_core: ^3.0.0</code>. Security rules required for production.'
+    );
+  }
+  if(m.includes('navigation')||m.includes('route')||m.includes('go_router')||m.includes('navigate')){
+    return showCodeBlock('&#127808; Navigation — <strong>go_router 14.x</strong>:',
+      `import 'package:go_router/go_router.dart';
+
+final router = GoRouter(routes: [
+  GoRoute(path: '/', builder: (ctx,state) => const HomeScreen()),
+  GoRoute(path: '/profile', builder: (ctx,state) => const ProfileScreen()),
+  GoRoute(path: '/detail/:id',
+    builder: (ctx,state) {
+      final id = state.pathParameters['id']!;
+      return DetailScreen(id: id);
+    }),
+  ShellRoute(
+    builder: (ctx,state,child) => ScaffoldWithNav(child:child),
+    routes: [
+      GoRoute(path:'/home',builder:(ctx,state)=>const HomeScreen()),
+      GoRoute(path:'/search',builder:(ctx,state)=>const SearchScreen()),
+    ],
+  ),
+]);
+
+// Navigate
+context.go('/profile');
+context.push('/detail/42');
+context.pop();`,
+      'Add <code>go_router: ^14.0.0</code>. Wrap MaterialApp.router with your GoRouter instance.'
+    );
+  }
+  // Default smart prompts
   const prev=chatContext.history.slice(-3).map(h=>h.msg).join(' ').toLowerCase();
   if(isBelinda){
     const opts=[
-      `What screens does your app need? I'll generate all the Flutter widget code instantly.`,
-      `Want me to scan the internet for the latest Flutter packages and best practices for your use case?`,
-      `I can generate your full authentication flow — Firebase Auth, Google Sign-In, and session persistence. Want that?`,
-      `Tell me your app's target users and I'll recommend the optimal architecture pattern.`,
-      `I can generate your complete <code>pubspec.yaml</code> with all dependencies. What features does your app need?`,
-      `Want me to create a Riverpod or BLoC state management setup? I'll write the full boilerplate.`,
+      `What screens does your app need? Tell me and I'll generate every <strong>Flutter widget file</strong> instantly.`,
+      `&#127760; Want me to <strong>scan the internet</strong> for the latest Flutter 3.22 packages and best practices?`,
+      `I can generate your full <strong>Firebase Auth + Google Sign-In</strong> flow — complete, production-ready code. Just say yes.`,
+      `Tell me your app idea and I'll architect the full <strong>data model, screens, API layer and state management</strong>.`,
+      `&#128196; I can generate your complete <code>pubspec.yaml</code> with all dependencies sorted. What features do you need?`,
+      `Want a <strong>Riverpod, BLoC, or Provider</strong> state management setup? I'll write the full boilerplate now.`,
+      `Need a <strong>custom widget</strong>? Describe it — gradient cards, bottom sheets, animated lists — I'll generate the full Dart code.`,
+      `I can generate a full <strong>REST API client with Dio</strong>, interceptors, token refresh and error handling. Want that?`,
     ];
     return opts[chatContext.history.length%opts.length];
   } else {
     const opts=[
-      `Want me to set up your GitHub Actions pipeline? I'll write the full workflow YAML for automated builds.`,
-      `I can configure your Android signing keystore and ProGuard rules. What's your app's package ID?`,
-      `Tell me your target SDK versions and I'll generate the optimal Gradle build config.`,
-      `Want me to scan the internet for the latest Play Store requirements and App Store guidelines?`,
-      `I can generate your complete CI/CD pipeline — build, test, sign, and deploy on every push.`,
-      `What's your app package name? I'll generate the full Android and iOS project configuration.`,
+      `Want me to write your <strong>GitHub Actions CI/CD pipeline</strong>? Full workflow — build, test, sign, deploy on every push.`,
+      `I can configure your <strong>Android keystore + ProGuard</strong> rules. What's your app package ID?`,
+      `Need the latest <strong>Play Store requirements</strong>? targetSdk 35 required from Aug 2026. Want full build.gradle?`,
+      `I can generate your <strong>complete Fastlane setup</strong> for automated iOS and Android deployments.`,
+      `Want the full <strong>Docker + CI pipeline</strong> for your Flutter app? Build on every commit, zero manual steps.`,
+      `I'll generate your <strong>Gradle signing config</strong> + key.properties setup for production APK/AAB. App ID?`,
+      `Need <strong>Firebase App Distribution</strong> setup for beta testing? I'll write the GitHub Actions workflow.`,
+      `I can set up <strong>Sentry crash reporting</strong> for Flutter — full integration with source maps. Want the code?`,
     ];
     return opts[chatContext.history.length%opts.length];
   }
