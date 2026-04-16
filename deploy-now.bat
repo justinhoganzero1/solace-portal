@@ -8,7 +8,7 @@ echo =====================================
 echo.
 
 :: Set up Git with token
-set GIT_TOKEN=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
+set GIT_TOKEN=YOUR_GITHUB_TOKEN_HERE
 
 :: Check if git is initialized
 if not exist ".git" (
