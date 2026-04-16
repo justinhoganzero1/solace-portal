@@ -2254,27 +2254,67 @@ function dismissGate(name,announce){
   // Run any pending callback
   if(gateCallback){const cb=gateCallback;gateCallback=null;setTimeout(cb,400);}
 }
+function _spHash(str){
+  // Simple deterministic hash for password storage (not cryptographic, but no backend available)
+  let h=0;
+  for(let i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i);h|=0;}
+  return 'sp'+Math.abs(h).toString(36);
+}
+function _spGetAccounts(){
+  return JSON.parse(localStorage.getItem('sp_accounts')||'{}');
+}
+function _spSaveAccount(email,name,hash){
+  const accs=_spGetAccounts();
+  if(!accs[email])accs[email]={name,hash,joined:Date.now()};
+  localStorage.setItem('sp_accounts',JSON.stringify(accs));
+}
+function _spLoginUser(name,email,announce){
+  // Always preserve admin privileges when admin email is used
+  const isAdm=email===ADMIN_EMAIL;
+  const u={name,email,provider:'email',joined:Date.now()};
+  localStorage.setItem('sp_user',JSON.stringify(u));
+  if(isAdm){localStorage.setItem('sp_paid','1');}
+  registerUserInDB(u);
+  addXP(20);
+  return u;
+}
 function handleGateSignup(){
   const n=document.getElementById('gateName').value.trim();
-  const e=document.getElementById('gateEmail').value.trim();
+  const e=document.getElementById('gateEmail').value.trim().toLowerCase();
   const p=document.getElementById('gatePass').value;
   const err=document.getElementById('gateError');
   if(!n||!e||!p){err.textContent='Please fill in all fields.';err.style.display='block';return;}
+  if(p.length<6){err.textContent='Password must be at least 6 characters.';err.style.display='block';return;}
+  const accs=_spGetAccounts();
+  if(accs[e]){err.textContent='Account already exists. Use Sign In instead.';err.style.display='block';return;}
   err.style.display='none';
-  const u={name:n,email:e,provider:'email',joined:Date.now()};
-  localStorage.setItem('sp_user',JSON.stringify(u));
-  registerUserInDB(u);addXP(50);
+  _spSaveAccount(e,n,_spHash(p));
+  const u=_spLoginUser(n,e,true);
   dismissGate(n,true);
-  if(!isPaid()){setTimeout(openPaywall,1200);}
+  if(!isPaid()&&e!==ADMIN_EMAIL){setTimeout(openPaywall,1200);}
 }
 function handleGateLogin(){
-  const e=document.getElementById('gateLoginEmail').value.trim();
+  const e=document.getElementById('gateLoginEmail').value.trim().toLowerCase();
   const p=document.getElementById('gateLoginPass').value;
-  if(!e){document.getElementById('gateError').textContent='Please enter your email.';return;}
-  const name=e.split('@')[0];
-  const u={name,email:e,provider:'email',joined:Date.now()};
-  localStorage.setItem('sp_user',JSON.stringify(u));
-  registerUserInDB(u);addXP(20);
+  const err=document.getElementById('gateError');
+  if(!e||!p){err.textContent='Please enter your email and password.';err.style.display='block';return;}
+  // Admin shortcut — always works with admin credentials
+  if(e===ADMIN_EMAIL){
+    const adminPass=localStorage.getItem('sp_admin_pass')||'Yuggni184821';
+    const saved=JSON.parse(localStorage.getItem('sp_admin_creds')||'{}');
+    const vp=saved.pass||adminPass;
+    if(p!==vp){err.textContent='Incorrect password.';err.style.display='block';return;}
+    const u=_spLoginUser('Justin Hogan',ADMIN_EMAIL,true);
+    err.style.display='none';
+    dismissGate('Justin Hogan',true);
+    return;
+  }
+  const accs=_spGetAccounts();
+  if(!accs[e]){err.textContent='No account found. Please sign up first.';err.style.display='block';return;}
+  if(accs[e].hash!==_spHash(p)){err.textContent='Incorrect password.';err.style.display='block';return;}
+  err.style.display='none';
+  const name=accs[e].name||e.split('@')[0];
+  _spLoginUser(name,e,true);
   dismissGate(name,true);
   if(!isPaid()){setTimeout(openPaywall,1200);}
 }
@@ -2282,40 +2322,24 @@ function showGateLogin(){
   document.getElementById('gateLoginForm').style.display='block';
 }
 function handleGoogleLogin(){
-  // Simulate Google OAuth — in production wire firebase.auth().signInWithPopup(new GoogleAuthProvider())
-  const mockEmail='user@gmail.com';
-  const mockName='Google User';
-  // Show loading state
-  const btn=event.currentTarget;
-  const orig=btn.innerHTML;
-  btn.innerHTML='<span style="opacity:0.6;">Connecting to Google...</span>';
-  btn.disabled=true;
-  setTimeout(()=>{
-    btn.innerHTML=orig;btn.disabled=false;
-    // Prompt for name since we can't get it from real OAuth in this static context
-    const name=window.prompt('What name should we use for your account?','');
-    if(!name){return;}
-    const user={name:name.trim()||'Google User',email:mockEmail,provider:'google',joined:Date.now()};
-    localStorage.setItem('sp_user',JSON.stringify(user));
-    registerUserInDB(user);addXP(50);
-    dismissGate(user.name,true);
-    if(!isPaid())setTimeout(openPaywall,1200);
-  },1200);
+  // No real OAuth backend — guide user to email sign-in instead
+  showTabToast('Use the email form below to sign in or create your account.','#4285F4');
+  // Scroll down to show email fields in whatever modal is open
+  const gf=document.getElementById('gateLoginForm');
+  if(gf)gf.style.display='block';
+  // If in the main modal, switch to sign in tab
+  const li=document.getElementById('loginForm');
+  const su=document.getElementById('signupForm');
+  if(li&&su){li.style.display='block';su.style.display='none';}
+  const tl=document.getElementById('tabLogin');
+  const ts=document.getElementById('tabSignup');
+  if(tl&&ts){tl.style.background='linear-gradient(135deg,var(--red),var(--gold2),var(--blue))';tl.style.color='#fff';ts.style.background='transparent';ts.style.color='rgba(255,255,255,0.45)';}
 }
 function handleAppleLogin(){
-  const btn=event.currentTarget;
-  const orig=btn.innerHTML;
-  btn.innerHTML='<span style="opacity:0.6;">Connecting to Apple...</span>';
-  btn.disabled=true;
-  setTimeout(()=>{
-    btn.innerHTML=orig;btn.disabled=false;
-    const name=window.prompt('What name should we use for your account?','');
-    if(!name){return;}
-    const user={name:name.trim()||'Apple User',email:'user@icloud.com',provider:'apple',joined:Date.now()};
-    localStorage.setItem('sp_user',JSON.stringify(user));
-    dismissGate(user.name,true);
-    if(!isPaid())setTimeout(openPaywall,1200);
-  },1200);
+  showTabToast('Use the email form below to sign in or create your account.','#888');
+  const li=document.getElementById('loginForm');
+  const su=document.getElementById('signupForm');
+  if(li&&su){li.style.display='block';su.style.display='none';}
 }
 function gateOpenChat(avatar){
   // Open chat from gate — avatar will sign them up via conversation
@@ -2591,23 +2615,38 @@ function unlockFeatures(){
 
 function handleSignup(){
   const n=document.getElementById('signupName').value.trim();
-  const e=document.getElementById('signupEmail').value.trim();
+  const e=document.getElementById('signupEmail').value.trim().toLowerCase();
   const p=document.getElementById('signupPass').value;
   if(!n||!e||!p){alert('Please fill in all fields.');return;}
-  const user={name:n,email:e,provider:'email',joined:Date.now()};
-  localStorage.setItem('sp_user',JSON.stringify(user));
-  registerUserInDB(user);addXP(50);
+  if(p.length<6){alert('Password must be at least 6 characters.');return;}
+  const accs=_spGetAccounts();
+  if(accs[e]){alert('An account with this email already exists. Please sign in instead.');switchModalTab('login');return;}
+  _spSaveAccount(e,n,_spHash(p));
+  const user=_spLoginUser(n,e,true);
   closeModal();updateNavUser(n);
-  if(!isPaid()){openPaywall();} else {unlockFeatures();showWelcome(n);}
+  if(!isPaid()&&e!==ADMIN_EMAIL){openPaywall();} else {unlockFeatures();showWelcome(n);}
 }
 
 function handleLogin(){
-  const e=document.getElementById('loginEmail').value.trim();
-  if(!e){alert('Please enter your email.');return;}
-  const name=e.split('@')[0];
-  const user={name,email:e,provider:'email',joined:Date.now()};
-  localStorage.setItem('sp_user',JSON.stringify(user));
-  registerUserInDB(user);addXP(20);
+  const e=document.getElementById('loginEmail').value.trim().toLowerCase();
+  const p=document.getElementById('loginPass').value;
+  if(!e||!p){alert('Please enter your email and password.');return;}
+  // Admin shortcut
+  if(e===ADMIN_EMAIL){
+    const adminPass=localStorage.getItem('sp_admin_pass')||'Yuggni184821';
+    const saved=JSON.parse(localStorage.getItem('sp_admin_creds')||'{}');
+    const vp=saved.pass||adminPass;
+    if(p!==vp){alert('Incorrect password.');return;}
+    _spLoginUser('Justin Hogan',ADMIN_EMAIL,false);
+    closeModal();updateNavUser('Justin Hogan');unlockFeatures();
+    showTabToast('\uD83C\uDF0C Welcome back, Justin! Logged in as Admin.','#FFD700');
+    return;
+  }
+  const accs=_spGetAccounts();
+  if(!accs[e]){alert('No account found for that email. Please sign up first.');switchModalTab('signup');return;}
+  if(accs[e].hash!==_spHash(p)){alert('Incorrect password.');return;}
+  const name=accs[e].name||e.split('@')[0];
+  _spLoginUser(name,e,false);
   closeModal();updateNavUser(name);
   if(!isPaid()){openPaywall();} else {unlockFeatures();}
 }
