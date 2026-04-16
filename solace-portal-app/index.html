@@ -2783,59 +2783,166 @@ open ios/Runner.xcworkspace
 function showBuiltOutput(){
   const chat=document.getElementById('demoChat');
   const arch=generateArchitecture();
-  const n=buildState.appName;
-  // Show architecture card
+  const n=buildState.appName||'My App';
+  const appIcons=['🚀','📱','✨','🎯','💡','🔮','⚡','🌟','🎨','🛠️','🎮','📊','🏆','💎','🌈'];
+  const appIcon=appIcons[Math.floor(Math.random()*appIcons.length)];
+  const appId='app_'+Date.now();
+
+  // ── Generate all screen dart files ──
+  const screenFiles={};
+  arch.screens.forEach(s=>{screenFiles[s.toLowerCase().replace(/\s+/g,'_')+'_screen.dart']=genScreenCode(s,buildState.hasLogin);});
+  const mainDart=buildState.builtFiles['main.dart']||buildState.builtFiles.mainDart||'';
+  const pubspec=buildState.builtFiles['pubspec.yaml']||buildState.builtFiles.pubspecYaml||'';
+  const readme=buildState.builtFiles['README.md']||buildState.builtFiles.readmeMd||'';
+  const allFiles=Object.assign({'main.dart':mainDart,'pubspec.yaml':pubspec,'README.md':readme},screenFiles);
+
+  // ── Save to Library NOW with all file contents ──
+  const savedApp={
+    id:appId,
+    name:n,
+    icon:appIcon,
+    platform:buildState.platform,
+    screens:arch.screens,
+    screenCount:arch.screens.length,
+    hasLogin:buildState.hasLogin,
+    monetise:buildState.monetise,
+    files:allFiles,
+    fileCount:Object.keys(allFiles).length,
+    created:new Date().toISOString().split('T')[0],
+    createdFull:new Date().toLocaleString(),
+    status:'complete',
+    cat:'AI Built',
+    color:'#DC143C',
+    downloads:0,
+    rating:0,
+  };
+  try{
+    const u=JSON.parse(localStorage.getItem('sp_user')||'{}');
+    savedApp.creator=u.name||'You';
+    const db=JSON.parse(localStorage.getItem('sp_db')||'{"apps":[],"users":[]}');
+    if(!db.apps)db.apps=[];
+    db.apps.push(savedApp);
+    localStorage.setItem('sp_db',JSON.stringify(db));
+    localStorage.setItem('sp_public_stats',JSON.stringify({total:db.apps.length,users:db.users?db.users.length:8}));
+    // also persist files separately for fast lookup
+    localStorage.setItem('sp_app_'+appId,JSON.stringify(allFiles));
+  }catch(e){}
+
+  // ── Build the app preview card ──
+  const uid='preview_'+Date.now();
+  const fileKeys=Object.keys(allFiles);
+  const firstKey=fileKeys[0];
+
   const card=document.createElement('div');
-  card.style.cssText='background:linear-gradient(135deg,rgba(0,229,255,0.06),rgba(21,101,192,0.08));border:1px solid rgba(0,229,255,0.2);border-radius:14px;padding:18px;margin-top:4px;';
+  card.style.cssText='border-radius:18px;overflow:hidden;margin-top:4px;box-shadow:0 20px 60px rgba(0,0,0,0.7),0 0 40px rgba(220,20,60,0.1);';
+
   card.innerHTML=`
-    <div style="font-size:12px;font-weight:800;color:rgba(0,229,255,0.8);letter-spacing:1px;margin-bottom:12px;">📐 APP ARCHITECTURE — ${n.toUpperCase()}</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-      <div style="font-size:12px;"><span style="color:rgba(255,215,0,0.7);">Platform:</span> ${buildState.platform}</div>
-      <div style="font-size:12px;"><span style="color:rgba(255,215,0,0.7);">Auth:</span> ${buildState.hasLogin?'Google/Email Login':'Public access'}</div>
-      <div style="font-size:12px;"><span style="color:rgba(255,215,0,0.7);">Monetise:</span> ${buildState.monetise}</div>
-      <div style="font-size:12px;"><span style="color:rgba(255,215,0,0.7);">Framework:</span> Flutter 3.x</div>
+    <!-- App header banner -->
+    <div style="background:linear-gradient(135deg,rgba(220,20,60,0.3),rgba(255,215,0,0.15),rgba(21,101,192,0.2));padding:20px 22px;border:1px solid rgba(255,215,0,0.25);border-bottom:none;border-radius:18px 18px 0 0;position:relative;overflow:hidden;">
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 80% 50%,rgba(255,215,0,0.08),transparent);pointer-events:none;"></div>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <!-- App icon -->
+        <div style="width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,rgba(220,20,60,0.4),rgba(255,215,0,0.3));display:flex;align-items:center;justify-content:center;font-size:34px;flex-shrink:0;box-shadow:0 8px 24px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.2);">${appIcon}</div>
+        <div style="flex:1;min-width:140px;">
+          <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:#fff;text-shadow:0 2px 0 #FFD700,0 4px 12px rgba(255,215,0,0.4);margin-bottom:4px;">${n}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:8px;">${buildState.platform} &bull; Flutter 3.x &bull; ${buildState.monetise} &bull; ${arch.screens.length} screens</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span style="background:rgba(0,175,79,0.2);border:1px solid rgba(0,175,79,0.4);color:#00E56A;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:0.5px;">✓ BUILD COMPLETE</span>
+            <span style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.2);color:rgba(0,229,255,0.8);padding:2px 10px;border-radius:20px;font-size:10px;">${savedApp.created}</span>
+            <span style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.25);color:rgba(255,215,0,0.8);padding:2px 10px;border-radius:20px;font-size:10px;">${fileKeys.length} files</span>
+          </div>
+        </div>
+        <!-- Saved to library badge -->
+        <div style="background:linear-gradient(135deg,rgba(0,229,255,0.15),rgba(21,101,192,0.2));border:1px solid rgba(0,229,255,0.3);border-radius:12px;padding:10px 14px;text-align:center;flex-shrink:0;">
+          <div style="font-size:20px;margin-bottom:3px;">📚</div>
+          <div style="font-size:9px;font-weight:800;color:rgba(0,229,255,0.8);letter-spacing:1px;">SAVED TO<br>LIBRARY</div>
+        </div>
+      </div>
     </div>
-    <div style="font-size:12px;font-weight:700;color:rgba(255,215,0,0.7);margin-bottom:8px;">📱 SCREENS GENERATED (${arch.screens.length})</div>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
-      ${arch.screens.map(s=>`<span style="background:rgba(220,20,60,0.12);border:1px solid rgba(220,20,60,0.25);color:rgba(255,255,255,0.8);padding:3px 10px;border-radius:8px;font-size:11px;font-weight:600;">${s}</span>`).join('')}
+
+    <!-- Screens row -->
+    <div style="background:rgba(5,5,16,0.95);border:1px solid rgba(255,215,0,0.1);border-top:none;border-bottom:none;padding:14px 22px;">
+      <div style="font-size:10px;font-weight:700;color:rgba(255,215,0,0.6);letter-spacing:1.5px;margin-bottom:10px;">📱 SCREENS GENERATED</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        ${arch.screens.map((s,i)=>`<div style="background:linear-gradient(135deg,rgba(220,20,60,0.12),rgba(255,215,0,0.06));border:1px solid rgba(220,20,60,0.2);border-radius:10px;padding:6px 12px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.85);display:flex;align-items:center;gap:5px;"><span style="width:16px;height:16px;background:rgba(220,20,60,0.3);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;flex-shrink:0;">${i+1}</span>${s}Screen</div>`).join('')}
+      </div>
     </div>
-    <div style="font-size:12px;font-weight:700;color:rgba(255,215,0,0.7);margin-bottom:8px;">📁 FILES GENERATED</div>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;">
-      <span style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:rgba(0,229,255,0.8);padding:3px 10px;border-radius:8px;font-size:11px;">main.dart</span>
-      <span style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:rgba(0,229,255,0.8);padding:3px 10px;border-radius:8px;font-size:11px;">pubspec.yaml</span>
-      <span style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:rgba(0,229,255,0.8);padding:3px 10px;border-radius:8px;font-size:11px;">README.md</span>
-      ${arch.screens.map(s=>`<span style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:rgba(0,229,255,0.8);padding:3px 10px;border-radius:8px;font-size:11px;">${s.toLowerCase().replace(/\s+/g,'_')}_screen.dart</span>`).join('')}
+
+    <!-- Tabbed code viewer -->
+    <div style="background:rgba(3,3,10,0.98);border:1px solid rgba(255,215,0,0.1);border-top:none;border-bottom:none;">
+      <div id="${uid}_tabs" style="display:flex;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,0.06);padding:0 4px;gap:2px;flex-shrink:0;scrollbar-width:none;">
+        ${fileKeys.map((f,i)=>`<button onclick="_switchCodeTab('${uid}','${f}')" id="${uid}_tab_${i}" style="background:${i===0?'rgba(255,215,0,0.1)':'transparent'};border:none;border-bottom:2px solid ${i===0?'#FFD700':'transparent'};color:${i===0?'#FFD700':'rgba(255,255,255,0.35)'};padding:10px 14px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:monospace;transition:all 0.2s;flex-shrink:0;" onmouseover="if(this.style.borderBottomColor!=='rgb(255, 215, 0)')this.style.color='rgba(255,255,255,0.7)'" onmouseout="if(this.style.borderBottomColor!=='rgb(255, 215, 0)')this.style.color='rgba(255,255,255,0.35)'">${f}</button>`).join('')}
+      </div>
+      <div id="${uid}_code" style="background:#050510;padding:14px;font-family:'Fira Code',Consolas,monospace;font-size:11px;line-height:1.8;overflow:auto;max-height:220px;white-space:pre-wrap;color:rgba(0,229,255,0.85);border-bottom:1px solid rgba(255,255,255,0.04);">${_escHtml(allFiles[firstKey]||'').slice(0,1200)}</div>
+    </div>
+
+    <!-- Action buttons -->
+    <div style="background:rgba(5,5,16,0.95);border:1px solid rgba(255,215,0,0.12);border-top:none;border-radius:0 0 18px 18px;padding:16px 20px;">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <button onclick="downloadProject()" style="background:linear-gradient(135deg,#DC143C,#FFD700);color:#000;border:none;padding:11px 20px;border-radius:11px;font-weight:900;cursor:pointer;font-size:12px;box-shadow:0 6px 0 rgba(0,0,0,0.4),0 8px 20px rgba(255,215,0,0.25);transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">⬇ Download All Files</button>
+        <button onclick="openLibrary()" style="background:linear-gradient(135deg,rgba(0,229,255,0.2),rgba(21,101,192,0.3));border:1px solid rgba(0,229,255,0.4);color:#fff;padding:11px 20px;border-radius:11px;font-weight:800;cursor:pointer;font-size:12px;box-shadow:0 6px 0 rgba(0,0,0,0.3);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">📚 View in My Library</button>
+        <button onclick="openPlayStoreModal('${n.replace(/'/g,"\\'")}')" style="background:linear-gradient(135deg,#00AF4F,#00D4FF);color:#fff;border:none;padding:11px 20px;border-radius:11px;font-weight:800;cursor:pointer;font-size:12px;box-shadow:0 6px 0 rgba(0,0,0,0.3);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">▶️ Play Store</button>
+        <a href="https://appstoreconnect.apple.com/" target="_blank" style="background:linear-gradient(135deg,#2a2a2a,#444);color:#fff;padding:11px 20px;border-radius:11px;font-weight:800;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;box-shadow:0 6px 0 rgba(0,0,0,0.3);">🍎 App Store</a>
+        <button onclick="_downloadIndividualFile('${uid}','${firstKey}')" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);padding:11px 16px;border-radius:11px;font-weight:600;cursor:pointer;font-size:11px;" title="Download currently viewed file">⬇ This File</button>
+      </div>
+      <div style="margin-top:12px;padding:10px 14px;background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.1);border-radius:10px;font-size:11px;color:rgba(255,255,255,0.4);line-height:1.7;">
+        💡 <strong style="color:rgba(255,215,0,0.7);">Next steps:</strong> Download files → <code style="background:rgba(255,255,255,0.06);padding:1px 6px;border-radius:4px;">flutter create ${n.replace(/\s+/g,'_').toLowerCase()}</code> → replace files → <code style="background:rgba(255,255,255,0.06);padding:1px 6px;border-radius:4px;">flutter pub get</code> → <code style="background:rgba(255,255,255,0.06);padding:1px 6px;border-radius:4px;">flutter run</code>
+        &nbsp;|&nbsp; Your app is also saved in <strong style="color:rgba(0,229,255,0.7);">📚 My Library</strong> — access it anytime from the top nav.
+      </div>
     </div>`;
-  // Code preview
-  const pre=document.createElement('div');
-  pre.style.cssText='background:#050510;border:1px solid rgba(255,215,0,0.1);border-radius:10px;padding:14px;font-family:monospace;font-size:11px;color:rgba(0,229,255,0.8);white-space:pre-wrap;overflow-x:auto;max-height:160px;overflow-y:auto;margin-bottom:14px;line-height:1.7;';
-  const _mainDart=buildState.builtFiles['main.dart']||buildState.builtFiles.mainDart||'';
-  pre.textContent=_mainDart.slice(0,800)+'\n...('+ Math.max(0,_mainDart.length-800)+' more chars)';
-  card.appendChild(pre);
-  // Download + submit buttons
-  const btns=document.createElement('div');
-  btns.style.cssText='display:flex;gap:10px;flex-wrap:wrap;';
-  btns.innerHTML=`
-    <button onclick="downloadProject()" style="background:linear-gradient(135deg,#DC143C,#FFD700);color:#000;border:none;padding:10px 18px;border-radius:10px;font-weight:800;cursor:pointer;font-size:12px;box-shadow:0 4px 15px rgba(255,215,0,0.3);">⬇ Download Project ZIP</button>
-    <button onclick="openPlayStoreModal('${n.replace(/'/g,"\\'")}')\'" style="background:linear-gradient(135deg,#00AF4F,#00D4FF);color:#fff;border:none;padding:10px 18px;border-radius:10px;font-weight:800;cursor:pointer;font-size:12px;">▶️ Submit to Play Store</button>
-    <a href="https://appstoreconnect.apple.com/" target="_blank" style="background:linear-gradient(135deg,#333,#555);color:#fff;padding:10px 18px;border-radius:10px;font-weight:800;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;">🍎 App Store Connect</a>`;
-  card.appendChild(btns);
-  card.innerHTML+=`</div>`;
+
+  // Store file data on the card element for tab switching
+  card._appFiles=allFiles;
+  card._uid=uid;
+  window['_appFiles_'+uid]=allFiles;
+
   const wrap=document.createElement('div');
   wrap.className='msg ai';
-  wrap.innerHTML='<div class="msg-label">⚡ BELINDA AI</div>';
+  wrap.innerHTML='<div class="msg-label">⚡ BELINDA AI</div>🎉 <strong>'+n+'</strong> is complete and saved to your library!<br><br>';
   wrap.appendChild(card);
-  chat.appendChild(wrap);chat.scrollTop=chat.scrollHeight;
-  // Save to admin DB
-  try{
-    const db=JSON.parse(localStorage.getItem('sp_db')||'null');
-    if(db&&db.apps){
-      const cats=['productivity','health','social','education','finance','games','entertainment'];
-      db.apps.push({id:Date.now(),name:n,cat:cats[Math.floor(Math.random()*cats.length)],subcat:'AI Built',platform:buildState.platform,status:'draft',creator:'You',created:new Date().toISOString().split('T')[0],desc:'Built with Solace Portal AI.',icon:'🚀',color:'#DC143C',downloads:0,rating:0});
-      localStorage.setItem('sp_db',JSON.stringify(db));
-      localStorage.setItem('sp_public_stats',JSON.stringify({total:db.apps.length,users:db.users?db.users.length:8}));
-    }
-  }catch(e){}
+  chat.appendChild(wrap);
+  chat.scrollTop=chat.scrollHeight;
+
+  // Pulse the orb green for success
+  if(window._orbPulseInternal)window._orbPulseInternal();
+  const st=document.getElementById('orbStatusText');
+  if(st){st.textContent='BUILD COMPLETE';setTimeout(()=>{st.textContent='BELINDA ONLINE';},4000);}
+}
+
+// Escape HTML for code display
+function _escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// Switch code tab in the built output viewer
+function _switchCodeTab(uid,filename){
+  const files=window['_appFiles_'+uid];
+  if(!files||!files[filename])return;
+  const codeEl=document.getElementById(uid+'_code');
+  if(codeEl)codeEl.textContent=files[filename].slice(0,2400)+(files[filename].length>2400?'\n\n... ('+( files[filename].length-2400)+' more chars — download to see all)':'');
+  // Update tab styles
+  const tabsEl=document.getElementById(uid+'_tabs');
+  if(tabsEl){
+    tabsEl.querySelectorAll('button').forEach(btn=>{
+      const active=btn.textContent.trim()===filename;
+      btn.style.background=active?'rgba(255,215,0,0.1)':'transparent';
+      btn.style.borderBottomColor=active?'#FFD700':'transparent';
+      btn.style.color=active?'#FFD700':'rgba(255,255,255,0.35)';
+    });
+  }
+}
+
+// Download the currently-viewed file
+function _downloadIndividualFile(uid,filename){
+  const files=window['_appFiles_'+uid];
+  if(!files)return;
+  // Check which tab is active
+  const tabsEl=document.getElementById(uid+'_tabs');
+  let activeFile=filename;
+  if(tabsEl){
+    tabsEl.querySelectorAll('button').forEach(btn=>{
+      if(btn.style.borderBottomColor==='rgb(255, 215, 0)')activeFile=btn.textContent.trim();
+    });
+  }
+  if(files[activeFile])downloadFile(activeFile,files[activeFile]);
 }
 
 function downloadProject(){
@@ -4642,23 +4749,48 @@ function _renderLibrary(u){
     } else {
       appsEl.innerHTML=myApps.map((a,i)=>`
         <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,215,0,0.12);border-radius:16px;padding:16px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(255,215,0,0.35)'" onmouseout="this.style.borderColor='rgba(255,215,0,0.12)'">
-          <div style="font-size:28px;margin-bottom:8px;">${a.icon||'📱'}</div>
+          <div style="font-size:32px;margin-bottom:8px;">${a.icon||'📱'}</div>
           <div style="font-weight:800;font-size:13px;margin-bottom:4px;color:#fff;">${a.name}</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:8px;">${a.platform||'Android'} &bull; ${a.screens||0} screens</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <span style="background:rgba(0,175,79,0.15);border:1px solid rgba(0,175,79,0.3);color:#00AF4F;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;">${a.status||'built'}</span>
-            <span style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:rgba(0,229,255,0.7);padding:2px 8px;border-radius:8px;font-size:10px;">${a.created||''}</span>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:6px;">${a.platform||'Android'} &bull; ${a.screenCount||a.screens||(a.screens&&a.screens.length)||0} screens</div>
+          <div style="font-size:10px;color:rgba(255,215,0,0.5);margin-bottom:8px;">${a.fileCount||''}${a.fileCount?' files':''}${a.fileCount&&a.created?' &bull; ':''} ${a.created||''}</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;">
+            <span style="background:rgba(0,175,79,0.15);border:1px solid rgba(0,175,79,0.3);color:#00AF4F;padding:2px 8px;border-radius:8px;font-size:9px;font-weight:700;">${a.status==='complete'?'✓ COMPLETE':a.status||'built'}</span>
+            ${a.hasLogin?'<span style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:rgba(0,229,255,0.7);padding:2px 8px;border-radius:8px;font-size:9px;">Auth</span>':''}
           </div>
-          <button onclick="downloadAppFiles('${a.name}')" style="width:100%;margin-top:10px;background:linear-gradient(135deg,#DC143C,#FFD700);border:none;color:#000;padding:7px;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer;">⬇ Download Files</button>
+          <div style="display:flex;gap:6px;">
+            <button onclick="downloadAppFiles('${a.id||a.name}')" style="flex:1;background:linear-gradient(135deg,#DC143C,#FFD700);border:none;color:#000;padding:8px 4px;border-radius:8px;font-weight:900;font-size:10px;cursor:pointer;">⬇ Download</button>
+            <button onclick="closeLibrary()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);padding:8px 10px;border-radius:8px;font-size:10px;cursor:pointer;" title="Build info">📋</button>
+          </div>
         </div>`).join('');
     }
   }
 }
-function downloadAppFiles(appName){
+function downloadAppFiles(appIdOrName){
+  // Try to find the app in sp_db by id first, then by name
+  try{
+    const db=JSON.parse(localStorage.getItem('sp_db')||'{"apps":[]}');
+    const app=(db.apps||[]).find(a=>a.id===appIdOrName||a.name===appIdOrName);
+    if(app){
+      // Try fast-lookup stored files first
+      let files=app.files;
+      if(!files){
+        const stored=localStorage.getItem('sp_app_'+app.id);
+        if(stored)files=JSON.parse(stored);
+      }
+      if(files&&Object.keys(files).length){
+        const parts=Object.entries(files).map(([name,code])=>`\n${'='.repeat(60)}\n--- ${name} ---\n${'='.repeat(60)}\n${code}`);
+        const content=`SOLACE PORTAL — ${app.name}\nBuilt: ${app.createdFull||app.created||''}\nPlatform: ${app.platform||''} | Screens: ${app.screenCount||''} | ${app.monetise||''}\n${parts.join('\n')}`;
+        downloadFile(app.name.replace(/\s+/g,'_')+'_solace_project.txt',content);
+        showTabToast('⬇ Downloading '+Object.keys(files).length+' files for '+app.name,'#FFD700');
+        return;
+      }
+    }
+  }catch(e){}
+  // Fallback to current buildState
   if(buildState.builtFiles&&(buildState.builtFiles['main.dart']||buildState.builtFiles.mainDart)){
     downloadProject();
   } else {
-    showTabToast('Build this app first using the AI App Builder, then download all files.','#FFA500');
+    showTabToast('Files not found. Build the app first, then download from here.','#FFA500');
   }
 }
 function logoutUser(){
