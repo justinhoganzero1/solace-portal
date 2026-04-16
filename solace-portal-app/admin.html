@@ -117,11 +117,11 @@ nav.admin-nav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;justi
 <div style="text-align:center;margin-bottom:8px;"><span class="admin-badge">&#128274; ADMIN ACCESS ONLY</span></div>
 <div class="login-title">Solace Admin Portal</div>
 <div class="login-sub">Authorised personnel only</div>
-<div class="input-group"><label>ADMIN EMAIL</label><input type="email" id="adminEmail" placeholder="admin@solaceportal.com"/></div>
+<div class="input-group"><label>ADMIN EMAIL</label><input type="email" id="adminEmail" value="justinbretthogan@gmail.com"/></div>
 <div class="input-group"><label>PASSWORD</label><input type="password" id="adminPass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
 <button class="login-btn" onclick="doLogin()">&#9889; Access Admin Portal</button>
 <div class="login-err" id="loginErr">&#10060; Invalid credentials</div>
-<div style="margin-top:16px;text-align:center;font-size:11px;color:rgba(255,255,255,0.2);">Demo: admin@solaceportal.com / solace2026</div>
+<div style="margin-top:16px;text-align:center;"><button onclick="openChangePwModal()" style="background:none;border:none;color:rgba(255,215,0,0.5);font-size:12px;cursor:pointer;text-decoration:underline;font-family:'Inter',sans-serif;">&#128274; Change Password</button></div>
 </div></div>
 <div id="adminUI">
 <nav class="admin-nav">
@@ -198,10 +198,13 @@ nav.admin-nav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;justi
 <div class="a-panel" id="panel-settings">
 <div class="a-h1" style="margin-bottom:24px;">&#9881; Settings</div>
 <div class="a-grid a-grid-2">
-<div class="a-card"><div class="a-h2">Admin Credentials</div>
-<div class="input-group"><label>EMAIL</label><input type="email" id="setEmail" value="admin@solaceportal.com" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:11px 14px;border-radius:10px;font-size:13px;outline:none;font-family:'Inter',sans-serif;"/></div>
-<div class="input-group" style="margin-top:12px;"><label>NEW PASSWORD</label><input type="password" id="setPass" placeholder="Leave blank to keep current" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:11px 14px;border-radius:10px;font-size:13px;outline:none;font-family:'Inter',sans-serif;"/></div>
-<button class="btn-a gold" style="margin-top:14px;" onclick="saveSettings()">&#10003; Save</button>
+<div class="a-card"><div class="a-h2">&#128274; Security</div>
+<div style="margin-bottom:16px;background:rgba(255,215,0,0.04);border:1px solid rgba(255,215,0,0.12);border-radius:12px;padding:16px;">
+  <div style="font-size:13px;font-weight:600;margin-bottom:4px;">Admin Account</div>
+  <div style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:12px;">&#128231; <span id="displayEmail">justinbretthogan@gmail.com</span></div>
+  <div style="font-size:13px;color:rgba(255,255,255,0.45);">Password: <span style="letter-spacing:3px;">&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;</span></div>
+</div>
+<button class="btn-a gold" onclick="openChangePwModal()">&#128274; Change Password</button>
 </div>
 <div class="a-card"><div class="a-h2">Public Settings</div>
 <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span style="font-size:13px;">Show total app count on public homepage</span><input type="checkbox" id="showTotal" checked style="width:18px;height:18px;cursor:pointer;accent-color:#FFD700;"/></div>
@@ -210,9 +213,49 @@ nav.admin-nav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;justi
 </div>
 </div>
 </div>
+<!-- CHANGE PASSWORD MODAL -->
+<div id="changePwModal" style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.88);backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;">
+<div style="width:min(440px,92vw);background:linear-gradient(145deg,#0A0A18,#060610);border:1px solid rgba(255,215,0,0.25);border-radius:26px;padding:40px;position:relative;box-shadow:0 40px 120px rgba(0,0,0,0.9);">
+<div style="position:absolute;top:0;left:0;right:0;height:3px;border-radius:26px 26px 0 0;background:linear-gradient(90deg,#DC143C,#FFD700,#00E5FF,#1565C0,#DC143C);background-size:300%;animation:rf 4s linear infinite;"></div>
+<button onclick="closeChangePwModal()" style="position:absolute;top:16px;right:20px;background:none;border:none;color:rgba(255,255,255,0.35);font-size:22px;cursor:pointer;">&#10005;</button>
+<div style="text-align:center;margin-bottom:6px;font-size:30px;">&#128274;</div>
+<div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;text-align:center;margin-bottom:4px;background:linear-gradient(135deg,#FFD700,#FFA500);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">Change Password</div>
+<div style="color:rgba(255,255,255,0.4);font-size:13px;text-align:center;margin-bottom:26px;">Set a new secure admin password</div>
+<div style="margin-bottom:14px;">
+  <label style="display:block;font-size:11px;font-weight:700;color:rgba(255,215,0,0.6);margin-bottom:6px;letter-spacing:0.5px;">CURRENT PASSWORD</label>
+  <div style="position:relative;">
+    <input type="password" id="cpCurrent" placeholder="Enter your current password" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:12px 44px 12px 16px;border-radius:12px;font-size:14px;outline:none;font-family:'Inter',sans-serif;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(255,215,0,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"/>
+    <button onclick="togglePw('cpCurrent',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;font-size:16px;">&#128065;</button>
+  </div>
+</div>
+<div style="margin-bottom:14px;">
+  <label style="display:block;font-size:11px;font-weight:700;color:rgba(255,215,0,0.6);margin-bottom:6px;letter-spacing:0.5px;">NEW PASSWORD</label>
+  <div style="position:relative;">
+    <input type="password" id="cpNew" placeholder="Min 8 chars, mix of upper, numbers &amp; symbols" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:12px 44px 12px 16px;border-radius:12px;font-size:14px;outline:none;font-family:'Inter',sans-serif;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(255,215,0,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" oninput="checkStrength(this.value)"/>
+    <button onclick="togglePw('cpNew',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;font-size:16px;">&#128065;</button>
+  </div>
+  <div style="margin-top:8px;">
+    <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:rgba(255,255,255,0.35);">Strength</span><span id="cpStrengthLbl" style="font-weight:700;"></span></div>
+    <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;">
+      <div id="cpStrengthBar" style="height:100%;width:0%;border-radius:3px;transition:width 0.3s,background 0.3s;"></div>
+    </div>
+    <div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:5px;">Tips: Use uppercase, numbers &amp; symbols for a stronger password</div>
+  </div>
+</div>
+<div style="margin-bottom:20px;">
+  <label style="display:block;font-size:11px;font-weight:700;color:rgba(255,215,0,0.6);margin-bottom:6px;letter-spacing:0.5px;">CONFIRM NEW PASSWORD</label>
+  <div style="position:relative;">
+    <input type="password" id="cpConfirm" placeholder="Repeat new password" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:12px 44px 12px 16px;border-radius:12px;font-size:14px;outline:none;font-family:'Inter',sans-serif;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(255,215,0,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"/>
+    <button onclick="togglePw('cpConfirm',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;font-size:16px;">&#128065;</button>
+  </div>
+</div>
+<div id="cpErr" style="display:none;color:#DC143C;font-size:13px;margin-bottom:14px;background:rgba(220,20,60,0.08);border:1px solid rgba(220,20,60,0.25);border-radius:10px;padding:10px 14px;"></div>
+<button onclick="doChangePassword()" style="width:100%;padding:14px;border-radius:13px;border:none;cursor:pointer;background:linear-gradient(135deg,#DC143C,#FFD700,#1565C0);color:#fff;font-weight:800;font-size:15px;font-family:'Inter',sans-serif;box-shadow:0 0 25px rgba(220,20,60,0.35);">&#128274; Update Password</button>
+</div>
+</div>
 </div></div>
 <script>
-var ADMIN_EMAIL='admin@solaceportal.com',ADMIN_PASS='solace2026';
+var ADMIN_EMAIL='justinbretthogan@gmail.com',ADMIN_PASS=(localStorage.getItem('sp_admin_pass')||'Yuggni184821');
 var DB={
 apps:[
 {id:1,name:'FitTrack Pro',cat:'health',subcat:'Fitness',platform:'Android',status:'live',creator:'Sarah M.',created:'2026-04-10',desc:'AI-powered fitness tracker with custom workouts.',icon:'&#127947;',color:'#00B050',downloads:1240,rating:4.8},
@@ -365,6 +408,33 @@ function buildUsers(){
     tbody.appendChild(tr);
   });
 }
-function saveSettings(){var e=document.getElementById('setEmail').value;var p=document.getElementById('setPass').value;if(e)localStorage.setItem('sp_admin_creds',JSON.stringify({email:e,pass:p||ADMIN_PASS}));showNotif('Settings saved!');}
+function saveSettings(){document.getElementById('showTotal');showNotif('Settings saved!');
+}
+function openChangePwModal(){document.getElementById('changePwModal').style.display='flex';document.getElementById('cpCurrent').value='';document.getElementById('cpNew').value='';document.getElementById('cpConfirm').value='';document.getElementById('cpErr').style.display='none';document.getElementById('cpStrengthBar').style.width='0%';}
+function closeChangePwModal(){document.getElementById('changePwModal').style.display='none';}
+function togglePw(id,btn){var inp=document.getElementById(id);inp.type=inp.type==='password'?'text':'password';btn.textContent=inp.type==='password'?'&#128065;':'&#128584;';}
+function checkStrength(val){
+  var bar=document.getElementById('cpStrengthBar'),lbl=document.getElementById('cpStrengthLbl');
+  var score=0;
+  if(val.length>=8)score++;if(val.length>=12)score++;if(/[A-Z]/.test(val))score++;if(/[0-9]/.test(val))score++;if(/[^A-Za-z0-9]/.test(val))score++;
+  var pct=[0,20,40,65,85,100][score];
+  var cols=['#555','#DC143C','#FF6B00','#FFD700','#00B050','#00E5FF'][score];
+  var lbls=['','Weak','Fair','Good','Strong','Very Strong'][score];
+  bar.style.width=pct+'%';bar.style.background=cols;lbl.textContent=lbls;lbl.style.color=cols;
+}
+function doChangePassword(){
+  var cur=document.getElementById('cpCurrent').value;
+  var nw=document.getElementById('cpNew').value;
+  var cf=document.getElementById('cpConfirm').value;
+  var err=document.getElementById('cpErr');
+  var curValid=localStorage.getItem('sp_admin_pass')||'Yuggni184821';
+  if(cur!==curValid){err.textContent='&#10060; Current password is incorrect.';err.style.display='block';return;}
+  if(nw.length<8){err.textContent='&#10060; New password must be at least 8 characters.';err.style.display='block';return;}
+  if(nw!==cf){err.textContent='&#10060; Passwords do not match.';err.style.display='block';return;}
+  localStorage.setItem('sp_admin_pass',nw);
+  ADMIN_PASS=nw;
+  closeChangePwModal();
+  showNotif('&#10003; Password changed successfully!');
+}
 function showNotif(msg){var n=document.getElementById('notif');n.textContent=msg;n.style.display='block';setTimeout(function(){n.style.display='none';},3000);}
 </script></body></html>
