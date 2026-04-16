@@ -2152,15 +2152,15 @@ function removeTyping(){const b=document.getElementById('typingBubble');if(b)b.r
 
 function parseBuildInput(val){
   const v=val.toLowerCase().trim();
-  if(buildState.phase===1){
+  if(buildState.phase===0){
     buildState.appName=val;
-  } else if(buildState.phase===2){
+  } else if(buildState.phase===1){
     buildState.platform=v.includes('both')?'Android & iOS':v.includes('ios')?'iOS':'Android';
-  } else if(buildState.phase===3){
+  } else if(buildState.phase===2){
     buildState.hasLogin=v.startsWith('y');
-  } else if(buildState.phase===4){
+  } else if(buildState.phase===3){
     buildState.monetise=v.includes('ads')?'Ads':v.includes('premium')?'Premium':v.includes('in-app')||v.includes('purchase')?'In-App Purchases':'Free';
-  } else if(buildState.phase===5){
+  } else if(buildState.phase===4){
     buildState.screens=val.split(',').map(s=>s.trim()).filter(Boolean);
     if(!buildState.screens.length)buildState.screens=['Home','Profile','Settings'];
   }
@@ -2171,10 +2171,13 @@ function generateArchitecture(){
   const hasAuth=buildState.hasLogin;const mon=buildState.monetise;
   const screens=hasAuth?['Splash','Login','Register',...s]:['Splash',...s];
   const allScreens=screens.filter((x,i,a)=>a.indexOf(x)===i);
+  const _md=generateMainDart(n,allScreens,hasAuth);
+  const _py=generatePubspec(n,mon);
+  const _rm=generateReadme(n,p,allScreens,mon);
   buildState.builtFiles={
-    mainDart:generateMainDart(n,allScreens,hasAuth),
-    pubspecYaml:generatePubspec(n,mon),
-    readmeMd:generateReadme(n,p,allScreens,mon)
+    mainDart:_md,'main.dart':_md,
+    pubspecYaml:_py,'pubspec.yaml':_py,
+    readmeMd:_rm,'README.md':_rm
   };
   return {screens:allScreens,files:Object.keys(buildState.builtFiles).length+allScreens.length};
 }
@@ -2343,7 +2346,8 @@ function showBuiltOutput(){
   // Code preview
   const pre=document.createElement('div');
   pre.style.cssText='background:#050510;border:1px solid rgba(255,215,0,0.1);border-radius:10px;padding:14px;font-family:monospace;font-size:11px;color:rgba(0,229,255,0.8);white-space:pre-wrap;overflow-x:auto;max-height:160px;overflow-y:auto;margin-bottom:14px;line-height:1.7;';
-  pre.textContent=buildState.builtFiles.mainDart.slice(0,800)+'\n...('+Math.max(0,buildState.builtFiles.mainDart.length-800)+' more chars)';
+  const _mainDart=buildState.builtFiles['main.dart']||buildState.builtFiles.mainDart||'';
+  pre.textContent=_mainDart.slice(0,800)+'\n...('+ Math.max(0,_mainDart.length-800)+' more chars)';
   card.appendChild(pre);
   // Download + submit buttons
   const btns=document.createElement('div');
