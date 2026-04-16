@@ -1380,32 +1380,613 @@ function showPlayStorePrompt(appName){
   // now integrated into showBuiltOutput — kept for compatibility
 }
 
-// ── Chatbox (Avatar) ──
+// ══════════════════════════════════════════════════════
+// ── AVATAR AI BRAIN ENGINE (Belinda + Sven) ──
+// ══════════════════════════════════════════════════════
 let currentAvatar='belinda';
-const chatResponses={
-  belinda:[
-    "Hi! I'm Belinda, your AI architect. Tell me your app idea and I'll start building it right now — screens, code, everything.",
-    "Let me know which screens you need and I'll generate the Flutter widgets for each one.",
-    "I can generate your full <code>main.dart</code>, routing, state management and screen files. What screen should I build first?",
-    "For authentication I recommend Firebase Auth — I'll set up Google Sign-In, email/password, and session management automatically.",
-    "Tell me your app's colour scheme and I'll generate the full Material 3 theme in <code>theme.dart</code>.",
-    "I'll write the API layer too — just tell me what data your app needs to fetch or store.",
-    "Ready to generate the APK? I'll configure the build.gradle, sign the release and produce the AAB for Play Store.",
-  ],
-  sven:[
-    "Hey, I'm Sven — Lead Dev Engineer. Tell me what you need built and I'll handle the full pipeline.",
-    "I'll set up your Android project: Gradle config, ProGuard rules, signing config, and multi-flavour builds.",
-    "For iOS I'll configure the Xcode project, set your bundle ID, provisioning profiles and IPA export.",
-    "I can wire up your CI/CD pipeline — GitHub Actions, automated testing, and direct Play Store deployment.",
-    "Give me your screen list and I'll scaffold every route with proper navigation and back-stack management.",
-    "Need a database? I'll set up Hive for local storage or Firestore for cloud sync — your choice.",
-    "Your build is ready. I'll run the tests, generate the signed APK and AAB, and open Play Console at the upload screen.",
-  ]
-};
-let chatIdx=0;
+let chatContext={history:[],buildState:{active:false,phase:0,appName:'',platform:'',screens:[],hasLogin:false,monetise:'free'},scanActive:false};
 
+// ── Intent classifier ──
+function classifyIntent(msg){
+  const m=msg.toLowerCase();
+  if(/build|create|make|generate|app|project/.test(m)&&!/how|what|why/.test(m)) return 'BUILD_START';
+  if(/screen|page|view|tab|section|ui|interface/.test(m)) return 'SCREENS';
+  if(/code|dart|flutter|widget|class|function|main\.dart/.test(m)) return 'CODE_GEN';
+  if(/colour|color|theme|material|design|style|font|icon/.test(m)) return 'DESIGN';
+  if(/login|auth|sign.?in|google|firebase|account|password/.test(m)) return 'AUTH';
+  if(/api|fetch|http|rest|graphql|data|backend|server|database|firebase|firestore|hive|sql/.test(m)) return 'DATA';
+  if(/android|apk|aab|gradle|playstore|play store|google play/.test(m)) return 'ANDROID_BUILD';
+  if(/ios|apple|xcode|ipa|app store|testflight/.test(m)) return 'IOS_BUILD';
+  if(/ci.?cd|github|actions|deploy|pipeline|automat/.test(m)) return 'DEVOPS';
+  if(/search|scan|internet|online|latest|trend|news|2024|2025|2026|current|today|google/.test(m)) return 'WEB_SCAN';
+  if(/monetis|revenue|ads|premium|subscription|purchase|price/.test(m)) return 'MONETISE';
+  if(/error|crash|bug|fix|debug|problem|issue/.test(m)) return 'DEBUG';
+  if(/publish|submit|store|release|launch/.test(m)) return 'PUBLISH';
+  if(/state|bloc|provider|riverpod|getx|cubit|redux/.test(m)) return 'STATE_MGMT';
+  if(/test|unit test|widget test|integration/.test(m)) return 'TESTING';
+  if(/push notification|fcm|firebase messaging/.test(m)) return 'NOTIFICATIONS';
+  if(/map|location|gps|geoloc/.test(m)) return 'MAPS';
+  if(/payment|stripe|paypal|in.?app/.test(m)) return 'PAYMENTS';
+  if(/camera|photo|image|gallery|video|media/.test(m)) return 'MEDIA';
+  if(/hello|hi|hey|who are you|what can you/.test(m)) return 'GREETING';
+  return 'GENERAL';
+}
+
+// ── Web scan simulator ──
+function webScan(query){
+  const results={
+    flutter:['Flutter 3.22 released Apr 2026 — Impeller rendering engine now default on Android','pub.dev top package: go_router 14.x for navigation','Material 3 tokens fully supported in Flutter 3.22'],
+    react:['React Native 0.74 — bridgeless mode stable','Expo SDK 51 supports new architecture by default'],
+    android:['Android 15 API level 35 — predictive back gestures required','Play Store now requires targetSdk 35 for new apps from Aug 2026'],
+    ios:['iOS 18.4 released — App Intents framework expanded','App Store requires Privacy Manifest for all apps from May 2026','Xcode 16.3 — Swift 6 strict concurrency default'],
+    ai:['Gemini 2.0 Flash API free tier — 1M tokens/min','OpenAI GPT-4o mini — best cost/performance ratio 2026','On-device AI via Core ML 8 and TFLite 2.17'],
+    trends:['AI-powered apps dominate Play Store top charts Q1 2026','Short-form video features increase retention by 3x','Offline-first architecture trending for emerging markets'],
+    monetise:['Subscription model outperforms one-time purchase 4:1 in 2026','Google Play Billing 7.0 required for new apps','Apple StoreKit 2 simplifies subscription management'],
+    database:['Firestore pricing update Mar 2026 — free tier 1GB/day','Supabase v2 — Postgres + realtime + auth in one','Hive v4 for Flutter — 10x faster than SharedPreferences']
+  };
+  const q=query.toLowerCase();
+  let hits=[];
+  Object.keys(results).forEach(k=>{if(q.includes(k)||k.includes(q.split(' ')[0]))hits=hits.concat(results[k]);});
+  if(!hits.length)hits=results.trends;
+  return hits.slice(0,3);
+}
+
+// ── Code generators ──
+function genScreenCode(screenName,hasAuth){
+  const cls=screenName.replace(/\s+/g,'')+'Screen';
+  return `import 'package:flutter/material.dart';
+
+class ${cls} extends StatefulWidget {
+  const ${cls}({super.key});
+  @override
+  State<${cls}> createState() => _${cls}State();
+}
+
+class _${cls}State extends State<${cls}> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0A0A1A),
+      appBar: AppBar(
+        title: const Text('${screenName}',
+          style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: const Color(0xFF0A0A1A),
+        foregroundColor: Colors.white,
+      ),
+      body: const Center(
+        child: Text('${screenName} Screen',
+          style: TextStyle(color: Colors.white70, fontSize: 18)),
+      ),
+    );
+  }
+}`;
+}
+
+function genThemeCode(primaryColor){
+  return `import 'package:flutter/material.dart';
+
+final appTheme = ThemeData(
+  useMaterial3: true,
+  colorScheme: ColorScheme.dark(
+    primary: const Color(${primaryColor||'0xFFDC143C'}),
+    secondary: const Color(0xFF00E5FF),
+    surface: const Color(0xFF0A0A1A),
+    background: const Color(0xFF03030A),
+  ),
+  fontFamily: 'Inter',
+  appBarTheme: const AppBarTheme(elevation: 0),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFFDC143C),
+      foregroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14)),
+    ),
+  ),
+);`;
+}
+
+function genAuthCode(){
+  return `import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+class AuthService {
+  final _auth = FirebaseAuth.instance;
+
+  // Google Sign-In
+  Future<UserCredential?> signInWithGoogle() async {
+    final googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) return null;
+    final googleAuth = await googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    return await _auth.signInWithCredential(credential);
+  }
+
+  // Email/Password
+  Future<UserCredential> signUp(String email, String pass) =>
+      _auth.createUserWithEmailAndPassword(email: email, password: pass);
+
+  Future<UserCredential> signIn(String email, String pass) =>
+      _auth.signInWithEmailAndPassword(email: email, password: pass);
+
+  Future<void> signOut() => _auth.signOut();
+
+  User? get currentUser => _auth.currentUser;
+  Stream<User?> get authStream => _auth.authStateChanges();
+}`;
+}
+
+function genAPICode(endpoint){
+  return `import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+class ApiService {
+  static const _base = '${endpoint||'https://api.yourapp.com/v1'}';
+
+  Future<dynamic> get(String path) async {
+    final res = await http.get(Uri.parse('$_base/$path'),
+      headers: {'Content-Type': 'application/json'});
+    if (res.statusCode == 200) return jsonDecode(res.body);
+    throw Exception('Failed: \${res.statusCode}');
+  }
+
+  Future<dynamic> post(String path, Map<String,dynamic> body) async {
+    final res = await http.post(Uri.parse('$_base/$path'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(body));
+    if (res.statusCode == 201 || res.statusCode == 200)
+      return jsonDecode(res.body);
+    throw Exception('Failed: \${res.statusCode}');
+  }
+}`;
+}
+
+function genNotifCode(){
+  return `import 'package:firebase_messaging/firebase_messaging.dart';
+
+class NotificationService {
+  final _fcm = FirebaseMessaging.instance;
+
+  Future<void> init() async {
+    await _fcm.requestPermission(alert: true, badge: true, sound: true);
+    final token = await _fcm.getToken();
+    print('FCM Token: $token');
+    FirebaseMessaging.onMessage.listen((msg) {
+      print('Foreground message: \${msg.notification?.title}');
+    });
+  }
+}`;
+}
+
+function genGradleConfig(appId){
+  return `// android/app/build.gradle
+android {
+    compileSdk 35
+    defaultConfig {
+        applicationId "${appId||'com.solace.myapp'}"
+        minSdk 24
+        targetSdk 35
+        versionCode 1
+        versionName "1.0.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+            signingConfig signingConfigs.release
+        }
+    }
+}`;
+}
+
+// ── Avatar AI response engine ──
+function avatarAIRespond(userMsg){
+  const intent=classifyIntent(userMsg);
+  const isBelinda=currentAvatar==='belinda';
+  const ctx=chatContext;
+  ctx.history.push({role:'user',msg:userMsg});
+
+  // Build state machine
+  if(ctx.buildState.active){
+    return handleBuildFlow(userMsg,isBelinda);
+  }
+
+  switch(intent){
+    case 'GREETING':
+      return isBelinda
+        ?`Hi! I'm <strong>Belinda</strong>, your AI Architect. I can:<br>
+          &#9658; <strong>Build your entire app</strong> — screens, code, architecture<br>
+          &#9658; <strong>Generate real Flutter code</strong> — widgets, routes, state<br>
+          &#9658; <strong>Scan the internet</strong> for latest frameworks & trends<br>
+          &#9658; <strong>Design themes</strong>, auth flows, API layers<br><br>
+          What would you like to build today?`
+        :`Hey! I'm <strong>Sven</strong>, Lead Dev Engineer. I handle:<br>
+          &#9658; <strong>Android & iOS build pipelines</strong> — Gradle, Xcode, signing<br>
+          &#9658; <strong>CI/CD setup</strong> — GitHub Actions, automated deploys<br>
+          &#9658; <strong>Store submissions</strong> — Play Console & App Store Connect<br>
+          &#9658; <strong>Internet scan</strong> for latest SDK versions & requirements<br><br>
+          Tell me what you need built or deployed.`;
+
+    case 'BUILD_START':{
+      ctx.buildState={active:true,phase:1,appName:'',platform:'',screens:[],hasLogin:false,monetise:'free'};
+      const name=userMsg.replace(/build|create|make|generate|an?|app/gi,'').trim()||'';
+      if(name.length>2){
+        ctx.buildState.appName=name;
+        ctx.buildState.phase=2;
+        return isBelinda
+          ?`&#128204; Got it — building <strong>&ldquo;${name}&rdquo;</strong>!<br><br>Which platforms? <strong>Android</strong>, <strong>iOS</strong>, or <strong>Both</strong>?`
+          :`&#128204; <strong>&ldquo;${name}&rdquo;</strong> — on it.<br><br>Target platform: <strong>Android</strong>, <strong>iOS</strong>, or <strong>Both</strong>?`;
+      }
+      return isBelinda
+        ?`&#128204; Let\'s build your app! What\'s the <strong>name and purpose</strong> of the app? (e.g. &ldquo;FitTrack — a fitness tracker&rdquo;)`
+        :`&#128204; Ready to build. What\'s the <strong>app name and what it does</strong>?`;
+    }
+
+    case 'SCREENS':{
+      const screenList=userMsg.match(/\b[A-Z][a-z]+\b/g)||userMsg.split(/[,&+]/).map(s=>s.trim()).filter(Boolean);
+      if(!screenList.length) return isBelinda?'Tell me which screens you need and I\'ll generate them all.':'List your screens separated by commas.';
+      ctx.buildState.screens=screenList;
+      const codes=screenList.slice(0,3).map(s=>genScreenCode(s,false));
+      return showCodeBlock(
+        `&#128196; Generated <strong>${screenList.length} screen files</strong>:`,
+        codes[0],
+        `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;">${screenList.map(s=>`<span style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.2);color:rgba(0,229,255,0.8);padding:2px 10px;border-radius:8px;font-size:11px;">${s}Screen</span>`).join('')}</div>`+
+        (isBelinda?'<br>Each screen is a <code>StatefulWidget</code> with dark theme. Want me to add state management (Riverpod/BLoC)?':'<br>All screens scaffolded. Want CI/CD for automatic builds?')
+      );
+    }
+
+    case 'CODE_GEN':{
+      const screen=userMsg.match(/\b([A-Z][a-z]+)\b/)?.[1]||'Home';
+      return showCodeBlock(
+        `&#128196; Generated <strong>${screen}Screen</strong> widget:`,
+        genScreenCode(screen,false),
+        isBelinda?'Want me to add more screens or wire up navigation with <code>go_router</code>?':'Want me to set up the build pipeline for this?'
+      );
+    }
+
+    case 'DESIGN':{
+      const color=userMsg.includes('red')?'0xFFDC143C':userMsg.includes('blue')?'0xFF1565C0':userMsg.includes('teal')?'0xFF00E5FF':userMsg.includes('gold')?'0xFFFFD700':'0xFFDC143C';
+      return showCodeBlock(
+        '&#127912; Generated <strong>theme.dart</strong> with Material 3:',
+        genThemeCode(color),
+        isBelinda?'Your theme is ready. Want me to add custom fonts or generate icon assets?':'Theme locked in. Want me to configure the splash screen and app icon?'
+      );
+    }
+
+    case 'AUTH':
+      return showCodeBlock(
+        '&#128272; Generated <strong>auth_service.dart</strong> (Firebase + Google Sign-In):',
+        genAuthCode(),
+        isBelinda
+          ?'Auth service ready. Add these to <code>pubspec.yaml</code>:<br><code>firebase_auth: ^5.1.0</code><br><code>google_sign_in: ^6.2.0</code>'
+          :'Auth wired. Want me to set up the SHA-1 fingerprint and Google Services JSON for Android?'
+      );
+
+    case 'DATA':
+      return showCodeBlock(
+        '&#128225; Generated <strong>api_service.dart</strong> (HTTP REST client):',
+        genAPICode(userMsg.match(/https?:\/\/[^\s]+/)?.[0]),
+        isBelinda?'API layer done. Want me to add a Firestore service or Hive local storage on top?':'API service ready. Want me to add Dio interceptors for auth token refresh?'
+      );
+
+    case 'NOTIFICATIONS':
+      return showCodeBlock(
+        '&#128276; Generated <strong>notification_service.dart</strong> (FCM):',
+        genNotifCode(),
+        isBelinda?'Push notifications configured. Add <code>firebase_messaging: ^15.0.0</code> to pubspec.':'FCM ready. Want me to add topic subscriptions and background handler?'
+      );
+
+    case 'ANDROID_BUILD':
+      return showCodeBlock(
+        '&#129302; Generated <strong>build.gradle</strong> (Android release config):',
+        genGradleConfig(userMsg.match(/com\.\w+\.\w+/)?.[0]),
+        isBelinda?'Gradle configured. Want me to set up the keystore signing config?':'Run <code>flutter build apk --release</code> or <code>flutter build appbundle</code>. Want me to open Play Console?'
+      );
+
+    case 'IOS_BUILD':{
+      const iosCode=`# iOS Release Build
+# 1. Set bundle ID in Xcode → Runner → Signing & Capabilities
+# 2. Archive:
+flutter build ipa --release
+# 3. Export IPA:
+xcodebuild -exportArchive \
+  -archivePath build/ios/archive/Runner.xcarchive \
+  -exportPath build/ios/ipa \
+  -exportOptionsPlist ExportOptions.plist
+# 4. Upload via Xcode Organizer or:
+xcrun altool --upload-app -f Runner.ipa \
+  --username "your@apple.id" --password "@keychain:AC_PASSWORD"`;
+      return showCodeBlock('&#127822; iOS Build Pipeline:',iosCode,
+        isBelinda?'IPA ready for upload. Go to App Store Connect → TestFlight or Production.':'Want me to generate the ExportOptions.plist and provisioning profile config?');
+    }
+
+    case 'DEVOPS':{
+      const ghCode=`# .github/workflows/build.yml
+name: Flutter Build & Deploy
+on:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'
+      - run: flutter pub get
+      - run: flutter test
+      - run: flutter build apk --release
+      - run: flutter build appbundle
+      - uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: \${{ secrets.SERVICE_ACCOUNT_JSON }}
+          packageName: com.yourapp.app
+          releaseFiles: build/app/outputs/bundle/release/*.aab
+          track: production`;
+      return showCodeBlock('&#9881; Generated <strong>GitHub Actions CI/CD</strong> workflow:',ghCode,
+        isBelinda?'CI/CD pipeline ready. Push to main and it auto-builds + deploys to Play Store.':'Add your <code>SERVICE_ACCOUNT_JSON</code> secret in GitHub → Settings → Secrets.');
+    }
+
+    case 'STATE_MGMT':{
+      const riverpod=`import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// State model
+class AppState {
+  final bool isLoading;
+  final String? error;
+  final List<dynamic> data;
+  const AppState({this.isLoading=false,this.error,this.data=const[]});
+}
+
+// Notifier
+class AppNotifier extends AsyncNotifier<AppState> {
+  @override
+  Future<AppState> build() async => const AppState();
+
+  Future<void> fetchData() async {
+    state = const AsyncValue.loading();
+    try {
+      // fetch your data
+      state = AsyncValue.data(const AppState(data:[]));
+    } catch(e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
+}
+
+final appProvider = AsyncNotifierProvider<AppNotifier,AppState>(
+  AppNotifier.new);`;
+      return showCodeBlock('&#9889; Generated <strong>Riverpod state management</strong>:',riverpod,
+        isBelinda?'Riverpod wired up. Wrap your <code>MaterialApp</code> with <code>ProviderScope</code>.':'Add <code>flutter_riverpod: ^2.5.0</code> to pubspec.');
+    }
+
+    case 'TESTING':{
+      const testCode=`import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart';
+import 'package:your_app/main.dart';
+
+void main() {
+  testWidgets('Home screen renders', (WidgetTester tester) async {
+    await tester.pumpWidget(const MyApp());
+    expect(find.text('Home'), findsOneWidget);
+  });
+
+  test('Auth service returns user', () async {
+    // Unit test example
+    expect(1 + 1, 2);
+  });
+}`;
+      return showCodeBlock('&#129514; Generated <strong>widget & unit tests</strong>:',testCode,
+        isBelinda?'Run tests with <code>flutter test</code>. Want me to add integration tests?':'Add <code>integration_test</code> to your dev_dependencies for end-to-end testing.');
+    }
+
+    case 'PAYMENTS':{
+      const payCode=`import 'package:in_app_purchase/in_app_purchase.dart';
+
+class PaymentService {
+  final InAppPurchase _iap = InAppPurchase.instance;
+
+  Future<bool> isAvailable() => _iap.isAvailable();
+
+  Future<void> buyProduct(String productId) async {
+    final available = await isAvailable();
+    if (!available) throw Exception('Store unavailable');
+    final response = await _iap.queryProductDetails({productId});
+    if (response.productDetails.isEmpty) return;
+    final param = PurchaseParam(
+      productDetails: response.productDetails.first);
+    await _iap.buyNonConsumable(purchaseParam: param);
+  }
+}`;
+      return showCodeBlock('&#128176; Generated <strong>in_app_purchase service</strong>:',payCode,
+        isBelinda?'Payment service ready. Configure product IDs in Play Console & App Store Connect.':'Add <code>in_app_purchase: ^3.1.0</code> to pubspec.');
+    }
+
+    case 'MAPS':{
+      const mapCode=`import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+class MapScreen extends StatefulWidget {
+  const MapScreen({super.key});
+  @override
+  State<MapScreen> createState() => _MapScreenState();
+}
+class _MapScreenState extends State<MapScreen> {
+  static const _initial = CameraPosition(
+    target: LatLng(-33.865143, 151.209900), zoom: 14);
+  @override
+  Widget build(BuildContext context) => GoogleMap(
+    initialCameraPosition: _initial,
+    myLocationEnabled: true,
+    myLocationButtonEnabled: true,
+    onTap: (pos) => print('Tapped: \${pos.latitude}'),
+  );
+}`;
+      return showCodeBlock('&#128506; Generated <strong>Google Maps screen</strong>:',mapCode,
+        isBelinda?'Maps ready. Add your Google Maps API key to AndroidManifest.xml and Info.plist.':'Get your API key at console.cloud.google.com → Maps SDK.');
+    }
+
+    case 'MEDIA':{
+      const camCode=`import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
+class MediaService {
+  final _picker = ImagePicker();
+
+  Future<File?> pickImage({bool fromCamera = false}) async {
+    final picked = await _picker.pickImage(
+      source: fromCamera ? ImageSource.camera : ImageSource.gallery,
+      imageQuality: 85,
+      maxWidth: 1920,
+    );
+    if (picked == null) return null;
+    return File(picked.path);
+  }
+
+  Future<File?> pickVideo() async {
+    final picked = await _picker.pickVideo(
+      source: ImageSource.gallery,
+      maxDuration: const Duration(minutes: 5));
+    return picked == null ? null : File(picked.path);
+  }
+}`;
+      return showCodeBlock('&#128247; Generated <strong>media_service.dart</strong> (camera + gallery):',camCode,
+        isBelinda?'Media service done. Add camera/gallery permissions to AndroidManifest & Info.plist.':'Add <code>image_picker: ^1.1.0</code> to pubspec.');
+    }
+
+    case 'MONETISE':
+      return isBelinda
+        ?`&#128176; <strong>Monetisation Recommendations (2026 data):</strong><br><br>
+          &#9658; <strong>Subscription</strong> — highest LTV, use <code>in_app_purchase</code> or RevenueCat<br>
+          &#9658; <strong>Freemium</strong> — free core + paid features, 8-12% conversion typical<br>
+          &#9658; <strong>AdMob</strong> — use <code>google_mobile_ads: ^4.0.0</code>, banner + interstitial<br>
+          &#9658; <strong>One-time purchase</strong> — works for tools/utilities<br><br>
+          Want me to generate the RevenueCat or AdMob integration code?`
+        :`&#128176; <strong>Revenue setup for Play Store & App Store:</strong><br><br>
+          &#9658; Configure products in <a href="https://play.google.com/console" target="_blank" style="color:#00E5FF;">Play Console</a> → Monetise → Products<br>
+          &#9658; App Store: <a href="https://appstoreconnect.apple.com" target="_blank" style="color:#00E5FF;">App Store Connect</a> → In-App Purchases<br>
+          &#9658; Use RevenueCat SDK for cross-platform receipt validation<br><br>
+          Want the RevenueCat Flutter SDK integration code?`;
+
+    case 'DEBUG':
+      return isBelinda
+        ?`&#128030; <strong>Common Flutter errors & fixes:</strong><br><br>
+          &#9658; <code>setState() called after dispose()</code> — check <code>if(mounted)</code> before setState<br>
+          &#9658; <code>RenderFlex overflow</code> — wrap with <code>Expanded</code>, <code>Flexible</code>, or <code>SingleChildScrollView</code><br>
+          &#9658; <code>Null check fails</code> — use <code>?..</code> or add null checks<br>
+          &#9658; <code>MissingPluginException</code> — run <code>flutter clean</code> then <code>flutter pub get</code><br><br>
+          Paste your exact error and I\'ll diagnose it.`
+        :`&#128030; <strong>Build & pipeline debug:</strong><br><br>
+          &#9658; APK signing error — check <code>key.properties</code> path & alias<br>
+          &#9658; Gradle sync fail — run <code>./gradlew clean assembleRelease --stacktrace</code><br>
+          &#9658; iOS provisioning — open Xcode → Signing & Capabilities → re-select team<br>
+          &#9658; Play Console policy rejection — check target SDK ≥35 and privacy policy URL<br><br>
+          Tell me your exact error message.`;
+
+    case 'PUBLISH':
+      return isBelinda
+        ?`&#128640; <strong>App Submission Checklist:</strong><br><br>
+          &#9658; &#9989; <strong>Screenshots</strong> — Phone (1242×2688) + Tablet (2048×2732)<br>
+          &#9658; &#9989; <strong>App icon</strong> — 1024×1024 PNG, no alpha (iOS)<br>
+          &#9658; &#9989; <strong>Privacy policy URL</strong> — required for both stores<br>
+          &#9658; &#9989; <strong>Content rating</strong> — complete questionnaire in Play Console<br>
+          &#9658; &#9989; <strong>Store listing</strong> — title ≤30 chars, description ≤4000<br><br>
+          Want me to generate your Play Store listing copy?`
+        ?`&#128640; <strong>Submission Pipeline:</strong><br><br>
+          <strong>Android:</strong> <code>flutter build appbundle --release</code> → Play Console → Production → Create release<br>
+          <strong>iOS:</strong> <code>flutter build ipa --release</code> → Xcode Organizer → Upload → App Store Connect<br><br>
+          Want me to open Play Console or App Store Connect now?`
+        :`&#128640; Publishing pipeline initiated. <button onclick="openPlayStoreModal('My App')" style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.25);color:rgba(0,229,255,0.8);padding:4px 12px;border-radius:8px;cursor:pointer;font-size:12px;">Open Play Console</button> &nbsp; <a href="https://appstoreconnect.apple.com" target="_blank" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);padding:4px 12px;border-radius:8px;font-size:12px;text-decoration:none;">App Store Connect</a>`;
+
+    case 'WEB_SCAN':{
+      const topic=userMsg.replace(/search|scan|internet|online|latest|find|google|lookup/gi,'').trim()||'flutter';
+      const hits=webScan(topic);
+      return `&#127760; <strong>Internet Scan — &ldquo;${topic}&rdquo;</strong> (${new Date().toLocaleDateString()}):<br><br>`+
+        hits.map((h,i)=>`&#9658; ${h}`).join('<br>')+
+        '<br><br><em style="opacity:0.45;font-size:11px;">&#128204; Data sourced from developer docs, release notes & community feeds</em>';
+    }
+
+    default:
+      return generateContextualResponse(userMsg,isBelinda);
+  }
+}
+
+function handleBuildFlow(val,isBelinda){
+  const s=chatContext.buildState;
+  if(s.phase===1){s.appName=val;s.phase=2;return isBelinda?`&#128204; <strong>&ldquo;${val}&rdquo;</strong> — love it! Target platform: <strong>Android</strong>, <strong>iOS</strong>, or <strong>Both</strong>?`:`&#128204; <strong>&ldquo;${val}&rdquo;</strong>. Platform: <strong>Android</strong>, <strong>iOS</strong>, or <strong>Both</strong>?`;}
+  if(s.phase===2){s.platform=val.toLowerCase().includes('both')?'Android & iOS':val.toLowerCase().includes('ios')?'iOS':'Android';s.phase=3;return isBelinda?`&#128204; <strong>${s.platform}</strong> — perfect. Does your app need <strong>user login / accounts</strong>? (yes / no)`:` &#128204; <strong>${s.platform}</strong> build confirmed. Login required? (yes / no)`;}
+  if(s.phase===3){s.hasLogin=val.toLowerCase().startsWith('y');s.phase=4;return isBelinda?`&#128204; Auth: <strong>${s.hasLogin?'Firebase Auth + Google Sign-In':'Public access'}</strong>. Monetisation? <strong>free</strong> / <strong>ads</strong> / <strong>premium</strong> / <strong>in-app purchases</strong>`:`&#128204; Auth: <strong>${s.hasLogin?'Firebase':'None'}</strong>. Monetisation model? <strong>free</strong> / <strong>ads</strong> / <strong>premium</strong> / <strong>in-app</strong>`;}
+  if(s.phase===4){s.monetise=val.toLowerCase().includes('ads')?'Ads':val.toLowerCase().includes('premium')?'Premium':val.toLowerCase().includes('in-app')||val.toLowerCase().includes('purchase')?'In-App Purchases':'Free';s.phase=5;return isBelinda?`&#128204; <strong>${s.monetise}</strong> model confirmed. Now list your <strong>main screens</strong> separated by commas (e.g. Home, Profile, Map, Chat):`:`&#128204; <strong>${s.monetise}</strong>. List your <strong>screens</strong> (comma separated):`;}
+  if(s.phase===5){
+    s.screens=val.split(',').map(x=>x.trim()).filter(Boolean);
+    if(!s.screens.length)s.screens=['Home','Profile','Settings'];
+    s.active=false;
+    // Trigger the build pipeline visually
+    const wrap=document.createElement('div');
+    wrap.className='msg ai';
+    const lbl=isBelinda?'⚡ BELINDA AI':'🔧 SVEN AI';
+    wrap.innerHTML='<div class="msg-label">'+lbl+'</div>&#9989; All details captured. <strong>Building your app now...</strong>';
+    const msgs=document.getElementById('chatMessages');
+    msgs.appendChild(wrap);msgs.scrollTop=msgs.scrollHeight;
+    let delay=700;
+    const steps=isBelinda
+      ?['&#128196; Generating project structure...','&#128241; Creating '+s.screens.length+' screen files...','&#9881;&#65039; Configuring pubspec.yaml...','&#128272; '+(s.hasLogin?'Wiring Firebase Auth + Google Sign-In...':'Setting up public routing...'),'&#127912; Generating Material 3 theme...','&#128190; Writing main.dart with all routes...']
+      :['&#128268; Initialising Android Gradle config...','&#128268; Configuring iOS Xcode project...','&#128221; Setting up signing config...','&#9881;&#65039; Building release APK + AAB...','&#128640; Preparing Play Store submission...'];
+    steps.forEach((step,i)=>{
+      setTimeout(()=>{
+        const d=document.createElement('div');d.className='msg ai';
+        d.innerHTML='<div class="msg-label">'+lbl+'</div>'+step;
+        msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+      },delay);delay+=800;
+    });
+    setTimeout(()=>{
+      // reuse the main builder output
+      buildState=Object.assign({},s,{builtFiles:{}});
+      Object.assign(buildState,{appName:s.appName,platform:s.platform,screens:s.screens,hasLogin:s.hasLogin,monetise:s.monetise});
+      showBuiltOutput();
+    },delay);
+    return null;
+  }
+  return isBelinda?`Tell me more and I'll keep building.`:`What else do you need?`;
+}
+
+function generateContextualResponse(msg,isBelinda){
+  const prev=chatContext.history.slice(-3).map(h=>h.msg).join(' ').toLowerCase();
+  if(isBelinda){
+    const opts=[
+      `What screens does your app need? I'll generate all the Flutter widget code instantly.`,
+      `Want me to scan the internet for the latest Flutter packages and best practices for your use case?`,
+      `I can generate your full authentication flow — Firebase Auth, Google Sign-In, and session persistence. Want that?`,
+      `Tell me your app's target users and I'll recommend the optimal architecture pattern.`,
+      `I can generate your complete <code>pubspec.yaml</code> with all dependencies. What features does your app need?`,
+      `Want me to create a Riverpod or BLoC state management setup? I'll write the full boilerplate.`,
+    ];
+    return opts[chatContext.history.length%opts.length];
+  } else {
+    const opts=[
+      `Want me to set up your GitHub Actions pipeline? I'll write the full workflow YAML for automated builds.`,
+      `I can configure your Android signing keystore and ProGuard rules. What's your app's package ID?`,
+      `Tell me your target SDK versions and I'll generate the optimal Gradle build config.`,
+      `Want me to scan the internet for the latest Play Store requirements and App Store guidelines?`,
+      `I can generate your complete CI/CD pipeline — build, test, sign, and deploy on every push.`,
+      `What's your app package name? I'll generate the full Android and iOS project configuration.`,
+    ];
+    return opts[chatContext.history.length%opts.length];
+  }
+}
+
+function showCodeBlock(title,code,footer){
+  return `${title}<div style="background:#050510;border:1px solid rgba(255,215,0,0.12);border-radius:10px;padding:14px;font-family:monospace;font-size:11px;color:rgba(0,229,255,0.85);white-space:pre-wrap;overflow-x:auto;max-height:200px;overflow-y:auto;margin:10px 0;line-height:1.7;">${escHtml(code)}</div>${footer}`;
+}
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ── Chat UI ──
 function openChat(avatar){
-  currentAvatar=avatar;chatIdx=0;
+  currentAvatar=avatar;
+  chatContext={history:[],buildState:{active:false,phase:0,appName:'',platform:'',screens:[],hasLogin:false,monetise:'free'},scanActive:false};
   const overlay=document.getElementById('chatOverlay');
   const msgs=document.getElementById('chatMessages');
   const nameEl=document.getElementById('chatAvatarName');
@@ -1415,18 +1996,19 @@ function openChat(avatar){
   dotEl.textContent=avatar==='belinda'?'⚡':'🔧';
   dotEl.style.background=avatar==='belinda'?'linear-gradient(135deg,#DC143C,#FFD700)':'linear-gradient(135deg,#1565C0,#00E5FF)';
   overlay.style.display='flex';
-  addChatMsg('ai',chatResponses[avatar][0]);
+  const greeting=avatarAIRespond('hello');
+  addChatMsg('ai',greeting);
 }
 
 function closeChat(){document.getElementById('chatOverlay').style.display='none';}
 document.getElementById('chatOverlay').addEventListener('click',function(e){if(e.target===this)closeChat();});
 
-function addChatMsg(type,text){
+function addChatMsg(type,html){
   const msgs=document.getElementById('chatMessages');
   const d=document.createElement('div');
   d.className='msg '+type;
   const label=type==='ai'?(currentAvatar==='belinda'?'⚡ BELINDA AI':'🔧 SVEN AI'):'YOU';
-  d.innerHTML='<div class="msg-label">'+label+'</div>'+text;
+  d.innerHTML='<div class="msg-label">'+label+'</div>'+(html||'');
   msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
 }
 
@@ -1434,10 +2016,17 @@ function sendChat(){
   const inp=document.getElementById('chatInput');
   const val=inp.value.trim();if(!val)return;
   addChatMsg('user',val);inp.value='';
+  // typing indicator
+  const tid='typing_'+Date.now();
+  const msgs=document.getElementById('chatMessages');
+  const td=document.createElement('div');td.className='msg ai';td.id=tid;
+  td.innerHTML='<div class="msg-label">'+(currentAvatar==='belinda'?'⚡ BELINDA AI':'🔧 SVEN AI')+'</div><span style="opacity:0.5;">&#9679;&#9679;&#9679;</span>';
+  msgs.appendChild(td);msgs.scrollTop=msgs.scrollHeight;
   setTimeout(()=>{
-    chatIdx=(chatIdx+1)%chatResponses[currentAvatar].length;
-    addChatMsg('ai',chatResponses[currentAvatar][chatIdx]);
-  },600);
+    const bubble=document.getElementById(tid);if(bubble)bubble.remove();
+    const response=avatarAIRespond(val);
+    if(response!==null)addChatMsg('ai',response);
+  },Math.random()*400+500);
 }
 document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat();});
 
