@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Solace Portal — Holographic AI App Suite</title>
+<script src="https://js.stripe.com/v3/"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -1485,21 +1486,26 @@ function fmtExpiry(el){
   el.value=v;
 }
 
-// Live Stripe Payment Link — $1 one-time joining fee
+// ══ STRIPE CONFIG ══
+const STRIPE_PK='pk_live_51SvNs0LGip9LWuvpRvng7l9I3NouqNEs7Bj6cNQ5Ugrq0FMfNq3O6ARqucNPtB6E6souVJM4AwXMhiKKqB4aQXmA00hDIJgPof';
 const STRIPE_PAYMENT_LINK='https://buy.stripe.com/8x228s5Yj4571tNbBf5wI00';
+const SITE_URL='https://justinhoganzero1.github.io/solace-portal';
 
 function processPayment(){
-  // Build redirect URL: after payment Stripe returns to ?paid=1
-  const returnUrl=window.location.origin+window.location.pathname+'?paid=1';
-  // Pre-fill user email if available
+  const returnUrl=SITE_URL+'/?paid=1';
+  // Build Payment Link URL with email pre-fill and success redirect
   let url=STRIPE_PAYMENT_LINK;
   try{
     const u=JSON.parse(localStorage.getItem('sp_user')||'{}');
-    if(u.email)url+=((url.includes('?')?'&':'?')+'prefilled_email='+encodeURIComponent(u.email));
-  }catch(ex){}
-  // Store intent so we can re-verify on return
+    const params=new URLSearchParams();
+    if(u.email)params.set('prefilled_email',u.email);
+    params.set('success_url',returnUrl);
+    params.set('cancel_url',SITE_URL+'/');
+    url+='?'+params.toString();
+  }catch(ex){
+    url+='?success_url='+encodeURIComponent(returnUrl);
+  }
   localStorage.setItem('sp_pay_intent','pending');
-  // Redirect to Stripe hosted checkout
   window.location.href=url;
 }
 
