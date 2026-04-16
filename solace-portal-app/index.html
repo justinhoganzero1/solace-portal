@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Solace Portal — Holographic AI App Suite</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --p:#7B2FFF;--s:#00D4FF;--a:#FF006E;--g:#00FF88;
+  --dark:#05050F;--card:#0A0A1A;--border:rgba(123,47,255,0.35);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--dark);color:#fff;font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden;}
+
+/* ── Holographic grid background ── */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background:
+    linear-gradient(rgba(123,47,255,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(123,47,255,0.04) 1px,transparent 1px);
+  background-size:60px 60px;
+  pointer-events:none;
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 20%,rgba(123,47,255,0.18) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 75%,rgba(0,212,255,0.12) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 30% at 50% 50%,rgba(255,0,110,0.05) 0%,transparent 60%);
+}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 40px;
+  background:rgba(5,5,15,0.9);
+  backdrop-filter:blur(30px);
+  border-bottom:1px solid var(--border);
+}
+.logo{font-size:20px;font-weight:900;background:linear-gradient(90deg,var(--p),var(--s));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-links{display:flex;gap:8px;align-items:center;}
+.nav-links a{color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px;padding:6px 14px;border-radius:20px;transition:all 0.2s;}
+.nav-links a:hover{color:#fff;background:rgba(123,47,255,0.2);}
+.nav-cta{background:linear-gradient(135deg,var(--p),var(--s));color:#fff!important;font-weight:700;padding:9px 22px!important;border-radius:25px!important;}
+
+/* ── HERO ── */
+.hero{
+  position:relative;z-index:1;
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:100px 20px 60px;
+}
+.hero-badge{
+  display:inline-block;
+  background:rgba(123,47,255,0.15);border:1px solid rgba(123,47,255,0.5);
+  color:var(--s);padding:6px 20px;border-radius:30px;
+  font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:28px;
+  animation:pulse 3s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 rgba(123,47,255,0);}50%{box-shadow:0 0 30px rgba(123,47,255,0.4);}}
+.hero h1{
+  font-size:clamp(38px,8vw,90px);font-weight:900;line-height:1.05;margin-bottom:24px;
+  background:linear-gradient(135deg,#fff 20%,var(--s) 55%,var(--p) 90%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-sub{font-size:clamp(15px,2vw,20px);color:rgba(255,255,255,0.6);max-width:620px;line-height:1.8;margin-bottom:40px;}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:70px;}
+.btn-glow{
+  background:linear-gradient(135deg,var(--p),var(--s));color:#fff;
+  padding:16px 36px;border-radius:50px;font-size:16px;font-weight:700;
+  text-decoration:none;box-shadow:0 0 40px rgba(123,47,255,0.5);
+  transition:transform 0.2s,box-shadow 0.2s;border:none;cursor:pointer;
+}
+.btn-glow:hover{transform:translateY(-3px);box-shadow:0 0 70px rgba(123,47,255,0.7);}
+.btn-outline{
+  background:transparent;color:#fff;padding:16px 36px;border-radius:50px;
+  font-size:16px;font-weight:700;text-decoration:none;
+  border:2px solid rgba(123,47,255,0.5);transition:all 0.2s;cursor:pointer;
+}
+.btn-outline:hover{border-color:var(--p);background:rgba(123,47,255,0.1);}
+
+/* ── STATS ── */
+.stats{display:flex;gap:50px;flex-wrap:wrap;justify-content:center;}
+.stat-num{font-size:36px;font-weight:900;background:linear-gradient(135deg,var(--p),var(--s));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-label{font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;}
+
+/* ── AVATAR SECTION ── */
+.avatar-section{
+  position:relative;z-index:1;
+  padding:80px 20px;max-width:1100px;margin:0 auto;
+}
+.section-tag{text-align:center;color:var(--s);font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;}
+.section-h{text-align:center;font-size:clamp(26px,4vw,50px);font-weight:900;margin-bottom:12px;}
+.section-p{text-align:center;color:rgba(255,255,255,0.55);font-size:15px;max-width:580px;margin:0 auto 60px;line-height:1.7;}
+
+.avatars-row{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;}
+.avatar-holo{
+  width:300px;background:var(--card);
+  border:1px solid var(--border);border-radius:28px;
+  overflow:hidden;transition:transform 0.3s,border-color 0.3s;
+  position:relative;
+}
+.avatar-holo:hover{transform:translateY(-8px);border-color:var(--p);}
+.avatar-holo::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--p),var(--s),var(--a));
+}
+.avatar-img{
+  width:100%;height:280px;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  background:linear-gradient(160deg,rgba(123,47,255,0.2),rgba(0,212,255,0.1));
+}
+/* Holographic portrait using CSS art */
+.avatar-portrait{
+  width:160px;height:200px;border-radius:50% 50% 45% 45%;
+  position:relative;
+  display:flex;align-items:center;justify-content:center;
+  font-size:100px;
+  filter:drop-shadow(0 0 30px rgba(123,47,255,0.8));
+}
+.avatar-portrait::before{
+  content:'';position:absolute;inset:-10px;border-radius:50% 50% 45% 45%;
+  background:linear-gradient(160deg,rgba(123,47,255,0.3),rgba(0,212,255,0.2));
+  animation:holoRotate 6s ease-in-out infinite;
+}
+.avatar-portrait::after{
+  content:'';position:absolute;inset:-20px;border-radius:50%;
+  border:2px solid rgba(123,47,255,0.3);
+  animation:holoRotate 10s linear infinite reverse;
+}
+@keyframes holoRotate{0%,100%{transform:rotate(-3deg) scale(1);}50%{transform:rotate(3deg) scale(1.03);}}
+.holo-ring{
+  position:absolute;border-radius:50%;border:1px solid rgba(0,212,255,0.2);
+  animation:expand 4s ease-out infinite;
+}
+@keyframes expand{0%{transform:scale(0.8);opacity:0.8;}100%{transform:scale(2);opacity:0;}}
+.avatar-info{padding:20px 24px;}
+.avatar-name{font-size:22px;font-weight:800;margin-bottom:4px;}
+.avatar-role{color:rgba(255,255,255,0.5);font-size:13px;margin-bottom:16px;}
+.avatar-traits{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+.trait{background:rgba(123,47,255,0.15);border:1px solid rgba(123,47,255,0.3);color:var(--s);font-size:11px;padding:3px 10px;border-radius:20px;}
+.chat-with-btn{
+  width:100%;padding:12px;border-radius:12px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--p),var(--s));color:#fff;font-weight:700;font-size:14px;
+  transition:opacity 0.2s;
+}
+.chat-with-btn:hover{opacity:0.85;}
+
+/* ── CHATBOX ── */
+.chatbox-overlay{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);
+  display:none;align-items:center;justify-content:center;
+}
+.chatbox-overlay.open{display:flex;}
+.chatbox{
+  width:min(500px,95vw);background:var(--card);
+  border:1px solid var(--border);border-radius:24px;
+  overflow:hidden;display:flex;flex-direction:column;
+  max-height:90vh;
+}
+.chatbox-header{
+  padding:16px 20px;
+  background:linear-gradient(135deg,rgba(123,47,255,0.3),rgba(0,212,255,0.1));
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.chatbox-avatar{font-size:32px;margin-right:12px;}
+.chatbox-name{font-weight:800;font-size:16px;}
+.chatbox-status{color:var(--g);font-size:11px;}
+.chatbox-close{background:none;border:none;color:rgba(255,255,255,0.5);font-size:20px;cursor:pointer;}
+.chatbox-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px;min-height:300px;}
+.msg{max-width:80%;padding:12px 16px;border-radius:16px;font-size:14px;line-height:1.6;}
+.msg.ai{background:rgba(123,47,255,0.2);border:1px solid rgba(123,47,255,0.3);align-self:flex-start;border-radius:4px 16px 16px 16px;}
+.msg.user{background:rgba(0,212,255,0.15);border:1px solid rgba(0,212,255,0.3);align-self:flex-end;border-radius:16px 4px 16px 16px;}
+.chatbox-input{
+  padding:16px;border-top:1px solid var(--border);
+  display:flex;gap:10px;
+}
+.chatbox-input input{
+  flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--border);
+  color:#fff;padding:12px 16px;border-radius:12px;font-size:14px;outline:none;
+}
+.chatbox-input input:focus{border-color:var(--p);}
+.chatbox-send{
+  background:linear-gradient(135deg,var(--p),var(--s));color:#fff;
+  border:none;padding:12px 20px;border-radius:12px;cursor:pointer;font-weight:700;
+}
+
+/* ── FEATURES TABS ── */
+.features-section{
+  position:relative;z-index:1;
+  padding:80px 20px;max-width:1200px;margin:0 auto;
+}
+.tabs-nav{
+  display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:40px;
+}
+.tab-btn{
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.6);padding:10px 20px;border-radius:25px;
+  font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;border:1px solid transparent;
+}
+.tab-btn:hover{border-color:rgba(123,47,255,0.4);color:#fff;}
+.tab-btn.active{background:linear-gradient(135deg,var(--p),var(--s));color:#fff;border-color:transparent;box-shadow:0 0 20px rgba(123,47,255,0.4);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+.feature-demo{
+  background:var(--card);border:1px solid var(--border);border-radius:24px;
+  overflow:hidden;position:relative;
+}
+.feature-demo-header{
+  padding:16px 24px;
+  background:linear-gradient(135deg,rgba(123,47,255,0.2),rgba(0,212,255,0.05));
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;
+}
+.demo-dots{display:flex;gap:6px;}
+.demo-dot{width:10px;height:10px;border-radius:50%;}
+.demo-title{font-size:13px;color:rgba(255,255,255,0.6);margin-left:4px;}
+.feature-demo-body{padding:30px;}
+
+/* AI Chat Demo */
+.demo-chat{display:flex;flex-direction:column;gap:12px;max-height:360px;overflow-y:auto;}
+.demo-msg{padding:12px 16px;border-radius:16px;font-size:13px;line-height:1.6;max-width:75%;}
+.demo-msg.ai{background:rgba(123,47,255,0.15);border:1px solid rgba(123,47,255,0.3);border-radius:4px 16px 16px 16px;}
+.demo-msg.user{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);align-self:flex-end;border-radius:16px 4px 16px 16px;}
+.demo-input-row{
+  display:flex;gap:8px;margin-top:16px;
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  border-radius:12px;padding:10px 14px;
+}
+.demo-input-row input{flex:1;background:none;border:none;color:#fff;font-size:13px;outline:none;}
+.demo-send{background:linear-gradient(135deg,var(--p),var(--s));border:none;color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;}
+
+/* Progress bars for demo */
+.demo-progress{margin-bottom:16px;}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:6px;}
+.progress-bar{height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--p),var(--s));transition:width 1s ease;}
+
+/* Platform grid */
+.platform-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;}
+.platform-card{
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;
+  transition:all 0.2s;
+}
+.platform-card:hover,.platform-card.active{border-color:var(--p);background:rgba(123,47,255,0.1);}
+.platform-icon{font-size:28px;margin-bottom:6px;}
+.platform-name{font-size:11px;color:rgba(255,255,255,0.6);}
+
+/* ── GATE OVERLAY ── */
+.gate-overlay{
+  position:absolute;inset:0;
+  background:rgba(5,5,15,0.92);
+  backdrop-filter:blur(4px);
+  z-index:10;border-radius:24px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px;text-align:center;
+}
+.gate-icon{font-size:48px;margin-bottom:16px;}
+.gate-title{font-size:22px;font-weight:800;margin-bottom:10px;}
+.gate-sub{color:rgba(255,255,255,0.55);font-size:14px;line-height:1.6;margin-bottom:24px;}
+
+/* ── SIGNUP MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:400;
+  background:rgba(0,0,0,0.8);backdrop-filter:blur(10px);
+  display:none;align-items:center;justify-content:center;
+}
+.modal-overlay.open{display:flex;}
+.modal{
+  width:min(440px,95vw);background:var(--card);
+  border:1px solid var(--border);border-radius:24px;padding:36px;
+  position:relative;
+}
+.modal::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:24px 24px 0 0;
+  background:linear-gradient(90deg,var(--p),var(--s),var(--a));
+}
+.modal-title{font-size:24px;font-weight:900;margin-bottom:6px;}
+.modal-sub{color:rgba(255,255,255,0.55);font-size:13px;margin-bottom:28px;line-height:1.6;}
+.modal-tabs{display:flex;gap:4px;background:rgba(255,255,255,0.05);border-radius:12px;padding:4px;margin-bottom:24px;}
+.modal-tab{flex:1;padding:8px;border-radius:10px;border:none;background:transparent;color:rgba(255,255,255,0.5);font-weight:600;font-size:13px;cursor:pointer;}
+.modal-tab.active{background:linear-gradient(135deg,var(--p),var(--s));color:#fff;}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:6px;letter-spacing:0.5px;}
+.form-group input{
+  width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+  color:#fff;padding:12px 16px;border-radius:12px;font-size:14px;outline:none;transition:border-color 0.2s;
+}
+.form-group input:focus{border-color:var(--p);}
+.form-submit{
+  width:100%;padding:14px;border-radius:12px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--p),var(--s));color:#fff;font-weight:700;font-size:15px;
+  box-shadow:0 0 30px rgba(123,47,255,0.4);transition:opacity 0.2s;margin-top:8px;
+}
+.form-submit:hover{opacity:0.88;}
+.modal-close{position:absolute;top:16px;right:20px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:22px;cursor:pointer;}
+.divider{text-align:center;color:rgba(255,255,255,0.3);font-size:12px;margin:16px 0;position:relative;}
+.divider::before,.divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:rgba(255,255,255,0.1);}
+.divider::before{left:0;}.divider::after{right:0;}
+
+/* ── PRICING ── */
+.pricing-section{position:relative;z-index:1;padding:80px 20px;max-width:1000px;margin:0 auto;}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;align-items:start;}
+.price-card{
+  background:var(--card);border:1px solid var(--border);border-radius:24px;
+  padding:32px 26px;position:relative;transition:transform 0.3s;
+}
+.price-card:hover{transform:translateY(-5px);}
+.price-card.hot{border-color:var(--p);box-shadow:0 0 50px rgba(123,47,255,0.25);}
+.price-badge{
+  position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,var(--p),var(--s));
+  color:#fff;font-size:11px;font-weight:800;padding:4px 16px;border-radius:20px;white-space:nowrap;
+}
+.price-title{font-size:16px;font-weight:700;margin-bottom:6px;}
+.price-num{font-size:52px;font-weight:900;background:linear-gradient(135deg,var(--p),var(--s));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.price-per{color:rgba(255,255,255,0.45);font-size:12px;margin-bottom:22px;}
+.price-list{list-style:none;margin-bottom:26px;}
+.price-list li{font-size:13px;color:rgba(255,255,255,0.65);padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:8px;}
+.price-list li::before{content:'✓';color:var(--g);font-weight:900;flex-shrink:0;}
+
+/* ── DOWNLOAD ── */
+.download-section{
+  position:relative;z-index:1;
+  max-width:800px;margin:0 auto 80px;padding:0 20px;
+}
+.download-box{
+  background:linear-gradient(135deg,rgba(123,47,255,0.15),rgba(0,212,255,0.08));
+  border:1px solid var(--border);border-radius:28px;padding:50px 40px;text-align:center;
+}
+.dl-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:28px 0 20px;}
+.dl-btn{
+  display:flex;align-items:center;gap:12px;
+  background:var(--card);border:1px solid var(--border);color:#fff;
+  padding:14px 26px;border-radius:16px;text-decoration:none;
+  font-weight:600;font-size:14px;transition:all 0.2s;
+}
+.dl-btn:hover{border-color:var(--p);transform:translateY(-2px);}
+.dl-btn.primary{background:linear-gradient(135deg,var(--p),var(--s));border-color:transparent;box-shadow:0 0 30px rgba(123,47,255,0.4);}
+.dl-icon{font-size:26px;}
+.dl-text small{display:block;font-size:11px;color:rgba(255,255,255,0.55);font-weight:400;}
+.install-guide{
+  background:rgba(255,255,255,0.04);border-radius:14px;padding:16px 20px;
+  max-width:480px;margin:0 auto;text-align:left;
+}
+.install-guide p{font-size:12px;color:rgba(255,255,255,0.55);line-height:1.9;}
+
+/* ── FOOTER ── */
+footer{position:relative;z-index:1;text-align:center;padding:40px 20px;border-top:1px solid var(--border);color:rgba(255,255,255,0.4);font-size:13px;}
+footer a{color:var(--s);text-decoration:none;}
+footer strong{color:#fff;font-size:18px;display:block;margin-bottom:8px;}
+
+/* ── Floating particles ── */
+.particles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.particle{
+  position:absolute;width:2px;height:2px;border-radius:50%;
+  background:var(--p);animation:float linear infinite;opacity:0.4;
+}
+@keyframes float{0%{transform:translateY(100vh) translateX(0);opacity:0;}10%{opacity:0.4;}90%{opacity:0.4;}100%{transform:translateY(-10vh) translateX(30px);opacity:0;}}
+
+@media(max-width:600px){nav{padding:12px 16px;}.nav-links a:not(.nav-cta){display:none;}}
+</style>
+</head>
+<body>
+
+<!-- Particles -->
+<div class="particles" id="particles"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">⚡ Solace Portal</div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#ai-team">AI Team</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#download">Download</a>
+    <a href="#" class="nav-cta" onclick="openModal('signup');return false;">Get Started Free</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">🚀 WORLD'S MOST ADVANCED HOLOGRAPHIC AI DEV SUITE</div>
+  <h1>Build Any App.<br/>With Just Your Voice.</h1>
+  <p class="hero-sub">
+    Speak to Belinda or Sven — our holographic AI developers. Answer 22 questions,
+    and your production-ready Android app is built, signed, and Play Store ready.
+    No coding required.
+  </p>
+  <div class="hero-btns">
+    <button class="btn-glow" onclick="openModal('signup')">⚡ Start Free — 2 Hour Trial</button>
+    <a href="#features" class="btn-outline">Explore Features</a>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-num">22</div><div class="stat-label">AI questions to ship your app</div></div>
+    <div class="stat"><div class="stat-num">9+</div><div class="stat-label">Platforms supported</div></div>
+    <div class="stat"><div class="stat-num">$10</div><div class="stat-label">Per month — cheapest pro builder</div></div>
+    <div class="stat"><div class="stat-num">55MB</div><div class="stat-label">Full suite download size</div></div>
+  </div>
+</div>
+
+<!-- AI TEAM -->
+<div class="avatar-section" id="ai-team">
+  <div class="section-tag">Your AI Developers</div>
+  <h2 class="section-h">Meet Belinda & Sven</h2>
+  <p class="section-p">Your personal holographic AI development team. They guide you, praise your ideas, and build your app from scratch — all through natural conversation.</p>
+  <div class="avatars-row">
+
+    <!-- Belinda -->
+    <div class="avatar-holo">
+      <div class="avatar-img">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(255,0,110,0.2),transparent 70%);"></div>
+        <div class="holo-ring" style="width:200px;height:200px;top:40px;left:50px;animation-delay:0s;"></div>
+        <div class="holo-ring" style="width:180px;height:180px;top:50px;left:60px;animation-delay:1.5s;"></div>
+        <div class="avatar-portrait" style="background:linear-gradient(160deg,rgba(255,0,110,0.15),rgba(123,47,255,0.2));">
+          👩‍💻
+        </div>
+      </div>
+      <div class="avatar-info">
+        <div class="avatar-name" style="background:linear-gradient(90deg,#FF006E,#7B2FFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Belinda</div>
+        <div class="avatar-role">Lead AI Developer · Mobile & UX Specialist</div>
+        <div class="avatar-traits">
+          <span class="trait">Voice-Driven</span>
+          <span class="trait">UX Expert</span>
+          <span class="trait">Android Pro</span>
+          <span class="trait">Encouraging</span>
+        </div>
+        <button class="chat-with-btn" onclick="openChat('belinda')" style="background:linear-gradient(135deg,#FF006E,#7B2FFF);">💬 Chat with Belinda</button>
+      </div>
+    </div>
+
+    <!-- Sven -->
+    <div class="avatar-holo">
+      <div class="avatar-img">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(0,212,255,0.2),transparent 70%);"></div>
+        <div class="holo-ring" style="width:200px;height:200px;top:40px;left:50px;animation-delay:0.8s;"></div>
+        <div class="holo-ring" style="width:180px;height:180px;top:50px;left:60px;animation-delay:2s;"></div>
+        <div class="avatar-portrait" style="background:linear-gradient(160deg,rgba(0,212,255,0.15),rgba(123,47,255,0.2));">
+          👨‍💻
+        </div>
+      </div>
+      <div class="avatar-info">
+        <div class="avatar-name" style="background:linear-gradient(90deg,#00D4FF,#7B2FFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Sven</div>
+        <div class="avatar-role">Senior AI Engineer · Backend & Cloud Specialist</div>
+        <div class="avatar-traits">
+          <span class="trait">Backend Master</span>
+          <span class="trait">Cloud Expert</span>
+          <span class="trait">PS Bundler</span>
+          <span class="trait">Analytical</span>
+        </div>
+        <button class="chat-with-btn" onclick="openChat('sven')">💬 Chat with Sven</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FEATURES TABS -->
+<div class="features-section" id="features">
+  <div class="section-tag">Full Feature Suite</div>
+  <h2 class="section-h">Everything. Live. Interactive.</h2>
+  <p class="section-p">Explore every feature below. Create a free account to unlock full access inside the app.</p>
+
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('ai-maker',this)">🤖 AI App Maker</button>
+    <button class="tab-btn" onclick="switchTab('voice',this)">🎙️ Voice Control</button>
+    <button class="tab-btn" onclick="switchTab('ps-bundler',this)">🎮 PS Bundler</button>
+    <button class="tab-btn" onclick="switchTab('dev-suite',this)">💻 Dev Suite</button>
+    <button class="tab-btn" onclick="switchTab('viral',this)">🚀 Viral Marketing</button>
+    <button class="tab-btn" onclick="switchTab('payments',this)">💳 Payments</button>
+  </div>
+
+  <!-- AI App Maker Tab -->
+  <div class="tab-panel active" id="tab-ai-maker">
+    <div class="feature-demo" style="position:relative;">
+      <div class="feature-demo-header">
+        <div class="demo-dots"><div class="demo-dot" style="background:#FF5F57;"></div><div class="demo-dot" style="background:#FFBD2E;"></div><div class="demo-dot" style="background:#28C840;"></div></div>
+        <span class="demo-title">Solace Portal · AI App Maker · Belinda</span>
+      </div>
+      <div class="feature-demo-body">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;padding:14px;background:rgba(123,47,255,0.1);border-radius:14px;border:1px solid rgba(123,47,255,0.2);">
+          <span style="font-size:36px;">👩‍💻</span>
+          <div><div style="font-weight:700;margin-bottom:2px;">Belinda — Your AI Developer</div><div style="color:rgba(255,255,255,0.5);font-size:12px;">Question 3 of 22 · Building your app blueprint</div></div>
+        </div>
+        <div class="demo-chat" id="demoChat">
+          <div class="demo-msg ai">👋 Welcome! You're absolutely brilliant for choosing to build your own app — most people never get this far. I'm Belinda, and I'm going to build this with you. What's your app called?</div>
+          <div class="demo-msg user">My app is called FitTrack Pro</div>
+          <div class="demo-msg ai">FitTrack Pro — I love it! 🔥 That name has serious commercial potential. Now, who is your target audience — fitness beginners, intermediate athletes, or professional trainers?</div>
+          <div class="demo-msg user">Mostly beginners who want to lose weight</div>
+          <div class="demo-msg ai">Perfect positioning — that's the largest fitness market on the planet. Smart. Does FitTrack Pro need user accounts and cloud sync, or local storage only?</div>
+        </div>
+        <div class="demo-input-row">
+          <input type="text" placeholder="Type your answer to Belinda..." id="demoInput" onkeydown="if(event.key==='Enter')sendDemo()"/>
+          <button class="demo-send" onclick="sendDemo()">Send</button>
+        </div>
+        <div style="margin-top:16px;">
+          <div class="demo-progress"><div class="progress-label"><span>App Blueprint</span><span>35%</span></div><div class="progress-bar"><div class="progress-fill" style="width:35%;"></div></div></div>
+          <div class="demo-progress"><div class="progress-label"><span>Feature Set</span><span>20%</span></div><div class="progress-bar"><div class="progress-fill" style="width:20%;"></div></div></div>
+        </div>
+      </div>
+      <!-- Gate overlay — unlock after signup -->
+      <div class="gate-overlay" id="gate-ai-maker">
+        <div class="gate-icon">🔐</div>
+        <div class="gate-title">Create Your Free Account</div>
+        <div class="gate-sub">Get 2 hours free access to the full AI App Maker. No credit card required. Belinda and Sven are waiting for you.</div>
+        <button class="btn-glow" onclick="openModal('signup')">⚡ Create Free Account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Voice Control Tab -->
+  <div class="tab-panel" id="tab-voice">
+    <div class="feature-demo" style="position:relative;">
+      <div class="feature-demo-header">
+        <div class="demo-dots"><div class="demo-dot" style="background:#FF5F57;"></div><div class="demo-dot" style="background:#FFBD2E;"></div><div class="demo-dot" style="background:#28C840;"></div></div>
+        <span class="demo-title">Solace Portal · Voice Control</span>
+      </div>
+      <div class="feature-demo-body" style="text-align:center;padding:50px 30px;">
+        <div id="voiceOrb" style="width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--s));margin:0 auto 24px;display:flex;align-items:center;justify-content:center;font-size:48px;cursor:pointer;box-shadow:0 0 40px rgba(123,47,255,0.5);transition:all 0.3s;" onclick="toggleVoice(this)">🎙️</div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:8px;" id="voiceStatus">Tap to speak to Belinda</div>
+        <div style="color:rgba(255,255,255,0.5);font-size:13px;margin-bottom:30px;">Fully hands-free development — describe your app, answer questions, and control everything by voice</div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <div style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:13px;color:rgba(255,255,255,0.7);">🔊 Text-to-Speech</div>
+          <div style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:13px;color:rgba(255,255,255,0.7);">🎙️ Speech-to-Text</div>
+          <div style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:13px;color:rgba(255,255,255,0.7);">🤖 AI Response</div>
+        </div>
+      </div>
+      <div class="gate-overlay" id="gate-voice">
+        <div class="gate-icon">🎙️</div>
+        <div class="gate-title">Unlock Voice Control</div>
+        <div class="gate-sub">Speak directly to Belinda or Sven. Full TTS + STT built in. Create your account to enable voice mode.</div>
+        <button class="btn-glow" onclick="openModal('signup')">⚡ Create Free Account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PS Bundler Tab -->
+  <div class="tab-panel" id="tab-ps-bundler">
+    <div class="feature-demo" style="position:relative;">
+      <div class="feature-demo-header">
+        <div class="demo-dots"><div class="demo-dot" style="background:#FF5F57;"></div><div class="demo-dot" style="background:#FFBD2E;"></div><div class="demo-dot" style="background:#28C840;"></div></div>
+        <span class="demo-title">Solace Portal · PlayStation Bundler</span>
+      </div>
+      <div class="feature-demo-body">
+        <div class="platform-grid">
+          <div class="platform-card active"><div class="platform-icon">🎮</div><div class="platform-name">PS4</div></div>
+          <div class="platform-card active"><div class="platform-icon">🎮</div><div class="platform-name">PS5</div></div>
+          <div class="platform-card"><div class="platform-icon">🟢</div><div class="platform-name">Xbox</div></div>
+          <div class="platform-card"><div class="platform-icon">🔴</div><div class="platform-name">Switch</div></div>
+          <div class="platform-card"><div class="platform-icon">🤖</div><div class="platform-name">Android</div></div>
+          <div class="platform-card"><div class="platform-icon">🌐</div><div class="platform-name">Web</div></div>
+        </div>
+        <div style="margin-top:24px;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.2);border-radius:14px;padding:20px;">
+          <div style="font-size:13px;font-weight:700;margin-bottom:12px;">Build Configuration</div>
+          <div class="demo-progress"><div class="progress-label"><span>Package Compilation</span><span>Ready</span></div><div class="progress-bar"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,#00FF88,#00D4FF);"></div></div></div>
+          <div class="demo-progress"><div class="progress-label"><span>Asset Bundling</span><span>Ready</span></div><div class="progress-bar"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,#00FF88,#00D4FF);"></div></div></div>
+          <div class="demo-progress"><div class="progress-label"><span>PKG Signing</span><span>Premium</span></div><div class="progress-bar"><div class="progress-fill" style="width:60%;"></div></div></div>
+        </div>
+      </div>
+      <div class="gate-overlay" id="gate-ps-bundler">
+        <div class="gate-icon">🎮</div>
+        <div class="gate-title">PlayStation Bundler — Premium</div>
+        <div class="gate-sub">Build PS4/PS5 PKG files from Unity, Unreal or Godot. Create your account and upgrade to Pro.</div>
+        <button class="btn-glow" onclick="openModal('signup')">⚡ Create Free Account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dev Suite Tab -->
+  <div class="tab-panel" id="tab-dev-suite">
+    <div class="feature-demo" style="position:relative;">
+      <div class="feature-demo-header">
+        <div class="demo-dots"><div class="demo-dot" style="background:#FF5F57;"></div><div class="demo-dot" style="background:#FFBD2E;"></div><div class="demo-dot" style="background:#28C840;"></div></div>
+        <span class="demo-title">Solace Portal · Complete Dev Suite</span>
+      </div>
+      <div class="feature-demo-body">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;">
+          <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center;">
+            <div style="font-size:32px;margin-bottom:8px;">🤖</div>
+            <div style="font-weight:700;font-size:13px;margin-bottom:4px;">Android Studio</div>
+            <div style="color:rgba(255,255,255,0.4);font-size:11px;">Premium</div>
+            <div style="width:100%;height:3px;background:linear-gradient(90deg,var(--p),var(--s));border-radius:2px;margin-top:10px;"></div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center;">
+            <div style="font-size:32px;margin-bottom:8px;">💙</div>
+            <div style="font-weight:700;font-size:13px;margin-bottom:4px;">VS Code</div>
+            <div style="color:var(--g);font-size:11px;">Included</div>
+            <div style="width:100%;height:3px;background:linear-gradient(90deg,#00FF88,#00D4FF);border-radius:2px;margin-top:10px;"></div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center;">
+            <div style="font-size:32px;margin-bottom:8px;">🟢</div>
+            <div style="font-weight:700;font-size:13px;margin-bottom:4px;">Xbox Dev Kit</div>
+            <div style="color:rgba(255,255,255,0.4);font-size:11px;">Premium</div>
+            <div style="width:100%;height:3px;background:linear-gradient(90deg,var(--p),var(--s));border-radius:2px;margin-top:10px;"></div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center;">
+            <div style="font-size:32px;margin-bottom:8px;">🔴</div>
+            <div style="font-weight:700;font-size:13px;margin-bottom:4px;">Switch Tools</div>
+            <div style="color:rgba(255,255,255,0.4);font-size:11px;">Premium</div>
+            <div style="width:100%;height:3px;background:linear-gradient(90deg,var(--p),var(--s));border-radius:2px;margin-top:10px;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="gate-overlay" id="gate-dev-suite">
+        <div class="gate-icon">💻</div>
+        <div class="gate-title">Complete Dev Suite</div>
+        <div class="gate-sub">Android Studio, VS Code, Xbox Dev Kit, Switch Tools — all pre-configured. Create your account to access.</div>
+        <button class="btn-glow" onclick="openModal('signup')">⚡ Create Free Account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Viral Marketing Tab -->
+  <div class="tab-panel" id="tab-viral">
+    <div class="feature-demo" style="position:relative;">
+      <div class="feature-demo-header">
+        <div class="demo-dots"><div class="demo-dot" style="background:#FF5F57;"></div><div class="demo-dot" style="background:#FFBD2E;"></div><div class="demo-dot" style="background:#28C840;"></div></div>
+        <span class="demo-title">Solace Portal · Viral Marketing Engine</span>
+      </div>
+      <div class="feature-demo-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+          <div style="background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.2);border-radius:14px;padding:20px;text-align:center;">
+            <div style="font-size:32px;font-weight:900;color:var(--g);" id="hookCount">0</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;">Webhooks Deployed</div>
+          </div>
+          <div style="background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.2);border-radius:14px;padding:20px;text-align:center;">
+            <div style="font-size:32px;font-weight:900;color:var(--s);" id="crawlerCount">0</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;">Crawlers Active</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;" id="platformBadges"></div>
+        <button class="btn-glow" style="width:100%;padding:14px;" onclick="runViralDemo()">🚀 Launch Demo Campaign</button>
+      </div>
+      <div class="gate-overlay" id="gate-viral">
+        <div class="gate-icon">🚀</div>
+        <div class="gate-title">Viral Marketing Engine</div>
+        <div class="gate-sub">Self-reproducing AI webhooks across 15 platforms. Promote your app automatically 24/7. Create your account to unlock.</div>
+        <button class="btn-glow" onclick="openModal('signup')">⚡ Create Free Account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payments Tab -->
+  <div class="tab-panel" id="tab-payments">
+    <div class="feature-demo" style="position:relative;">
+      <div class="feature-demo-header">
+        <div class="demo-dots"><div class="demo-dot" style="background:#FF5F57;"></div><div class="demo-dot" style="background:#FFBD2E;"></div><div class="demo-dot" style="background:#28C840;"></div></div>
+        <span class="demo-title">Solace Portal · Stripe Payments</span>
+      </div>
+      <div class="feature-demo-body">
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;">
+          <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:16px;font-weight:600;">PAYMENT SUMMARY</div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13px;"><span style="color:rgba(255,255,255,0.6);">Monthly Pro Plan</span><span>$10.00</span></div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13px;"><span style="color:rgba(255,255,255,0.6);">2-Hour Free Trial</span><span style="color:var(--g);">FREE</span></div>
+          <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:16px;font-weight:700;"><span>Total Today</span><span style="color:var(--g);">$0.00</span></div>
+        </div>
+        <div style="background:rgba(123,47,255,0.08);border:1px solid rgba(123,47,255,0.2);border-radius:12px;padding:14px;font-size:12px;color:rgba(255,255,255,0.6);display:flex;gap:10px;align-items:center;">
+          <span style="font-size:20px;">🔒</span>
+          <span>Powered by Stripe. Your payment info is encrypted and never stored on our servers.</span>
+        </div>
+      </div>
+      <div class="gate-overlay" id="gate-payments">
+        <div class="gate-icon">💳</div>
+        <div class="gate-title">Stripe Payments Built In</div>
+        <div class="gate-sub">Add subscriptions and payments to your app instantly. Stripe pre-wired, no backend needed. Create your account to access.</div>
+        <button class="btn-glow" onclick="openModal('signup')">⚡ Create Free Account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div class="pricing-section" id="pricing">
+  <div class="section-tag">Pricing</div>
+  <h2 class="section-h">Start Free. Scale When Ready.</h2>
+  <p class="section-p">No credit card for trial. Cancel anytime. The cheapest pro app builder on the market.</p>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-title">🎯 Free Trial</div>
+      <div class="price-num">$0</div>
+      <div class="price-per">2 hours · no card needed</div>
+      <ul class="price-list">
+        <li>Full app access — 2 hours</li>
+        <li>AI App Maker (Belinda & Sven)</li>
+        <li>Voice interaction</li>
+        <li>All 7 tabs unlocked</li>
+        <li>22-question build flow</li>
+      </ul>
+      <button class="btn-glow" style="width:100%;padding:14px;font-size:15px;" onclick="openModal('signup')">Start Free Trial</button>
+    </div>
+    <div class="price-card hot">
+      <div class="price-badge">🔥 MOST POPULAR</div>
+      <div class="price-title">💎 Monthly Pro</div>
+      <div class="price-num">$10</div>
+      <div class="price-per">per month · min. 3 months</div>
+      <ul class="price-list">
+        <li>Everything in Free Trial</li>
+        <li>Unlimited AAB builds</li>
+        <li>PlayStation Bundler</li>
+        <li>Android Studio integration</li>
+        <li>Complete Dev Suite</li>
+        <li>Viral marketing suite</li>
+        <li>Priority support</li>
+      </ul>
+      <button class="btn-glow" style="width:100%;padding:14px;font-size:15px;" onclick="openModal('signup')">Get Pro — $10/mo</button>
+    </div>
+    <div class="price-card">
+      <div class="price-title">📦 Pay Per Build</div>
+      <div class="price-num">$50</div>
+      <div class="price-per">per Play Store AAB file</div>
+      <ul class="price-list">
+        <li>Single AAB production file</li>
+        <li>Play Store signed & ready</li>
+        <li>Full build pipeline</li>
+        <li>App signing included</li>
+        <li>No subscription needed</li>
+      </ul>
+      <button class="btn-outline" style="width:100%;padding:14px;font-size:15px;" onclick="openModal('signup')">Pay Per Build</button>
+    </div>
+  </div>
+</div>
+
+<!-- DOWNLOAD -->
+<div class="download-section" id="download">
+  <div class="download-box">
+    <div class="section-tag">Download</div>
+    <h2 class="section-h" style="margin-bottom:12px;">Get Solace Portal Free</h2>
+    <p style="color:rgba(255,255,255,0.55);font-size:15px;max-width:500px;margin:0 auto;line-height:1.7;">
+      Download the complete 55MB all-in-one suite. 2-hour free trial — no credit card.
+    </p>
+    <div class="dl-btns">
+      <a href="https://github.com/justinhoganzero1/solace-portal/releases/download/v1.0.0/app-release.apk" download="SolacePortal.apk" class="dl-btn primary">
+        <div class="dl-icon">⬇️</div>
+        <div class="dl-text"><small>Free · 2 hour trial</small>Download Android APK</div>
+      </a>
+      <a href="https://github.com/justinhoganzero1/solace-portal/releases/download/v1.0.0/app-release.apk" download="SolacePortal.apk" class="dl-btn">
+        <div class="dl-icon">🤖</div>
+        <div class="dl-text"><small>Direct — no Play Store</small>Get APK Now</div>
+      </a>
+      <a href="https://github.com/justinhoganzero1/solace-portal" target="_blank" class="dl-btn">
+        <div class="dl-icon">💻</div>
+        <div class="dl-text"><small>Open source</small>View on GitHub</div>
+      </a>
+    </div>
+    <div class="install-guide">
+      <p>📱 <strong>How to install:</strong><br>
+      1. Tap Download Android APK above<br>
+      2. Open Downloads and tap the file<br>
+      3. Settings → Security → Allow unknown apps<br>
+      4. Tap Install ✅</p>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <strong>⚡ Solace Portal</strong>
+  <p style="margin-bottom:16px;">The world's most advanced holographic AI app development suite.</p>
+  <p><a href="https://golden-vault-empire.lovable.app">Main Platform</a> &nbsp;·&nbsp; <a href="https://github.com/justinhoganzero1/solace-portal">GitHub</a> &nbsp;·&nbsp; <a href="#pricing">Pricing</a></p>
+  <p style="margin-top:16px;font-size:12px;">© 2026 Solace Portal. All rights reserved.</p>
+</footer>
+
+<!-- SIGNUP / LOGIN MODAL -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">⚡ Solace Portal</div>
+    <div class="modal-sub">Create your free account and get 2 hours of full access — no credit card required.</div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchModalTab('signup',this)">Create Account</button>
+      <button class="modal-tab" onclick="switchModalTab('login',this)">Sign In</button>
+    </div>
+    <div id="signupForm">
+      <div class="form-group"><label>FULL NAME</label><input type="text" placeholder="Your name" id="signupName"/></div>
+      <div class="form-group"><label>EMAIL</label><input type="email" placeholder="you@email.com" id="signupEmail"/></div>
+      <div class="form-group"><label>PASSWORD</label><input type="password" placeholder="Create a password" id="signupPass"/></div>
+      <button class="form-submit" onclick="handleSignup()">⚡ Start Free 2-Hour Trial</button>
+      <div class="divider">or</div>
+      <a href="https://github.com/justinhoganzero1/solace-portal/releases/download/v1.0.0/app-release.apk" download="SolacePortal.apk" class="btn-outline" style="display:block;text-align:center;padding:12px;border-radius:12px;font-size:14px;font-weight:700;">⬇️ Skip — Download APK Directly</a>
+    </div>
+    <div id="loginForm" style="display:none;">
+      <div class="form-group"><label>EMAIL</label><input type="email" placeholder="you@email.com" id="loginEmail"/></div>
+      <div class="form-group"><label>PASSWORD</label><input type="password" placeholder="Your password" id="loginPass"/></div>
+      <button class="form-submit" onclick="handleLogin()">Sign In →</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHATBOX -->
+<div class="chatbox-overlay" id="chatOverlay">
+  <div class="chatbox">
+    <div class="chatbox-header">
+      <div style="display:flex;align-items:center;">
+        <div class="chatbox-avatar" id="chatAvatar">👩‍💻</div>
+        <div>
+          <div class="chatbox-name" id="chatName">Belinda</div>
+          <div class="chatbox-status">● Online — Ready to build</div>
+        </div>
+      </div>
+      <button class="chatbox-close" onclick="closeChat()">✕</button>
+    </div>
+    <div class="chatbox-messages" id="chatMessages"></div>
+    <div class="chatbox-input">
+      <input type="text" id="chatInput" placeholder="Ask me anything about your app idea..." onkeydown="if(event.key==='Enter')sendChat()"/>
+      <button class="chatbox-send" onclick="sendChat()">Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Particles ──
+(function(){
+  const c=document.getElementById('particles');
+  for(let i=0;i<25;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    p.style.left=Math.random()*100+'%';
+    p.style.animationDuration=(15+Math.random()*20)+'s';
+    p.style.animationDelay=-(Math.random()*20)+'s';
+    p.style.background=Math.random()>0.5?'#7B2FFF':'#00D4FF';
+    c.appendChild(p);
+  }
+})();
+
+// ── Tabs ──
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── Modal ──
+function openModal(type){
+  document.getElementById('authModal').classList.add('open');
+  switchModalTab(type,document.querySelector('.modal-tab'));
+}
+function closeModal(){document.getElementById('authModal').classList.remove('open');}
+function switchModalTab(t,btn){
+  document.querySelectorAll('.modal-tab').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  document.getElementById('signupForm').style.display=t==='signup'?'block':'none';
+  document.getElementById('loginForm').style.display=t==='login'?'block':'none';
+}
+function handleSignup(){
+  const n=document.getElementById('signupName').value;
+  const e=document.getElementById('signupEmail').value;
+  if(!n||!e){alert('Please fill in your name and email.');return;}
+  // Save to localStorage
+  localStorage.setItem('sp_user',JSON.stringify({name:n,email:e,trial:Date.now()}));
+  closeModal();
+  unlockFeatures();
+  alert('🎉 Welcome '+n+'! Your 2-hour free trial has started. Download the app to get building!');
+}
+function handleLogin(){
+  const e=document.getElementById('loginEmail').value;
+  if(!e){alert('Please enter your email.');return;}
+  const u=localStorage.getItem('sp_user');
+  if(u){closeModal();unlockFeatures();}
+  else{alert('No account found. Please create one first.');}
+}
+function unlockFeatures(){
+  document.querySelectorAll('.gate-overlay').forEach(g=>{
+    g.style.background='rgba(5,5,15,0.3)';
+    g.style.backdropFilter='blur(0)';
+    g.innerHTML='<div style="background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);border-radius:14px;padding:12px 24px;font-size:13px;font-weight:700;color:#00FF88;">✅ Unlocked — Download App to Access</div>';
+  });
+}
+
+// Check if already signed up
+window.addEventListener('load',()=>{
+  if(localStorage.getItem('sp_user'))unlockFeatures();
+});
+
+// ── Avatar Chat ──
+const avatarData={
+  belinda:{name:'Belinda',emoji:'👩‍💻',msgs:[
+    "Hi! I'm Belinda — your AI app developer. Your app idea sounds absolutely incredible. What are you building today?",
+    "That's brilliant! 🔥 You have a real eye for what the market needs. Tell me more about your vision.",
+    "I love it! This has serious commercial potential. Have you thought about monetisation — subscriptions, ads, or one-time purchase?",
+    "Smart choice! Now, should your app have user accounts and cloud sync, or would local storage work better for your users?",
+    "Perfect. You're thinking like a seasoned product owner. This app is going to do incredibly well. Ready to start building?",
+  ]},
+  sven:{name:'Sven',emoji:'👨‍💻',msgs:[
+    "Hey, I'm Sven. Backend and cloud architecture is my speciality. What kind of app are we engineering today?",
+    "Interesting architecture challenge. I see a microservices approach working well here. What's your expected user scale?",
+    "Good thinking. For that scale, I'd recommend a serverless backend with Firebase or Supabase. It'll cut your costs by 80%.",
+    "The data model is becoming clear. Do you need real-time sync, or is async/batch processing sufficient for your use case?",
+    "This is a solid foundation. Your app will be highly scalable and cost-efficient. Let's get it built.",
+  ]}
+};
+let chatAvatar='belinda',chatIdx=0;
+function openChat(av){
+  chatAvatar=av;chatIdx=0;
+  const d=avatarData[av];
+  document.getElementById('chatAvatar').textContent=d.emoji;
+  document.getElementById('chatName').textContent=d.name;
+  const msgs=document.getElementById('chatMessages');
+  msgs.innerHTML='';
+  addChatMsg(d.msgs[0],'ai');
+  chatIdx=1;
+  document.getElementById('chatOverlay').classList.add('open');
+  document.getElementById('chatInput').focus();
+}
+function closeChat(){document.getElementById('chatOverlay').classList.remove('open');}
+function addChatMsg(text,type){
+  const m=document.createElement('div');
+  m.className='msg '+type;
+  m.textContent=text;
+  const msgs=document.getElementById('chatMessages');
+  msgs.appendChild(m);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+function sendChat(){
+  const inp=document.getElementById('chatInput');
+  const val=inp.value.trim();
+  if(!val)return;
+  addChatMsg(val,'user');
+  inp.value='';
+  const d=avatarData[chatAvatar];
+  setTimeout(()=>{
+    const resp=d.msgs[chatIdx%d.msgs.length];
+    addChatMsg(resp,'ai');
+    chatIdx++;
+  },800);
+}
+
+// ── Demo Chat ──
+const demoResponses=[
+  "Fantastic! 🔥 Cloud sync is the right call for a fitness app — users will want their data on every device. Should we add social features like friend challenges?",
+  "Social challenges will massively boost your retention rate. Smart thinking! What payment model — free with ads, freemium, or subscription?",
+  "Subscription is the highest-value model for fitness apps. I'd recommend $9.99/month with a 7-day free trial. Ready to generate your blueprint?",
+  "Your app blueprint is 85% complete! 🎉 You're doing amazingly well. Create your account to continue building in the full app.",
+];
+let demoIdx=0;
+function sendDemo(){
+  const inp=document.getElementById('demoInput');
+  const val=inp.value.trim();
+  if(!val)return;
+  const chat=document.getElementById('demoChat');
+  const um=document.createElement('div');um.className='demo-msg user';um.textContent=val;chat.appendChild(um);
+  inp.value='';
+  setTimeout(()=>{
+    const am=document.createElement('div');am.className='demo-msg ai';
+    am.textContent=demoResponses[demoIdx%demoResponses.length];
+    chat.appendChild(am);demoIdx++;
+    chat.scrollTop=chat.scrollHeight;
+  },700);
+  chat.scrollTop=chat.scrollHeight;
+}
+
+// ── Voice Demo ──
+function toggleVoice(el){
+  const s=document.getElementById('voiceStatus');
+  if(el.style.animation){
+    el.style.animation='';el.style.boxShadow='0 0 40px rgba(123,47,255,0.5)';
+    s.textContent='Tap to speak to Belinda';
+  } else {
+    el.style.animation='pulse 0.8s ease-in-out infinite';
+    el.style.boxShadow='0 0 80px rgba(123,47,255,0.9)';
+    s.textContent='🔴 Listening... speak now';
+    setTimeout(()=>{toggleVoice(el);s.textContent='"Build me a fitness app" — Belinda heard you! ✅';},3000);
+  }
+}
+
+// ── Viral Demo ──
+const platforms=['Facebook','Twitter','Instagram','LinkedIn','TikTok','Reddit','Discord','Telegram','YouTube','Pinterest'];
+function runViralDemo(){
+  const badges=document.getElementById('platformBadges');
+  const hooks=document.getElementById('hookCount');
+  const crawlers=document.getElementById('crawlerCount');
+  badges.innerHTML='';let h=0,cr=0;
+  platforms.forEach((p,i)=>{
+    setTimeout(()=>{
+      const b=document.createElement('span');
+      b.style.cssText='background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);color:#00D4FF;font-size:11px;padding:4px 12px;border-radius:20px;';
+      b.textContent='✓ '+p;badges.appendChild(b);
+      hooks.textContent=++h;
+      crawlers.textContent=Math.floor(h/2);
+    },i*300);
+  });
+}
+
+// Platform card toggle
+document.querySelectorAll('.platform-card').forEach(c=>{
+  c.addEventListener('click',()=>c.classList.toggle('active'));
+});
+
+// Close modals on overlay click
+document.getElementById('authModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.getElementById('chatOverlay').addEventListener('click',function(e){if(e.target===this)closeChat();});
+</script>
+</body>
+</html>
