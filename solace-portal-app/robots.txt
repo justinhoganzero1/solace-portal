@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+
+Sitemap: https://justinhoganzero1.github.io/solace-portal/sitemap.xml
