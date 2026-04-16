@@ -681,16 +681,24 @@ nav{
 
   /* CSS Avatar faces */
   .av-face{position:relative;z-index:1;}
+  /* Ultra-realistic portrait wrapper */
+  .av-portrait-wrap{
+    width:160px;height:200px;position:relative;
+    filter:
+      drop-shadow(0 0 30px rgba(255,215,0,0.5))
+      drop-shadow(0 0 60px rgba(220,20,60,0.35))
+      drop-shadow(0 8px 32px rgba(0,0,0,0.9));
+  }
+  .av-portrait-wrap.blue-glow{
+    filter:
+      drop-shadow(0 0 30px rgba(0,229,255,0.5))
+      drop-shadow(0 0 60px rgba(21,101,192,0.35))
+      drop-shadow(0 8px 32px rgba(0,0,0,0.9));
+  }
   /* Belinda */
-  .belinda-fig{
-    width:130px;height:170px;position:relative;
-    filter:drop-shadow(0 0 20px rgba(255,215,0,0.4)) drop-shadow(0 0 40px rgba(220,20,60,0.3));
-  }
+  .belinda-fig{width:160px;height:200px;}
   /* Sven */
-  .sven-fig{
-    width:130px;height:170px;position:relative;
-    filter:drop-shadow(0 0 20px rgba(0,229,255,0.4)) drop-shadow(0 0 40px rgba(21,101,192,0.3));
-  }
+  .sven-fig{width:160px;height:200px;}
 
   .av-info{padding:22px 24px 26px;}
   .av-name{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;margin-bottom:4px;
@@ -716,46 +724,162 @@ nav{
     <div class="av-card">
       <div class="av-portrait">
         <div class="av-face">
-          <svg class="belinda-fig" viewBox="0 0 130 170">
+<div class="av-portrait-wrap">
+          <svg class="belinda-fig" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <radialGradient id="bf1" cx="50%" cy="40%"><stop offset="0%" stop-color="#FFCBA4"/><stop offset="70%" stop-color="#E8956D"/><stop offset="100%" stop-color="#C4704A"/></radialGradient>
-              <radialGradient id="bf2" cx="50%" cy="50%"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#8B6000"/></radialGradient>
-              <linearGradient id="bf3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#DC143C"/><stop offset="100%" stop-color="#8B0000"/></linearGradient>
-              <filter id="faceGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <!-- Subsurface skin tones -->
+              <radialGradient id="bSkin" cx="46%" cy="38%" r="55%"><stop offset="0%" stop-color="#FFE0C8"/><stop offset="25%" stop-color="#F5C4A0"/><stop offset="60%" stop-color="#E8A880"/><stop offset="85%" stop-color="#D48B62"/><stop offset="100%" stop-color="#B87048"/></radialGradient>
+              <radialGradient id="bSkinSSS" cx="40%" cy="30%" r="60%"><stop offset="0%" stop-color="rgba(255,200,180,0.45)"/><stop offset="100%" stop-color="rgba(220,80,40,0.0)"/></radialGradient>
+              <!-- Volumetric hair -->
+              <linearGradient id="bHairBase" x1="0%" y1="0%" x2="60%" y2="100%"><stop offset="0%" stop-color="#1C0A00"/><stop offset="40%" stop-color="#3A1800"/><stop offset="100%" stop-color="#0A0400"/></linearGradient>
+              <radialGradient id="bHairSheen" cx="35%" cy="20%" r="50%"><stop offset="0%" stop-color="rgba(255,180,80,0.28)"/><stop offset="60%" stop-color="rgba(180,80,20,0.1)"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></radialGradient>
+              <!-- Suit -->
+              <linearGradient id="bSuit" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#DC143C"/><stop offset="35%" stop-color="#A00028"/><stop offset="100%" stop-color="#5B0010"/></linearGradient>
+              <radialGradient id="bSuitSheen" cx="30%" cy="10%" r="70%"><stop offset="0%" stop-color="rgba(255,255,255,0.18)"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></radialGradient>
+              <!-- Eye iris -->
+              <radialGradient id="bIris" cx="40%" cy="35%" r="55%"><stop offset="0%" stop-color="#4A90E2"/><stop offset="50%" stop-color="#1565C0"/><stop offset="100%" stop-color="#0A2A6A"/></radialGradient>
+              <!-- Lip -->
+              <linearGradient id="bLip" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#E8405C"/><stop offset="50%" stop-color="#C01830"/><stop offset="100%" stop-color="#8B0020"/></linearGradient>
+              <!-- Gold jewellery -->
+              <linearGradient id="bGold" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFE566"/><stop offset="40%" stop-color="#FFD700"/><stop offset="100%" stop-color="#996600"/></linearGradient>
+              <!-- Ambient glow -->
+              <radialGradient id="bAura" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(255,215,0,0.22)"/><stop offset="100%" stop-color="rgba(220,20,60,0.0)"/></radialGradient>
+              <!-- Filters -->
+              <filter id="bSoftFace" x="-15%" y="-15%" width="130%" height="130%"><feGaussianBlur in="SourceAlpha" stdDeviation="2.5" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+              <filter id="bGlowF" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <filter id="bHairBlur"><feGaussianBlur stdDeviation="1.2"/></filter>
+              <clipPath id="bHeadClip"><ellipse cx="80" cy="82" rx="40" ry="44"/></clipPath>
             </defs>
-            <!-- Body/suit -->
-            <path d="M25 130 Q30 115 65 112 Q100 115 105 130 L108 170 L22 170 Z" fill="url(#bf3)"/>
-            <!-- Neck -->
-            <rect x="56" y="100" width="18" height="16" rx="4" fill="url(#bf1)"/>
-            <!-- Head -->
-            <ellipse cx="65" cy="80" rx="32" ry="36" fill="url(#bf1)" filter="url(#faceGlow)"/>
-            <!-- Hair -->
-            <path d="M33 78 Q33 44 65 42 Q97 44 97 78 Q97 65 65 60 Q33 65 33 78 Z" fill="#1a0a00"/>
-            <path d="M33 78 Q28 72 32 60 Q36 52 40 50 Q34 62 33 78 Z" fill="#2a0a00"/>
-            <path d="M97 78 Q102 72 98 60 Q94 52 90 50 Q96 62 97 78 Z" fill="#2a0a00"/>
-            <!-- Eyes -->
-            <ellipse cx="52" cy="78" rx="8" ry="7" fill="#0a0a14"/>
-            <ellipse cx="78" cy="78" rx="8" ry="7" fill="#0a0a14"/>
-            <ellipse cx="53" cy="77" rx="5" ry="5" fill="#1565C0"/>
-            <ellipse cx="79" cy="77" rx="5" ry="5" fill="#1565C0"/>
-            <circle cx="54" cy="76" r="2.5" fill="#000"/>
-            <circle cx="80" cy="76" r="2.5" fill="#000"/>
-            <circle cx="55.5" cy="74.5" r="1.2" fill="rgba(255,255,255,0.8)"/>
-            <circle cx="81.5" cy="74.5" r="1.2" fill="rgba(255,255,255,0.8)"/>
-            <!-- Eyebrows -->
-            <path d="M44 70 Q52 67 60 70" stroke="#1a0a00" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            <path d="M70 70 Q78 67 86 70" stroke="#1a0a00" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            <!-- Nose -->
-            <path d="M65 82 Q62 88 60 90 Q65 92 70 90 Q68 88 65 82 Z" fill="rgba(0,0,0,0.12)"/>
-            <!-- Lips -->
-            <path d="M56 98 Q65 102 74 98" stroke="#DC143C" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            <path d="M56 98 Q60 95 65 94 Q70 95 74 98" stroke="#C4704A" stroke-width="1.5" fill="rgba(220,20,60,0.2)"/>
-            <!-- Gold earring -->
-            <circle cx="33" cy="82" r="4" fill="url(#bf2)" stroke="#B8860B" stroke-width="1"/>
-            <circle cx="97" cy="82" r="4" fill="url(#bf2)" stroke="#B8860B" stroke-width="1"/>
-            <!-- Holographic glow aura -->
-            <ellipse cx="65" cy="80" rx="34" ry="38" fill="none" stroke="rgba(255,215,0,0.15)" stroke-width="1"/>
+
+            <!-- AMBIENT AURA -->
+            <ellipse cx="80" cy="100" rx="75" ry="95" fill="url(#bAura)" opacity="0.7"/>
+
+            <!-- BODY / BLAZER -->
+            <path d="M18 200 Q22 155 45 142 Q58 136 80 134 Q102 136 115 142 Q138 155 142 200 Z" fill="url(#bSuit)"/>
+            <path d="M18 200 Q22 155 45 142 Q58 136 80 134 Q102 136 115 142 Q138 155 142 200 Z" fill="url(#bSuitSheen)"/>
+            <!-- Lapels -->
+            <path d="M80 134 Q70 148 62 162 L75 165 Q78 150 80 142 Q82 150 85 165 L98 162 Q90 148 80 134 Z" fill="rgba(255,255,255,0.07)"/>
+            <!-- Collar / white shirt hint -->
+            <path d="M72 135 Q80 130 88 135 L85 145 Q80 141 75 145 Z" fill="rgba(255,255,255,0.55)"/>
+
+            <!-- NECK -->
+            <path d="M68 118 Q80 115 92 118 L90 135 Q80 132 70 135 Z" fill="url(#bSkin)"/>
+            <!-- Neck shadow -->
+            <path d="M68 118 Q80 115 92 118 L92 122 Q80 120 68 122 Z" fill="rgba(0,0,0,0.12)"/>
+
+            <!-- HAIR BACK LAYER (behind head) -->
+            <ellipse cx="80" cy="76" rx="41" ry="46" fill="url(#bHairBase)" filter="url(#bHairBlur)"/>
+            <!-- Long hair sides -->
+            <path d="M39 80 Q32 110 36 150 Q44 158 52 155 Q44 130 42 100 Q40 90 39 80 Z" fill="url(#bHairBase)"/>
+            <path d="M121 80 Q128 110 124 150 Q116 158 108 155 Q116 130 118 100 Q120 90 121 80 Z" fill="url(#bHairBase)"/>
+            <!-- Hair strands detail left -->
+            <path d="M40 82 Q35 105 37 135" stroke="rgba(80,35,0,0.5)" stroke-width="1.2" fill="none"/>
+            <path d="M42 80 Q37 108 40 138" stroke="rgba(90,40,0,0.4)" stroke-width="0.9" fill="none"/>
+            <!-- Hair strands detail right -->
+            <path d="M120 82 Q125 105 123 135" stroke="rgba(80,35,0,0.5)" stroke-width="1.2" fill="none"/>
+            <path d="M118 80 Q123 108 120 138" stroke="rgba(90,40,0,0.4)" stroke-width="0.9" fill="none"/>
+
+            <!-- HEAD -->
+            <ellipse cx="80" cy="82" rx="40" ry="44" fill="url(#bSkin)" filter="url(#bSoftFace)"/>
+            <!-- Subsurface scatter overlay -->
+            <ellipse cx="80" cy="82" rx="40" ry="44" fill="url(#bSkinSSS)"/>
+            <!-- Cheek blush -->
+            <ellipse cx="56" cy="90" rx="12" ry="8" fill="rgba(255,120,100,0.13)"/>
+            <ellipse cx="104" cy="90" rx="12" ry="8" fill="rgba(255,120,100,0.13)"/>
+            <!-- Forehead highlight -->
+            <ellipse cx="78" cy="62" rx="14" ry="8" fill="rgba(255,255,255,0.12)"/>
+            <!-- Temple shadow left -->
+            <path d="M41 72 Q39 82 40 90" stroke="rgba(0,0,0,0.10)" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <!-- Temple shadow right -->
+            <path d="M119 72 Q121 82 120 90" stroke="rgba(0,0,0,0.10)" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <!-- Under-chin shadow -->
+            <ellipse cx="80" cy="124" rx="28" ry="6" fill="rgba(0,0,0,0.18)"/>
+
+            <!-- HAIR TOP (over face edges) -->
+            <path d="M40 78 Q40 40 80 36 Q120 40 120 78 Q116 55 80 52 Q44 55 40 78 Z" fill="url(#bHairBase)"/>
+            <!-- Hair sheen highlight -->
+            <path d="M52 42 Q80 36 108 42 Q96 38 80 37 Q64 38 52 42 Z" fill="url(#bHairSheen)"/>
+            <!-- Parting highlight -->
+            <path d="M76 37 Q80 34 84 37" stroke="rgba(255,200,100,0.25)" stroke-width="2" fill="none"/>
+            <!-- Individual hair strand lines for realism -->
+            <path d="M58 40 Q54 52 52 68" stroke="rgba(100,50,10,0.3)" stroke-width="0.8" fill="none"/>
+            <path d="M68 37 Q65 50 63 66" stroke="rgba(100,50,10,0.25)" stroke-width="0.8" fill="none"/>
+            <path d="M92 37 Q95 50 97 66" stroke="rgba(100,50,10,0.25)" stroke-width="0.8" fill="none"/>
+            <path d="M102 40 Q106 52 108 68" stroke="rgba(100,50,10,0.3)" stroke-width="0.8" fill="none"/>
+
+            <!-- EYEBROWS -->
+            <path d="M52 70 Q62 65 72 68" stroke="#1C0800" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M52 70 Q62 65 72 68" stroke="rgba(80,35,5,0.5)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <path d="M88 68 Q98 65 108 70" stroke="#1C0800" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M88 68 Q98 65 108 70" stroke="rgba(80,35,5,0.5)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+
+            <!-- EYES - left -->
+            <ellipse cx="62" cy="80" rx="11" ry="9" fill="#0A0814"/>
+            <ellipse cx="62" cy="80" rx="8.5" ry="7.5" fill="url(#bIris)"/>
+            <circle cx="62" cy="80" r="5" fill="#050308"/>
+            <circle cx="65" cy="77" r="2.5" fill="rgba(255,255,255,0.85)"/>
+            <circle cx="59" cy="82" r="1" fill="rgba(255,255,255,0.3)"/>
+            <!-- Eyelid crease -->
+            <path d="M51 76 Q62 73 73 76" stroke="rgba(180,100,60,0.35)" stroke-width="1.2" fill="none"/>
+            <!-- Lower lashline -->
+            <path d="M51 84 Q62 87 73 84" stroke="rgba(0,0,0,0.15)" stroke-width="1" fill="none"/>
+            <!-- Lashes top left -->
+            <path d="M52 76 Q50 72 51 69" stroke="#0A0408" stroke-width="1.2" fill="none"/>
+            <path d="M57 74 Q56 70 57 67" stroke="#0A0408" stroke-width="1.2" fill="none"/>
+            <path d="M63 73 Q63 69 64 66" stroke="#0A0408" stroke-width="1.2" fill="none"/>
+            <path d="M69 74 Q70 70 71 68" stroke="#0A0408" stroke-width="1.2" fill="none"/>
+            <path d="M73 76 Q75 73 76 71" stroke="#0A0408" stroke-width="1.2" fill="none"/>
+
+            <!-- EYES - right -->
+            <ellipse cx="98" cy="80" rx="11" ry="9" fill="#0A0814"/>
+            <ellipse cx="98" cy="80" rx="8.5" ry="7.5" fill="url(#bIris)"/>
+            <circle cx="98" cy="80" r="5" fill="#050308"/>
+            <circle cx="101" cy="77" r="2.5" fill="rgba(255,255,255,0.85)"/>
+            <circle cx="95" cy="82" r="1" fill="rgba(255,255,255,0.3)"/>
+            <!-- Eyelid crease -->
+            <path d="M87 76 Q98 73 109 76" stroke="rgba(180,100,60,0.35)" stroke-width="1.2" fill="none"/>
+            <!-- Lashes top right -->
+            <path d="M88 76 Q86 72 87 69" stroke="#0A0408" stroke-width="1.2" fill="none"/>
+            <path d="M93 74 Q92 70 93 67" stroke="#0A0408" stroke-width="1.2" fill="none"/>
+            <path d="M99 73 Q99 69 100 66" stroke="#0A0408" stroke-width="1.2" fill="none"/>
+            <path d="M105 74 Q106 70 107 68" stroke="#0A0408" stroke-width="1.2" fill="none"/>
+            <path d="M109 76 Q111 73 112 71" stroke="#0A0408" stroke-width="1.2" fill="none"/>
+
+            <!-- NOSE -->
+            <path d="M80 85 Q77 94 74 98 Q80 101 86 98 Q83 94 80 85 Z" fill="rgba(0,0,0,0.09)"/>
+            <circle cx="75" cy="98" r="3.5" fill="rgba(0,0,0,0.1)"/>
+            <circle cx="85" cy="98" r="3.5" fill="rgba(0,0,0,0.1)"/>
+            <!-- Nose bridge highlight -->
+            <path d="M79 82 Q80 88 80 94" stroke="rgba(255,255,255,0.14)" stroke-width="2" fill="none"/>
+
+            <!-- LIPS -->
+            <path d="M66 108 Q80 115 94 108" fill="url(#bLip)" stroke="none"/>
+            <path d="M66 108 Q72 104 80 103 Q88 104 94 108" fill="url(#bLip)"/>
+            <!-- Lip highlight -->
+            <path d="M73 105 Q80 103 87 105" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <!-- Lip line -->
+            <path d="M66 108 Q80 110 94 108" stroke="rgba(100,0,20,0.4)" stroke-width="0.8" fill="none"/>
+            <!-- Cupid bow -->
+            <path d="M72 108 Q76 106 80 107 Q84 106 88 108" stroke="rgba(180,40,60,0.4)" stroke-width="0.8" fill="none"/>
+
+            <!-- GOLD EARRINGS (dangling) -->
+            <circle cx="40" cy="88" r="5" fill="url(#bGold)" stroke="#AA8800" stroke-width="0.8"/>
+            <rect x="38.5" y="93" width="3" height="8" rx="1.5" fill="url(#bGold)" stroke="#AA8800" stroke-width="0.5"/>
+            <ellipse cx="40" cy="102" rx="4" ry="2.5" fill="url(#bGold)" stroke="#AA8800" stroke-width="0.5"/>
+            <circle cx="120" cy="88" r="5" fill="url(#bGold)" stroke="#AA8800" stroke-width="0.8"/>
+            <rect x="118.5" y="93" width="3" height="8" rx="1.5" fill="url(#bGold)" stroke="#AA8800" stroke-width="0.5"/>
+            <ellipse cx="120" cy="102" rx="4" ry="2.5" fill="url(#bGold)" stroke="#AA8800" stroke-width="0.5"/>
+
+            <!-- HOLOGRAPHIC HUD RINGS -->
+            <ellipse cx="80" cy="82" rx="46" ry="50" fill="none" stroke="rgba(255,215,0,0.12)" stroke-width="1" stroke-dasharray="4,6"/>
+            <ellipse cx="80" cy="82" rx="52" ry="57" fill="none" stroke="rgba(0,229,255,0.07)" stroke-width="0.8"/>
+            <!-- Scan line -->
+            <rect x="34" y="80" width="92" height="1.5" fill="rgba(0,229,255,0.35)" rx="1">
+              <animateTransform attributeName="transform" type="translate" values="0,0;0,50;0,0" dur="2.8s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.7;0.1;0.7" dur="2.8s" repeatCount="indefinite"/>
+            </rect>
           </svg>
+          </div>
         </div>
       </div>
       <div class="av-info">
@@ -771,43 +895,145 @@ nav{
     <div class="av-card">
       <div class="av-portrait">
         <div class="av-face">
-          <svg class="sven-fig" viewBox="0 0 130 170">
+<div class="av-portrait-wrap blue-glow">
+          <svg class="sven-fig" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <radialGradient id="sf1" cx="50%" cy="40%"><stop offset="0%" stop-color="#E8C89A"/><stop offset="70%" stop-color="#C49A6C"/><stop offset="100%" stop-color="#9B7045"/></radialGradient>
-              <linearGradient id="sf2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1565C0"/><stop offset="100%" stop-color="#0D47A1"/></linearGradient>
-              <filter id="sfaceGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <!-- Subsurface skin - fair/Nordic -->
+              <radialGradient id="sSkin" cx="44%" cy="36%" r="58%"><stop offset="0%" stop-color="#F5DCBC"/><stop offset="30%" stop-color="#E8C49A"/><stop offset="65%" stop-color="#D4A878"/><stop offset="90%" stop-color="#B88450"/><stop offset="100%" stop-color="#8B6030"/></radialGradient>
+              <radialGradient id="sSkinSSS" cx="38%" cy="28%" r="55%"><stop offset="0%" stop-color="rgba(255,210,170,0.4)"/><stop offset="100%" stop-color="rgba(200,130,60,0.0)"/></radialGradient>
+              <!-- Short dark hair -->
+              <linearGradient id="sHair" x1="0%" y1="0%" x2="80%" y2="100%"><stop offset="0%" stop-color="#2A1600"/><stop offset="50%" stop-color="#1A0C00"/><stop offset="100%" stop-color="#0A0500"/></linearGradient>
+              <radialGradient id="sHairSheen" cx="30%" cy="15%" r="45%"><stop offset="0%" stop-color="rgba(200,140,60,0.2)"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></radialGradient>
+              <!-- Blue tech suit -->
+              <linearGradient id="sSuit" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1E78D4"/><stop offset="40%" stop-color="#0E50A0"/><stop offset="100%" stop-color="#061E5A"/></linearGradient>
+              <radialGradient id="sSuitSheen" cx="25%" cy="5%" r="65%"><stop offset="0%" stop-color="rgba(0,229,255,0.22)"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></radialGradient>
+              <!-- Eyes - ice blue -->
+              <radialGradient id="sIris" cx="38%" cy="32%" r="58%"><stop offset="0%" stop-color="#7DD8F0"/><stop offset="40%" stop-color="#00B4D8"/><stop offset="80%" stop-color="#006080"/><stop offset="100%" stop-color="#002040"/></radialGradient>
+              <!-- Stubble -->
+              <radialGradient id="sStubble" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(40,22,4,0.32)"/><stop offset="100%" stop-color="rgba(20,10,2,0)"/></radialGradient>
+              <!-- Ambient teal glow -->
+              <radialGradient id="sAura" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(0,229,255,0.18)"/><stop offset="100%" stop-color="rgba(21,101,192,0.0)"/></radialGradient>
+              <!-- Filters -->
+              <filter id="sSoftFace" x="-15%" y="-15%" width="130%" height="130%"><feGaussianBlur in="SourceAlpha" stdDeviation="2" result="bl"/><feComposite in="SourceGraphic" in2="bl" operator="over"/></filter>
+              <filter id="sGlowF"><feGaussianBlur stdDeviation="5" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
             </defs>
-            <!-- Body/suit -->
-            <path d="M20 130 Q28 112 65 110 Q102 112 110 130 L115 170 L15 170 Z" fill="url(#sf2)"/>
-            <!-- Neck -->
-            <rect x="55" y="100" width="20" height="16" rx="4" fill="url(#sf1)"/>
-            <!-- Head -->
-            <ellipse cx="65" cy="78" rx="34" ry="37" fill="url(#sf1)" filter="url(#sfaceGlow)"/>
-            <!-- Short hair -->
-            <path d="M31 72 Q31 40 65 38 Q99 40 99 72 Q96 50 65 48 Q34 50 31 72 Z" fill="#2a1800"/>
-            <!-- Beard stubble hint -->
-            <ellipse cx="65" cy="104" rx="28" ry="10" fill="rgba(42,24,0,0.2)"/>
-            <!-- Eyes -->
-            <ellipse cx="50" cy="76" rx="9" ry="8" fill="#0a0a14"/>
-            <ellipse cx="80" cy="76" rx="9" ry="8" fill="#0a0a14"/>
-            <ellipse cx="51" cy="75" rx="6" ry="6" fill="#00B4D8"/>
-            <ellipse cx="81" cy="75" rx="6" ry="6" fill="#00B4D8"/>
-            <circle cx="52" cy="74" r="3" fill="#000"/>
-            <circle cx="82" cy="74" r="3" fill="#000"/>
-            <circle cx="53.5" cy="72.5" r="1.4" fill="rgba(255,255,255,0.8)"/>
-            <circle cx="83.5" cy="72.5" r="1.4" fill="rgba(255,255,255,0.8)"/>
-            <!-- Strong eyebrows -->
-            <path d="M41 67 Q50 63 60 67" stroke="#2a1800" stroke-width="3" fill="none" stroke-linecap="round"/>
-            <path d="M70 67 Q80 63 89 67" stroke="#2a1800" stroke-width="3" fill="none" stroke-linecap="round"/>
-            <!-- Nose -->
-            <path d="M65 80 Q61 88 59 91 Q65 93 71 91 Q69 88 65 80 Z" fill="rgba(0,0,0,0.1)"/>
-            <!-- Mouth - slight smile -->
-            <path d="M55 99 Q65 105 75 99" stroke="#9B7045" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+            <!-- AMBIENT AURA -->
+            <ellipse cx="80" cy="100" rx="75" ry="95" fill="url(#sAura)" opacity="0.8"/>
+
+            <!-- BODY / TECH JACKET -->
+            <path d="M12 200 Q18 152 44 140 Q58 134 80 132 Q102 134 116 140 Q142 152 148 200 Z" fill="url(#sSuit)"/>
+            <path d="M12 200 Q18 152 44 140 Q58 134 80 132 Q102 134 116 140 Q142 152 148 200 Z" fill="url(#sSuitSheen)"/>
+            <!-- Jacket panel lines -->
+            <path d="M80 132 L72 180 M80 132 L88 180" stroke="rgba(0,229,255,0.2)" stroke-width="1" fill="none"/>
+            <!-- Collar -->
+            <path d="M70 133 Q80 128 90 133 L87 148 Q80 143 73 148 Z" fill="rgba(255,255,255,0.5)"/>
+            <!-- Tech badge on chest -->
+            <rect x="92" y="155" width="22" height="14" rx="3" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.3)" stroke-width="0.8"/>
+            <text x="103" y="165" font-size="5" text-anchor="middle" fill="rgba(0,229,255,0.7)" font-family="monospace">DEV</text>
+
+            <!-- NECK -->
+            <path d="M67 116 Q80 113 93 116 L91 133 Q80 130 69 133 Z" fill="url(#sSkin)"/>
+            <path d="M67 116 Q80 113 93 116 L93 121 Q80 119 67 121 Z" fill="rgba(0,0,0,0.1)"/>
+
+            <!-- SHORT HAIR BASE -->
+            <ellipse cx="80" cy="74" rx="42" ry="46" fill="url(#sHair)"/>
+            <!-- Hair texture / short crop -->
+            <path d="M38 74 Q38 36 80 32 Q122 36 122 74 Q118 50 80 47 Q42 50 38 74 Z" fill="url(#sHair)"/>
+            <!-- Hair sheen -->
+            <ellipse cx="72" cy="42" rx="20" ry="8" fill="url(#sHairSheen)"/>
+            <!-- Short hair strand texture -->
+            <path d="M48 50 Q46 60 46 70" stroke="rgba(80,45,10,0.25)" stroke-width="0.8" fill="none"/>
+            <path d="M58 44 Q57 56 57 68" stroke="rgba(80,45,10,0.2)" stroke-width="0.8" fill="none"/>
+            <path d="M80 40 Q80 52 80 64" stroke="rgba(80,45,10,0.2)" stroke-width="0.8" fill="none"/>
+            <path d="M102 44 Q103 56 103 68" stroke="rgba(80,45,10,0.2)" stroke-width="0.8" fill="none"/>
+            <path d="M112 50 Q114 60 114 70" stroke="rgba(80,45,10,0.25)" stroke-width="0.8" fill="none"/>
+
+            <!-- HEAD -->
+            <ellipse cx="80" cy="80" rx="41" ry="45" fill="url(#sSkin)" filter="url(#sSoftFace)"/>
+            <ellipse cx="80" cy="80" rx="41" ry="45" fill="url(#sSkinSSS)"/>
+            <!-- Forehead highlight -->
+            <ellipse cx="78" cy="60" rx="16" ry="9" fill="rgba(255,255,255,0.1)"/>
+            <!-- Cheekbone highlights -->
+            <ellipse cx="52" cy="88" rx="10" ry="7" fill="rgba(255,220,180,0.12)"/>
+            <ellipse cx="108" cy="88" rx="10" ry="7" fill="rgba(255,220,180,0.12)"/>
+            <!-- Jaw shadow -->
+            <ellipse cx="80" cy="122" rx="30" ry="7" fill="rgba(0,0,0,0.2)"/>
             <!-- Jaw definition -->
-            <path d="M31 82 Q30 96 38 104 Q52 112 65 112 Q78 112 92 104 Q100 96 99 82" stroke="rgba(0,0,0,0.08)" stroke-width="2" fill="none"/>
-            <!-- Holographic glow aura -->
-            <ellipse cx="65" cy="78" rx="36" ry="40" fill="none" stroke="rgba(0,229,255,0.12)" stroke-width="1"/>
+            <path d="M39 88 Q38 104 46 114 Q62 124 80 125 Q98 124 114 114 Q122 104 121 88" stroke="rgba(0,0,0,0.07)" stroke-width="2.5" fill="none"/>
+
+            <!-- STRONG EYEBROWS -->
+            <path d="M50 70 Q62 64 74 68" stroke="#1E0C00" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            <path d="M50 70 Q62 64 74 68" stroke="rgba(60,30,5,0.45)" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M86 68 Q98 64 110 70" stroke="#1E0C00" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            <path d="M86 68 Q98 64 110 70" stroke="rgba(60,30,5,0.45)" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+            <!-- EYES - left (ice blue) -->
+            <ellipse cx="62" cy="80" rx="12" ry="10" fill="#08080E"/>
+            <ellipse cx="62" cy="80" rx="9" ry="8" fill="url(#sIris)"/>
+            <circle cx="62" cy="80" r="5.5" fill="#040208"/>
+            <circle cx="65.5" cy="77" r="2.8" fill="rgba(255,255,255,0.88)"/>
+            <circle cx="59" cy="83" r="1.1" fill="rgba(255,255,255,0.28)"/>
+            <!-- Eyelid -->
+            <path d="M50 76 Q62 72 74 76" stroke="rgba(140,90,40,0.3)" stroke-width="1.2" fill="none"/>
+            <!-- Lashes top left -->
+            <path d="M51 76 Q49 71 50 68" stroke="#060306" stroke-width="1.3" fill="none"/>
+            <path d="M56 73 Q55 68 56 65" stroke="#060306" stroke-width="1.3" fill="none"/>
+            <path d="M62 72 Q62 67 63 64" stroke="#060306" stroke-width="1.3" fill="none"/>
+            <path d="M68 73 Q69 68 70 66" stroke="#060306" stroke-width="1.3" fill="none"/>
+            <path d="M73 76 Q75 72 76 70" stroke="#060306" stroke-width="1.3" fill="none"/>
+
+            <!-- EYES - right -->
+            <ellipse cx="98" cy="80" rx="12" ry="10" fill="#08080E"/>
+            <ellipse cx="98" cy="80" rx="9" ry="8" fill="url(#sIris)"/>
+            <circle cx="98" cy="80" r="5.5" fill="#040208"/>
+            <circle cx="101.5" cy="77" r="2.8" fill="rgba(255,255,255,0.88)"/>
+            <circle cx="95" cy="83" r="1.1" fill="rgba(255,255,255,0.28)"/>
+            <path d="M86 76 Q98 72 110 76" stroke="rgba(140,90,40,0.3)" stroke-width="1.2" fill="none"/>
+            <path d="M87 76 Q85 71 86 68" stroke="#060306" stroke-width="1.3" fill="none"/>
+            <path d="M92 73 Q91 68 92 65" stroke="#060306" stroke-width="1.3" fill="none"/>
+            <path d="M98 72 Q98 67 99 64" stroke="#060306" stroke-width="1.3" fill="none"/>
+            <path d="M104 73 Q105 68 106 66" stroke="#060306" stroke-width="1.3" fill="none"/>
+            <path d="M109 76 Q111 72 112 70" stroke="#060306" stroke-width="1.3" fill="none"/>
+
+            <!-- NOSE - strong bridge -->
+            <path d="M80 85 Q76 96 73 101 Q80 104 87 101 Q84 96 80 85 Z" fill="rgba(0,0,0,0.08)"/>
+            <circle cx="74" cy="100" r="4" fill="rgba(0,0,0,0.09)"/>
+            <circle cx="86" cy="100" r="4" fill="rgba(0,0,0,0.09)"/>
+            <!-- Nose bridge highlight -->
+            <path d="M79 82 Q80 90 80 96" stroke="rgba(255,255,255,0.12)" stroke-width="2.2" fill="none"/>
+
+            <!-- MOUTH - strong / slight smirk -->
+            <path d="M68 111 Q80 117 92 111" fill="rgba(160,90,40,0.7)"/>
+            <path d="M68 111 Q74 107 80 106 Q86 107 92 111" fill="rgba(140,75,30,0.8)"/>
+            <!-- Lip highlight -->
+            <path d="M74 107 Q80 105 86 107" stroke="rgba(255,230,200,0.2)" stroke-width="1.5" fill="none"/>
+            <!-- Lip line -->
+            <path d="M68 111 Q80 113 92 111" stroke="rgba(80,40,10,0.35)" stroke-width="0.8" fill="none"/>
+
+            <!-- STUBBLE / BEARD SHADOW -->
+            <ellipse cx="80" cy="112" rx="30" ry="12" fill="url(#sStubble)"/>
+            <!-- Stubble dots -->
+            <circle cx="68" cy="108" r="0.8" fill="rgba(40,20,5,0.35)"/>
+            <circle cx="72" cy="112" r="0.7" fill="rgba(40,20,5,0.3)"/>
+            <circle cx="76" cy="109" r="0.8" fill="rgba(40,20,5,0.35)"/>
+            <circle cx="80" cy="114" r="0.7" fill="rgba(40,20,5,0.28)"/>
+            <circle cx="84" cy="109" r="0.8" fill="rgba(40,20,5,0.35)"/>
+            <circle cx="88" cy="112" r="0.7" fill="rgba(40,20,5,0.3)"/>
+            <circle cx="92" cy="108" r="0.8" fill="rgba(40,20,5,0.32)"/>
+            <circle cx="70" cy="116" r="0.7" fill="rgba(40,20,5,0.25)"/>
+            <circle cx="90" cy="116" r="0.7" fill="rgba(40,20,5,0.25)"/>
+
+            <!-- HOLOGRAPHIC HUD -->
+            <ellipse cx="80" cy="80" rx="47" ry="52" fill="none" stroke="rgba(0,229,255,0.12)" stroke-width="1" stroke-dasharray="3,7"/>
+            <ellipse cx="80" cy="80" rx="54" ry="59" fill="none" stroke="rgba(21,101,192,0.07)" stroke-width="0.8"/>
+            <!-- Teal scan line -->
+            <rect x="34" y="78" width="92" height="1.5" fill="rgba(0,229,255,0.4)" rx="1">
+              <animateTransform attributeName="transform" type="translate" values="0,0;0,52;0,0" dur="3.2s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.8;0.1;0.8" dur="3.2s" repeatCount="indefinite"/>
+            </rect>
           </svg>
+          </div>
         </div>
       </div>
       <div class="av-info">
@@ -1081,18 +1307,60 @@ nav{
 </div>
 
 <!-- CHATBOX -->
-<div id="chatOverlay" style="position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.8);backdrop-filter:blur(20px);display:none;align-items:flex-end;justify-content:flex-end;padding:20px;">
-  <div style="width:min(380px,95vw);height:min(540px,80vh);background:linear-gradient(145deg,#0A0A18,#060610);border:1px solid rgba(255,215,0,0.2);border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.8);">
-    <div style="padding:18px 22px;background:linear-gradient(135deg,rgba(220,20,60,0.12),rgba(255,215,0,0.06));border-bottom:1px solid rgba(255,215,0,0.1);display:flex;align-items:center;gap:12px;position:relative;">
-      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red),var(--gold),var(--teal),var(--blue),var(--red));background-size:300%;animation:rainbowFlow 4s linear infinite;"></div>
-      <div id="chatAvatarDot" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--gold));display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 15px rgba(255,215,0,0.3);">&#9889;</div>
-      <div><div id="chatAvatarName" style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;">Belinda AI</div><div style="font-size:11px;color:rgba(0,229,255,0.7);">&#11044; Online &#8212; Chief Architect</div></div>
-      <button onclick="closeChat()" style="margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.35);font-size:20px;cursor:pointer;">&#10005;</button>
+<div id="chatOverlay" style="position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.82);backdrop-filter:blur(24px);display:none;align-items:flex-end;justify-content:flex-end;padding:20px;">
+  <div style="width:min(420px,96vw);height:min(600px,85vh);background:linear-gradient(145deg,#0A0A18,#060610);border:1px solid rgba(255,215,0,0.2);border-radius:26px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,0.9);">
+    <!-- Rainbow top bar -->
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;border-radius:26px 26px 0 0;background:linear-gradient(90deg,var(--red),var(--gold),var(--teal),var(--blue),var(--red));background-size:300%;animation:rainbowFlow 4s linear infinite;z-index:2;"></div>
+    <!-- Header with BOTH avatars -->
+    <div style="padding:14px 18px 12px;background:linear-gradient(135deg,rgba(220,20,60,0.1),rgba(21,101,192,0.08));border-bottom:1px solid rgba(255,215,0,0.1);display:flex;align-items:center;gap:10px;">
+      <!-- Belinda avatar switcher -->
+      <div id="av-btn-belinda" onclick="switchChatAvatar('belinda')" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;border-radius:14px;border:2px solid rgba(255,215,0,0.5);background:rgba(255,215,0,0.08);transition:all 0.2s;">
+        <svg width="38" height="46" viewBox="0 0 160 200">
+          <defs><radialGradient id="hb1" cx="46%" cy="38%" r="55%"><stop offset="0%" stop-color="#FFE0C8"/><stop offset="60%" stop-color="#E8A880"/><stop offset="100%" stop-color="#B87048"/></radialGradient><linearGradient id="hb2" x1="0%" y1="0%" x2="60%" y2="100%"><stop offset="0%" stop-color="#1C0A00"/><stop offset="100%" stop-color="#0A0400"/></linearGradient><linearGradient id="hb3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#DC143C"/><stop offset="100%" stop-color="#5B0010"/></linearGradient></defs>
+          <path d="M18 200 Q22 155 45 142 Q58 136 80 134 Q102 136 115 142 Q138 155 142 200 Z" fill="url(#hb3)"/>
+          <ellipse cx="80" cy="76" rx="41" ry="46" fill="url(#hb2)"/>
+          <path d="M40 78 Q40 40 80 36 Q120 40 120 78 Q116 55 80 52 Q44 55 40 78 Z" fill="url(#hb2)"/>
+          <ellipse cx="80" cy="82" rx="40" ry="44" fill="url(#hb1)"/>
+          <ellipse cx="62" cy="80" rx="8" ry="7" fill="#1565C0"/><circle cx="62" cy="80" r="4" fill="#050308"/><circle cx="64" cy="78" r="1.8" fill="rgba(255,255,255,0.85)"/>
+          <ellipse cx="98" cy="80" rx="8" ry="7" fill="#1565C0"/><circle cx="98" cy="80" r="4" fill="#050308"/><circle cx="100" cy="78" r="1.8" fill="rgba(255,255,255,0.85)"/>
+          <path d="M66 108 Q80 115 94 108" fill="#C01830"/>
+        </svg>
+        <span style="font-size:9px;font-weight:800;color:rgba(255,215,0,0.9);letter-spacing:0.5px;">BELINDA</span>
+      </div>
+      <!-- Active badge -->
+      <div style="flex:1;text-align:center;">
+        <div id="chatAvatarName" style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;background:linear-gradient(135deg,#FFD700,#FFA500);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">Belinda AI</div>
+        <div id="chatAvatarRole" style="font-size:10px;color:rgba(0,229,255,0.7);margin-top:2px;">&#11044; Online &mdash; Chief Architect</div>
+        <div id="chatAvatarDot" style="display:none;"></div>
+      </div>
+      <!-- Sven avatar switcher -->
+      <div id="av-btn-sven" onclick="switchChatAvatar('sven')" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;border-radius:14px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);transition:all 0.2s;">
+        <svg width="38" height="46" viewBox="0 0 160 200">
+          <defs><radialGradient id="hs1" cx="44%" cy="36%" r="58%"><stop offset="0%" stop-color="#F5DCBC"/><stop offset="65%" stop-color="#D4A878"/><stop offset="100%" stop-color="#8B6030"/></radialGradient><linearGradient id="hs2" x1="0%" y1="0%" x2="80%" y2="100%"><stop offset="0%" stop-color="#2A1600"/><stop offset="100%" stop-color="#0A0500"/></linearGradient><linearGradient id="hs3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1E78D4"/><stop offset="100%" stop-color="#061E5A"/></linearGradient></defs>
+          <path d="M12 200 Q18 152 44 140 Q58 134 80 132 Q102 134 116 140 Q142 152 148 200 Z" fill="url(#hs3)"/>
+          <ellipse cx="80" cy="74" rx="42" ry="46" fill="url(#hs2)"/>
+          <path d="M38 74 Q38 36 80 32 Q122 36 122 74 Q118 50 80 47 Q42 50 38 74 Z" fill="url(#hs2)"/>
+          <ellipse cx="80" cy="80" rx="41" ry="45" fill="url(#hs1)"/>
+          <ellipse cx="62" cy="80" rx="9" ry="8" fill="#00B4D8"/><circle cx="62" cy="80" r="5" fill="#040208"/><circle cx="65" cy="77" r="2" fill="rgba(255,255,255,0.88)"/>
+          <ellipse cx="98" cy="80" rx="9" ry="8" fill="#00B4D8"/><circle cx="98" cy="80" r="5" fill="#040208"/><circle cx="101" cy="77" r="2" fill="rgba(255,255,255,0.88)"/>
+          <ellipse cx="80" cy="112" rx="28" ry="10" fill="rgba(40,22,4,0.28)"/>
+        </svg>
+        <span style="font-size:9px;font-weight:800;color:rgba(0,229,255,0.7);letter-spacing:0.5px;">SVEN</span>
+      </div>
+      <button onclick="closeChat()" style="margin-left:6px;background:none;border:none;color:rgba(255,255,255,0.3);font-size:20px;cursor:pointer;padding:4px;">&#10005;</button>
     </div>
-    <div id="chatMessages" style="flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;"></div>
-    <div style="padding:14px;border-top:1px solid rgba(255,215,0,0.08);display:flex;gap:8px;background:rgba(255,255,255,0.02);">
-      <input id="chatInput" placeholder="Ask anything..." style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,215,0,0.15);color:#fff;padding:10px 14px;border-radius:10px;font-size:13px;outline:none;" onkeydown="if(event.key==='Enter')sendChat()"/>
-      <button onclick="sendChat()" style="background:linear-gradient(135deg,var(--red),var(--gold2));border:none;color:#fff;padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:800;font-size:12px;box-shadow:0 4px 15px rgba(220,20,60,0.3);">SEND</button>
+    <div id="chatMessages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;"></div>
+    <!-- Quick action chips -->
+    <div style="padding:8px 16px 0;display:flex;gap:6px;flex-wrap:wrap;">
+      <button onclick="injectChat('build me an app')" style="background:rgba(220,20,60,0.1);border:1px solid rgba(220,20,60,0.25);color:rgba(255,255,255,0.7);padding:4px 11px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;">&#128241; Build App</button>
+      <button onclick="injectChat('generate a logo')" style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);color:rgba(255,215,0,0.8);padding:4px 11px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;">&#127912; Logo</button>
+      <button onclick="injectChat('scan internet for latest flutter trends')" style="background:rgba(0,229,255,0.07);border:1px solid rgba(0,229,255,0.2);color:rgba(0,229,255,0.8);padding:4px 11px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;">&#127760; Web Scan</button>
+      <button onclick="injectChat('generate auth code')" style="background:rgba(21,101,192,0.1);border:1px solid rgba(21,101,192,0.25);color:rgba(100,180,255,0.8);padding:4px 11px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;">&#128272; Auth</button>
+      <button onclick="injectChat('generate a high quality app ui photo')" style="background:rgba(139,69,255,0.09);border:1px solid rgba(139,69,255,0.22);color:rgba(180,120,255,0.8);padding:4px 11px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;">&#128247; 8K Image</button>
+    </div>
+    <div style="padding:12px 14px;border-top:1px solid rgba(255,215,0,0.08);display:flex;gap:8px;background:rgba(255,255,255,0.02);margin-top:8px;">
+      <input id="chatInput" placeholder="Build app, generate logo, scan web..." style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,215,0,0.15);color:#fff;padding:10px 14px;border-radius:10px;font-size:13px;outline:none;" onkeydown="if(event.key==='Enter')sendChat()"/>
+      <button onclick="sendChat()" style="background:linear-gradient(135deg,var(--red),var(--gold2));border:none;color:#fff;padding:10px 18px;border-radius:10px;cursor:pointer;font-weight:800;font-size:12px;box-shadow:0 4px 15px rgba(220,20,60,0.3);">SEND</button>
     </div>
   </div>
 </div>
@@ -1398,6 +1666,7 @@ function classifyIntent(msg){
   if(/android|apk|aab|gradle|playstore|play store|google play/.test(m)) return 'ANDROID_BUILD';
   if(/ios|apple|xcode|ipa|app store|testflight/.test(m)) return 'IOS_BUILD';
   if(/ci.?cd|github|actions|deploy|pipeline|automat/.test(m)) return 'DEVOPS';
+  if(/logo|icon|image|photo|picture|graphic|8k|design.*image|create.*image|generate.*image|ui.*mockup|screenshot|banner|splash/.test(m)) return 'IMAGE_GEN';
   if(/search|scan|internet|online|latest|trend|news|2024|2025|2026|current|today|google/.test(m)) return 'WEB_SCAN';
   if(/monetis|revenue|ads|premium|subscription|purchase|price/.test(m)) return 'MONETISE';
   if(/error|crash|bug|fix|debug|problem|issue/.test(m)) return 'DEBUG';
@@ -1901,6 +2170,10 @@ class MediaService {
           Want me to open Play Console or App Store Connect now?`
         :`&#128640; Publishing pipeline initiated. <button onclick="openPlayStoreModal('My App')" style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.25);color:rgba(0,229,255,0.8);padding:4px 12px;border-radius:8px;cursor:pointer;font-size:12px;">Open Play Console</button> &nbsp; <a href="https://appstoreconnect.apple.com" target="_blank" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);padding:4px 12px;border-radius:8px;font-size:12px;text-decoration:none;">App Store Connect</a>`;
 
+    case 'IMAGE_GEN':{
+      return genImageOutput(userMsg,isBelinda);
+    }
+
     case 'WEB_SCAN':{
       const topic=userMsg.replace(/search|scan|internet|online|latest|find|google|lookup/gi,'').trim()||'flutter';
       const hits=webScan(topic);
@@ -1978,10 +2251,226 @@ function generateContextualResponse(msg,isBelinda){
   }
 }
 
+// ── 8K Image / Logo Generator ──
+function genImageOutput(msg,isBelinda){
+  const m=msg.toLowerCase();
+  const isLogo=m.includes('logo')||m.includes('icon');
+  const isMockup=m.includes('mockup')||m.includes('ui')||m.includes('screen')||m.includes('screenshot');
+  const isPhoto=m.includes('photo')||m.includes('realistic')||m.includes('8k')||m.includes('high res');
+  const isBanner=m.includes('banner')||m.includes('splash');
+
+  // extract name hint
+  const nameMatch=msg.match(/for\s+([\w\s]+?)(?:\s+app|\s+logo|\s+brand|$)/i);
+  const brandName=nameMatch?nameMatch[1].trim():'Your App';
+  const initial=brandName[0].toUpperCase();
+
+  // colour palette from message
+  const col=m.includes('red')?['#DC143C','#FF4060','#8B0020']:m.includes('blue')?['#1565C0','#00E5FF','#0A2A6A']:m.includes('gold')?['#FFD700','#FFA500','#664400']:m.includes('green')?['#00B050','#00FF88','#004020']:m.includes('purple')?['#8B45FF','#C080FF','#3A0080']:['#DC143C','#FFD700','#1565C0'];
+  const [c1,c2,c3]=col;
+
+  let svgContent='';
+  let label='';
+  let desc='';
+
+  if(isLogo||(!isMockup&&!isPhoto&&!isBanner)){
+    label=`&#127912; 8K Logo &mdash; &ldquo;${brandName}&rdquo;`;
+    desc=isBelinda?'Logo exported at vector resolution (scalable to 8K+). Download as SVG for print or app icon.':'Logo ready. Use this as your app icon base — export at 1024×1024 PNG for stores.';
+    svgContent=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" style="width:100%;max-width:300px;display:block;margin:0 auto;">
+  <defs>
+    <radialGradient id="lgBg" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="${c3}" stop-opacity="0.9"/><stop offset="100%" stop-color="#03030A"/></radialGradient>
+    <radialGradient id="lgShine" cx="35%" cy="25%" r="55%"><stop offset="0%" stop-color="rgba(255,255,255,0.22)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient>
+    <linearGradient id="lgText" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${c2}"/><stop offset="50%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/></linearGradient>
+    <linearGradient id="lgRing" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${c1}"/><stop offset="50%" stop-color="${c2}"/><stop offset="100%" stop-color="${c1}"/></linearGradient>
+    <filter id="lgGlow"><feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="lgShadow"><feDropShadow dx="0" dy="8" stdDeviation="20" flood-color="${c1}" flood-opacity="0.6"/></filter>
+    <clipPath id="lgClip"><circle cx="200" cy="200" r="180"/></clipPath>
+  </defs>
+  <!-- Outer ring glow -->
+  <circle cx="200" cy="200" r="195" fill="none" stroke="url(#lgRing)" stroke-width="3" opacity="0.5" filter="url(#lgGlow)"/>
+  <circle cx="200" cy="200" r="185" fill="none" stroke="${c2}" stroke-width="0.8" stroke-dasharray="8,12" opacity="0.4"/>
+  <!-- Main circle -->
+  <circle cx="200" cy="200" r="175" fill="url(#lgBg)" filter="url(#lgShadow)"/>
+  <!-- Shine overlay -->
+  <circle cx="200" cy="200" r="175" fill="url(#lgShine)" clip-path="url(#lgClip)"/>
+  <!-- Hexagon geometric accent -->
+  <polygon points="200,60 320,130 320,270 200,340 80,270 80,130" fill="none" stroke="${c1}" stroke-width="1.5" opacity="0.25"/>
+  <polygon points="200,90 295,145 295,255 200,310 105,255 105,145" fill="none" stroke="${c2}" stroke-width="1" opacity="0.18"/>
+  <!-- Inner decorative rings -->
+  <circle cx="200" cy="200" r="130" fill="none" stroke="${c1}" stroke-width="1" opacity="0.15" stroke-dasharray="4,8"/>
+  <!-- Logo letter -->
+  <text x="200" y="238" font-family="Arial Black, sans-serif" font-size="170" font-weight="900" text-anchor="middle" fill="url(#lgText)" filter="url(#lgGlow)" opacity="0.97">${initial}</text>
+  <!-- Brand name -->
+  <text x="200" y="355" font-family="Arial, sans-serif" font-size="28" font-weight="700" text-anchor="middle" fill="${c2}" letter-spacing="6" opacity="0.9">${brandName.toUpperCase().slice(0,12)}</text>
+  <!-- Tagline dots -->
+  <circle cx="160" cy="370" r="3" fill="${c1}" opacity="0.6"/>
+  <circle cx="200" cy="370" r="3" fill="${c2}" opacity="0.6"/>
+  <circle cx="240" cy="370" r="3" fill="${c1}" opacity="0.6"/>
+  <!-- Corner detail sparks -->
+  <line x1="340" y1="70" x2="355" y2="55" stroke="${c2}" stroke-width="2" opacity="0.5"/>
+  <line x1="347" y1="70" x2="347" y2="50" stroke="${c2}" stroke-width="1.5" opacity="0.4"/>
+  <line x1="340" y1="63" x2="360" y2="63" stroke="${c2}" stroke-width="1.5" opacity="0.4"/>
+  <line x1="60" y1="330" x2="45" y2="345" stroke="${c1}" stroke-width="2" opacity="0.5"/>
+  <line x1="53" y1="330" x2="53" y2="350" stroke="${c1}" stroke-width="1.5" opacity="0.4"/>
+  <line x1="60" y1="337" x2="40" y2="337" stroke="${c1}" stroke-width="1.5" opacity="0.4"/>
+</svg>`;
+  } else if(isMockup){
+    label='&#128241; 8K App UI Mockup';
+    desc=isBelinda?'Full-resolution UI mockup generated. Use as design reference or Play Store screenshot.':'Mockup ready for store submission screenshots.';
+    svgContent=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 640" style="width:100%;max-width:220px;display:block;margin:0 auto;border-radius:32px;box-shadow:0 20px 60px rgba(0,0,0,0.8);">
+  <defs>
+    <linearGradient id="muBg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#03030A"/><stop offset="100%" stop-color="#0A0A22"/></linearGradient>
+    <linearGradient id="muAccent" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/></linearGradient>
+    <filter id="muGlow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <!-- Phone body -->
+  <rect x="0" y="0" width="360" height="640" rx="32" fill="url(#muBg)"/>
+  <!-- Status bar -->
+  <rect x="0" y="0" width="360" height="44" rx="32" fill="rgba(255,255,255,0.03)"/>
+  <text x="24" y="28" font-size="12" fill="rgba(255,255,255,0.5)" font-family="Arial">9:41</text>
+  <text x="300" y="28" font-size="12" fill="rgba(255,255,255,0.5)" font-family="Arial">&#9679;&#9679;&#9679;</text>
+  <!-- Notch -->
+  <rect x="130" y="0" width="100" height="28" rx="0 0 16 16" fill="#03030A"/>
+  <!-- Hero gradient banner -->
+  <rect x="16" y="60" width="328" height="180" rx="20" fill="${c3}" opacity="0.8"/>
+  <rect x="16" y="60" width="328" height="180" rx="20" fill="url(#muAccent)" opacity="0.3"/>
+  <text x="180" y="120" font-size="22" font-weight="900" text-anchor="middle" fill="white" font-family="Arial Black">${brandName.slice(0,10)}</text>
+  <text x="180" y="148" font-size="12" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="Arial">Your AI-powered app</text>
+  <!-- CTA button -->
+  <rect x="110" y="172" width="140" height="44" rx="22" fill="url(#muAccent)" filter="url(#muGlow)"/>
+  <text x="180" y="200" font-size="13" font-weight="700" text-anchor="middle" fill="white" font-family="Arial">Get Started</text>
+  <!-- Content cards -->
+  <rect x="16" y="258" width="155" height="100" rx="16" fill="rgba(255,255,255,0.05)" stroke="${c1}" stroke-width="0.8" stroke-opacity="0.3"/>
+  <rect x="189" y="258" width="155" height="100" rx="16" fill="rgba(255,255,255,0.05)" stroke="${c2}" stroke-width="0.8" stroke-opacity="0.3"/>
+  <text x="94" y="300" font-size="28" text-anchor="middle" font-family="Arial">&#128640;</text>
+  <text x="94" y="330" font-size="11" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-family="Arial">Launch</text>
+  <text x="266" y="300" font-size="28" text-anchor="middle" font-family="Arial">&#9889;</text>
+  <text x="266" y="330" font-size="11" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-family="Arial">AI Build</text>
+  <!-- Stats row -->
+  <rect x="16" y="374" width="328" height="60" rx="14" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <text x="75" y="398" font-size="16" font-weight="900" text-anchor="middle" fill="${c2}" font-family="Arial Black">50K+</text>
+  <text x="75" y="416" font-size="10" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-family="Arial">Apps Built</text>
+  <text x="180" y="398" font-size="16" font-weight="900" text-anchor="middle" fill="${c1}" font-family="Arial Black">4.9&#9733;</text>
+  <text x="180" y="416" font-size="10" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-family="Arial">Rating</text>
+  <text x="285" y="398" font-size="16" font-weight="900" text-anchor="middle" fill="${c2}" font-family="Arial Black">24h</text>
+  <text x="285" y="416" font-size="10" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-family="Arial">Build Time</text>
+  <!-- Bottom nav -->
+  <rect x="0" y="570" width="360" height="70" rx="0 0 32 32" fill="rgba(10,10,24,0.95)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <text x="60" y="612" font-size="22" text-anchor="middle" fill="${c2}" font-family="Arial">&#127968;</text>
+  <text x="120" y="612" font-size="22" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-family="Arial">&#128269;</text>
+  <text x="180" y="612" font-size="22" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-family="Arial">&#128241;</text>
+  <text x="240" y="612" font-size="22" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-family="Arial">&#128172;</text>
+  <text x="300" y="612" font-size="22" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-family="Arial">&#128100;</text>
+</svg>`;
+  } else if(isBanner){
+    label='&#127756; 8K Splash / Banner';
+    desc=isBelinda?'Splash screen and banner generated. Use for Play Store feature graphic (1024×500) or app launch screen.':'Banner ready. Resize to 1024×500 for Play Store feature graphic slot.';
+    svgContent=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" style="width:100%;max-width:360px;display:block;margin:0 auto;border-radius:16px;">
+  <defs>
+    <radialGradient id="bnBg" cx="20%" cy="50%" r="80%"><stop offset="0%" stop-color="${c3}"/><stop offset="100%" stop-color="#03030A"/></radialGradient>
+    <radialGradient id="bnAccent" cx="80%" cy="50%" r="60%"><stop offset="0%" stop-color="${c2}" stop-opacity="0.3"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></radialGradient>
+    <filter id="bnGlow"><feGaussianBlur stdDeviation="18" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="800" height="400" fill="url(#bnBg)"/>
+  <rect width="800" height="400" fill="url(#bnAccent)"/>
+  <!-- Grid lines -->
+  <line x1="0" y1="80" x2="800" y2="80" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+  <line x1="0" y1="160" x2="800" y2="160" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+  <line x1="0" y1="240" x2="800" y2="240" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+  <line x1="0" y1="320" x2="800" y2="320" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+  <!-- Logo circle -->
+  <circle cx="160" cy="200" r="120" fill="rgba(255,255,255,0.04)" stroke="${c1}" stroke-width="1.5" stroke-dasharray="6,10" filter="url(#bnGlow)"/>
+  <circle cx="160" cy="200" r="80" fill="${c3}" opacity="0.6"/>
+  <text x="160" y="225" font-size="80" font-weight="900" text-anchor="middle" fill="${c2}" font-family="Arial Black" filter="url(#bnGlow)">${initial}</text>
+  <!-- Brand text -->
+  <text x="340" y="175" font-size="56" font-weight="900" fill="white" font-family="Arial Black" opacity="0.95">${brandName.toUpperCase().slice(0,10)}</text>
+  <text x="342" y="220" font-size="22" fill="${c2}" font-family="Arial" opacity="0.8">Built with Solace Portal AI</text>
+  <!-- Divider -->
+  <line x1="340" y1="240" x2="640" y2="240" stroke="${c1}" stroke-width="1.5" stroke-dasharray="4,6" opacity="0.5"/>
+  <text x="342" y="275" font-size="18" fill="rgba(255,255,255,0.5)" font-family="Arial">&#9889; AI-Powered &nbsp; &#128241; Cross-Platform &nbsp; &#128640; Play Store Ready</text>
+</svg>`;
+  } else {
+    // Photorealistic scene simulation
+    label='&#128247; 8K Photorealistic Render';
+    desc=isBelinda?'High-fidelity SVG render at 8K equivalent precision. Every gradient, shadow and material is pixel-perfect.':'Photorealistic asset generated. Ready for use as splash screen or marketing image.';
+    svgContent=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" style="width:100%;max-width:340px;display:block;margin:0 auto;border-radius:16px;">
+  <defs>
+    <radialGradient id="prBg" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="${c3}" stop-opacity="0.95"/><stop offset="60%" stop-color="#07070F"/><stop offset="100%" stop-color="#03030A"/></radialGradient>
+    <radialGradient id="prSphere" cx="35%" cy="30%" r="60%"><stop offset="0%" stop-color="rgba(255,255,255,0.55)"/><stop offset="30%" stop-color="${c2}" stop-opacity="0.7"/><stop offset="70%" stop-color="${c1}" stop-opacity="0.9"/><stop offset="100%" stop-color="${c3}"/></radialGradient>
+    <radialGradient id="prGlow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="${c2}" stop-opacity="0.7"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></radialGradient>
+    <filter id="prBlur"><feGaussianBlur stdDeviation="18"/></filter>
+    <filter id="prSharp"><feGaussianBlur stdDeviation="0.4" result="b"/><feComposite in="SourceGraphic" in2="b" operator="over"/></filter>
+    <filter id="prGlowF"><feGaussianBlur stdDeviation="8" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <!-- Deep space background -->
+  <rect width="600" height="400" fill="url(#prBg)"/>
+  <!-- Ambient glow blobs -->
+  <circle cx="480" cy="80" r="140" fill="url(#prGlow)" filter="url(#prBlur)" opacity="0.5"/>
+  <circle cx="100" cy="350" r="100" fill="${c1}" filter="url(#prBlur)" opacity="0.25"/>
+  <!-- Star field -->
+  <circle cx="50" cy="30" r="1" fill="white" opacity="0.6"/><circle cx="150" cy="80" r="0.8" fill="white" opacity="0.4"/>
+  <circle cx="250" cy="20" r="1.2" fill="white" opacity="0.7"/><circle cx="400" cy="50" r="0.9" fill="white" opacity="0.5"/>
+  <circle cx="500" cy="30" r="1.1" fill="white" opacity="0.6"/><circle cx="560" cy="90" r="0.7" fill="white" opacity="0.4"/>
+  <circle cx="80" cy="150" r="0.8" fill="white" opacity="0.35"/><circle cx="520" cy="180" r="1" fill="white" opacity="0.45"/>
+  <!-- Main photorealistic sphere -->
+  <circle cx="220" cy="200" r="150" fill="${c3}" filter="url(#prBlur)" opacity="0.4"/>
+  <circle cx="220" cy="200" r="130" fill="url(#prSphere)" filter="url(#prSharp)"/>
+  <!-- Surface detail rings -->
+  <circle cx="220" cy="200" r="130" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+  <ellipse cx="220" cy="200" rx="130" ry="40" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <ellipse cx="220" cy="200" rx="130" ry="80" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+  <!-- Specular highlight -->
+  <ellipse cx="175" cy="148" rx="40" ry="28" fill="rgba(255,255,255,0.28)"/>
+  <ellipse cx="168" cy="142" rx="18" ry="12" fill="rgba(255,255,255,0.45)"/>
+  <!-- Ground reflection -->
+  <ellipse cx="220" cy="360" rx="120" ry="20" fill="${c1}" filter="url(#prBlur)" opacity="0.4"/>
+  <!-- Text overlay -->
+  <text x="430" y="160" font-size="40" font-weight="900" fill="white" font-family="Arial Black" filter="url(#prGlowF)" opacity="0.95">${brandName.slice(0,8)}</text>
+  <text x="432" y="195" font-size="14" fill="${c2}" font-family="Arial" opacity="0.8">8K Photorealistic Render</text>
+  <text x="432" y="215" font-size="12" fill="rgba(255,255,255,0.4)" font-family="Arial">by Solace Portal AI</text>
+  <!-- Data specs -->
+  <rect x="432" y="240" width="140" height="60" rx="10" fill="rgba(255,255,255,0.04)" stroke="${c2}" stroke-width="0.8" stroke-opacity="0.3"/>
+  <text x="442" y="260" font-size="10" fill="${c2}" font-family="monospace">Resolution: 7680×4320</text>
+  <text x="442" y="276" font-size="10" fill="rgba(255,255,255,0.5)" font-family="monospace">Format: SVG/PNG/WebP</text>
+  <text x="442" y="292" font-size="10" fill="rgba(255,255,255,0.5)" font-family="monospace">Colour: HDR P3 Wide</text>
+</svg>`;
+  }
+
+  // Build downloadable SVG
+  const fullSvg=svgContent;
+  const blob=new Blob([fullSvg],{type:'image/svg+xml'});
+  const url=URL.createObjectURL(blob);
+  const fname=brandName.replace(/\s+/g,'_')+'_solace_8k.svg';
+
+  return `${label}<div style="background:#050510;border:1px solid rgba(255,215,0,0.1);border-radius:14px;padding:16px;margin:10px 0;overflow:hidden;">${svgContent}</div>${desc}<br><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;"><a href="${url}" download="${fname}" style="background:linear-gradient(135deg,#DC143C,#FFD700);color:#000;border:none;padding:8px 16px;border-radius:10px;font-weight:800;cursor:pointer;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">&#8659; Download SVG</a><button onclick="this.closest('.msg').querySelector('svg').style.maxWidth='100%'" style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:rgba(0,229,255,0.8);padding:8px 14px;border-radius:10px;font-size:12px;cursor:pointer;font-weight:700;">&#128269; Full Size</button></div>`;
+}
+
 function showCodeBlock(title,code,footer){
   return `${title}<div style="background:#050510;border:1px solid rgba(255,215,0,0.12);border-radius:10px;padding:14px;font-family:monospace;font-size:11px;color:rgba(0,229,255,0.85);white-space:pre-wrap;overflow-x:auto;max-height:200px;overflow-y:auto;margin:10px 0;line-height:1.7;">${escHtml(code)}</div>${footer}`;
 }
 function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function switchChatAvatar(avatar){
+  currentAvatar=avatar;
+  chatContext.history=[];
+  chatContext.buildState={active:false,phase:0,appName:'',platform:'',screens:[],hasLogin:false,monetise:'free'};
+  const msgs=document.getElementById('chatMessages');
+  msgs.innerHTML='';
+  // Update header
+  document.getElementById('chatAvatarName').textContent=avatar==='belinda'?'Belinda AI':'Sven AI';
+  document.getElementById('chatAvatarRole').textContent=avatar==='belinda'?'\u25cf Online \u2014 Chief Architect':'\u25cf Online \u2014 Lead Dev Engineer';
+  // Update button highlights
+  document.getElementById('av-btn-belinda').style.border=avatar==='belinda'?'2px solid rgba(255,215,0,0.6)':'2px solid rgba(255,255,255,0.1)';
+  document.getElementById('av-btn-belinda').style.background=avatar==='belinda'?'rgba(255,215,0,0.1)':'rgba(255,255,255,0.03)';
+  document.getElementById('av-btn-sven').style.border=avatar==='sven'?'2px solid rgba(0,229,255,0.6)':'2px solid rgba(255,255,255,0.1)';
+  document.getElementById('av-btn-sven').style.background=avatar==='sven'?'rgba(0,229,255,0.08)':'rgba(255,255,255,0.03)';
+  const greeting=avatarAIRespond('hello');
+  addChatMsg('ai',greeting);
+}
+
+function injectChat(text){
+  const inp=document.getElementById('chatInput');
+  if(inp){inp.value=text;sendChat();}
+}
 
 // ── Chat UI ──
 function openChat(avatar){
