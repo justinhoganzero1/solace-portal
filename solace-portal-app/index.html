@@ -363,8 +363,10 @@ nav{
     <a href="#avatars">AI Team</a>
     <a href="#pricing">Pricing</a>
     <a href="#download">Download</a>
-    <a href="admin.html" style="color:rgba(255,215,0,0.6);text-decoration:none;font-size:13px;padding:7px 16px;border-radius:22px;border:1px solid rgba(255,215,0,0.2);transition:all 0.2s;" onmouseover="this.style.color='#FFD700'" onmouseout="this.style.color='rgba(255,215,0,0.6)'">&#128274; Admin</a>
-    <a href="#" class="nav-cta" onclick="requireLogin();return false;">&#9889; Get Started Free</a>
+    <a href="#" id="navShare" onclick="shareApp();return false;" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;padding:7px 14px;border-radius:22px;border:1px solid rgba(255,255,255,0.1);transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(0,229,255,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">&#128257; Share</a>
+    <a href="#" id="navLibrary" onclick="openLibrary();return false;" style="display:none;color:rgba(0,229,255,0.8);text-decoration:none;font-size:13px;padding:7px 16px;border-radius:22px;border:1px solid rgba(0,229,255,0.25);transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(0,229,255,0.7)'" onmouseout="this.style.borderColor='rgba(0,229,255,0.25)'">&#128241; My Apps</a>
+    <a href="admin.html" id="navAdmin" style="display:none;color:rgba(255,215,0,0.6);text-decoration:none;font-size:13px;padding:7px 16px;border-radius:22px;border:1px solid rgba(255,215,0,0.2);transition:all 0.2s;" onmouseover="this.style.color='#FFD700'" onmouseout="this.style.color='rgba(255,215,0,0.6)'">&#128274; Admin</a>
+    <a href="#" class="nav-cta" id="navCta" onclick="navCtaClick();return false;">&#9889; Get Started Free</a>
   </div>
 </nav>
 
@@ -597,7 +599,7 @@ nav{
         <div class="gate-icon">&#9889;</div>
         <div class="gate-title">AI App Builder</div>
         <div class="gate-sub">Create an account to access Belinda AI and start building your first app in under 2 minutes.</div>
-        <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" data-gated onclick="requireLogin()">&#9889; Unlock Free &#8212; 2 Hour Trial</button>
+        <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" onclick="requireLogin(()=>{document.getElementById('gate-ai').style.display='none';})">&#9889; Unlock Free &#8212; 2 Hour Trial</button>
       </div>
     </div>
   </div>
@@ -625,7 +627,7 @@ nav{
         <div class="gate-icon">&#128241;</div>
         <div class="gate-title">Android Studio Suite</div>
         <div class="gate-sub">Full Android Studio integration with one-click APK builds. Unlock with a free account.</div>
-        <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" onclick="requireLogin()">&#9889; Unlock Free</button>
+        <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" onclick="requireLogin(()=>{document.getElementById('gate-android').style.display='none';})">&#9889; Unlock Free</button>
       </div>
     </div>
   </div>
@@ -657,7 +659,7 @@ nav{
         <div class="gate-icon">&#127918;</div>
         <div class="gate-title">PlayStation Bundler</div>
         <div class="gate-sub">Bundle and publish your app to PlayStation Store. Premium feature &#8212; unlock with account.</div>
-        <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" onclick="requireLogin()">&#9889; Unlock Premium</button>
+        <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" onclick="requireLogin(()=>{document.getElementById('gate-ps').style.display='none';})">&#9889; Unlock Premium</button>
       </div>
     </div>
   </div>
@@ -700,7 +702,7 @@ nav{
         <div class="gate-icon">&#63743;</div>
         <div class="gate-title">Apple App Store Wrapper</div>
         <div class="gate-sub">Wrap your app for iOS, generate IPA files, and submit directly to App Store Connect.</div>
-        <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" onclick="requireLogin()">&#9889; Unlock Free</button>
+        <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" onclick="requireLogin(()=>{document.getElementById('gate-apple').style.display='none';})">&#9889; Unlock Free</button>
       </div>
     </div>
   </div>
@@ -730,7 +732,7 @@ nav{
         <div class="gate-icon">&#127912;</div>
         <div class="gate-title">Visual UI Builder</div>
         <div class="gate-sub">Drag and drop components to build beautiful UIs. Unlock with a free account.</div>
-        <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" onclick="requireLogin()">&#9889; Unlock Free</button>
+        <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" onclick="requireLogin(()=>{document.getElementById('gate-builder').style.display='none';})">&#9889; Unlock Free</button>
       </div>
     </div>
   </div>
@@ -2096,7 +2098,13 @@ window.addEventListener('load',function(){
     try{
       const d=JSON.parse(u);
       updateNavUser(d.name);
-      if(isPaid())unlockFeatures();
+      // Admin always gets full access, no paywall
+      if(d.email===ADMIN_EMAIL){
+        localStorage.setItem('sp_paid','1');
+        unlockFeatures();
+      } else if(isPaid()){
+        unlockFeatures();
+      }
     }catch(ex){}
   }
   buildCompList();
@@ -2400,6 +2408,14 @@ function sendDemo(){
   const inp=document.getElementById('demoInput');
   const val=inp.value.trim();if(!val)return;
   userMsg(val);inp.value='';
+  // If build was completed (phase 99) or never started, reset for new build
+  if(buildState.phase===99||buildState.phase<0){
+    buildState={phase:0,appName:'',platform:'',hasLogin:false,monetise:'free',screens:[],builtFiles:{}};
+    const chat=document.getElementById('demoChat');
+    if(chat)chat.innerHTML='';
+    aiMsg('&#128204; <strong>Step 1 of 5:</strong> '+BUILD_PHASES[0].ask);
+    return;
+  }
   // Parse input FIRST at current phase, THEN advance
   parseBuildInput(val);
   buildState.phase++;
@@ -3102,6 +3118,13 @@ function handleBuildFlow(val,isBelinda){
         '<div style="margin-top:12px;padding:12px;background:rgba(255,215,0,0.05);border:1px solid rgba(255,215,0,0.15);border-radius:10px;font-size:12px;color:rgba(255,255,255,0.6);">'+
         '&#128204; <strong>Next steps:</strong> Download each file above, create a Flutter project with <code>flutter create '+s.appName.replace(/\s+/g,'_').toLowerCase()+'</code>, then replace the generated files. Run <code>flutter pub get</code> then <code>flutter run</code>.'+
         '</div>';
+      // Add 'Build Another App' button
+      const newBuildBtn=document.createElement('div');
+      newBuildBtn.className='msg ai';
+      newBuildBtn.innerHTML='<div class="msg-label">'+(isBelinda?'⚡ BELINDA AI':'🔧 SVEN AI')+'</div>'
+        +'<button onclick="buildState.phase=99;sendDemo&&(document.getElementById(\'demoInput\').value=\'new app\',sendDemo());" style="background:linear-gradient(135deg,#DC143C,#FFD700);border:none;color:#000;padding:10px 22px;border-radius:10px;font-weight:900;cursor:pointer;font-size:13px;margin-right:10px;">⚡ Build Another App</button>'
+        +'<button onclick="openLibrary()" style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.3);color:rgba(0,229,255,0.9);padding:10px 22px;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px;">📱 View My Library</button>';
+      msgs.appendChild(newBuildBtn);msgs.scrollTop=msgs.scrollHeight;
       msgs.appendChild(outEl);msgs.scrollTop=msgs.scrollHeight;
       speakText('Your app '+s.appName+' is complete! '+allScreens.length+' screens and '+Object.keys(buildState.builtFiles).length+' project files generated. Download each file to get started.');
       // Award XP for completing a build
@@ -3888,6 +3911,173 @@ function getBadgeHTML(user){
 
 // Mobile nav
 window.addEventListener('resize',function(){});
+
+// ══ NAV CTA — context-aware click ══
+function navCtaClick(){
+  const u=localStorage.getItem('sp_user');
+  if(u){openLibrary();}else{requireLogin();}
+}
+
+// ══ SHARE APP ══
+function shareApp(){
+  const data={title:'Solace Portal — AI App Builder',text:'Build Android & iOS apps with AI in minutes — no coding required! Meet Belinda & Sven, your 24/7 AI dev team.',url:'https://oracle-lunar.online/'};
+  if(navigator.share){
+    navigator.share(data).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(data.url).then(()=>{
+      showTabToast('&#128257; Link copied to clipboard! Share it anywhere.','#00E5FF');
+    }).catch(()=>{
+      showTabToast('&#128257; Share: https://oracle-lunar.online/','#00E5FF');
+    });
+  }
+}
+
+// ══ USER LIBRARY ══
+function openLibrary(){
+  const u=JSON.parse(localStorage.getItem('sp_user')||'null');
+  if(!u){requireLogin();return;}
+  const modal=document.getElementById('libraryModal');
+  if(!modal)return;
+  _renderLibrary(u);
+  modal.style.display='flex';
+  requestAnimationFrame(()=>{modal.style.opacity='1';});
+}
+function closeLibrary(){
+  const modal=document.getElementById('libraryModal');
+  if(modal){modal.style.opacity='0';setTimeout(()=>modal.style.display='none',250);}
+}
+function _renderLibrary(u){
+  const isAdmin=u.email===ADMIN_EMAIL;
+  const xp=isAdmin?999999:getUserXP();
+  const lvl=getUserLevel(xp);
+  const db=JSON.parse(localStorage.getItem('sp_db')||'{"apps":[],"users":[]}');
+  const myApps=(db.apps||[]).filter(a=>a.creator===u.name||(isAdmin));
+  const nameEl=document.getElementById('libUserName');
+  const emailEl=document.getElementById('libUserEmail');
+  const badgeEl=document.getElementById('libUserBadge');
+  const xpEl=document.getElementById('libUserXP');
+  const appsEl=document.getElementById('libAppsGrid');
+  const adminBtn=document.getElementById('libAdminBtn');
+  if(nameEl)nameEl.textContent=u.name;
+  if(emailEl)emailEl.textContent=u.email;
+  if(badgeEl)badgeEl.innerHTML=getBadgeHTML(u);
+  if(xpEl)xpEl.textContent=isAdmin?'∞':xp.toLocaleString();
+  if(adminBtn)adminBtn.style.display=isAdmin?'flex':'none';
+  if(appsEl){
+    if(!myApps.length){
+      appsEl.innerHTML='<div style="grid-column:1/-1;text-align:center;color:rgba(255,255,255,0.3);padding:32px 0;font-size:13px;">No apps built yet — use the AI App Builder to create your first app!</div>';
+    } else {
+      appsEl.innerHTML=myApps.map((a,i)=>`
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,215,0,0.12);border-radius:16px;padding:16px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(255,215,0,0.35)'" onmouseout="this.style.borderColor='rgba(255,215,0,0.12)'">
+          <div style="font-size:28px;margin-bottom:8px;">${a.icon||'📱'}</div>
+          <div style="font-weight:800;font-size:13px;margin-bottom:4px;color:#fff;">${a.name}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:8px;">${a.platform||'Android'} &bull; ${a.screens||0} screens</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span style="background:rgba(0,175,79,0.15);border:1px solid rgba(0,175,79,0.3);color:#00AF4F;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;">${a.status||'built'}</span>
+            <span style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:rgba(0,229,255,0.7);padding:2px 8px;border-radius:8px;font-size:10px;">${a.created||''}</span>
+          </div>
+          <button onclick="downloadAppFiles('${a.name}')" style="width:100%;margin-top:10px;background:linear-gradient(135deg,#DC143C,#FFD700);border:none;color:#000;padding:7px;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer;">⬇ Download Files</button>
+        </div>`).join('');
+    }
+  }
+}
+function downloadAppFiles(appName){
+  if(buildState.builtFiles&&(buildState.builtFiles['main.dart']||buildState.builtFiles.mainDart)){
+    downloadProject();
+  } else {
+    showTabToast('Build this app first using the AI App Builder, then download all files.','#FFA500');
+  }
+}
+function logoutUser(){
+  localStorage.removeItem('sp_user');
+  localStorage.removeItem('sp_paid');
+  closeLibrary();
+  const cta=document.querySelector('.nav-cta');
+  if(cta){cta.innerHTML='&#9889; Get Started Free';cta.style.background='linear-gradient(135deg,#DC143C,#FFD700,#1565C0)';}
+  const lib=document.getElementById('navLibrary');if(lib)lib.style.display='none';
+  const adm=document.getElementById('navAdmin');if(adm)adm.style.display='none';
+  document.querySelectorAll('.gate').forEach(g=>g.style.display='flex');
+  showTabToast('Logged out. See you soon!','#888');
+}
+
+// ══ FIX: updateNavUser — show My Apps + Admin links, make CTA open dashboard ══
+const _origUpdateNavUser=updateNavUser;
+updateNavUser=function(name){
+  _origUpdateNavUser(name);
+  const lib=document.getElementById('navLibrary');if(lib)lib.style.display='inline-flex';
+  const u=JSON.parse(localStorage.getItem('sp_user')||'{}');
+  const adm=document.getElementById('navAdmin');
+  if(adm)adm.style.display=(u.email===ADMIN_EMAIL)?'inline-block':'none';
+  const cta=document.getElementById('navCta');
+  if(cta)cta.onclick=function(e){e.preventDefault();navCtaClick();};
+};
+
+// ══ FIX: unlockFeatures — admin ALWAYS unlocked, paid users unlocked ══
+const _origUnlockFeatures=unlockFeatures;
+unlockFeatures=function(){
+  document.querySelectorAll('.gate').forEach(g=>g.style.display='none');
+};
+// Also unlock for admin regardless of paid status
+(function patchDismissGate(){
+  const orig=dismissGate;
+  dismissGate=function(name,announce){
+    orig(name,announce);
+    const u=JSON.parse(localStorage.getItem('sp_user')||'{}');
+    if(u.email===ADMIN_EMAIL){
+      document.querySelectorAll('.gate').forEach(g=>g.style.display='none');
+      localStorage.setItem('sp_paid','1');
+    }
+  };
+})();
 </script>
+
+<!-- USER LIBRARY MODAL -->
+<div id="libraryModal" style="position:fixed;inset:0;z-index:2100;background:rgba(0,0,0,0.92);backdrop-filter:blur(28px);display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;opacity:0;transition:opacity 0.25s ease;">
+  <div style="width:min(700px,98vw);background:linear-gradient(145deg,#0A0A18,#06060F);border:1px solid rgba(255,215,0,0.2);border-radius:28px;padding:32px;position:relative;box-shadow:0 40px 120px rgba(0,0,0,0.95);margin:auto;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;border-radius:28px 28px 0 0;background:linear-gradient(90deg,#DC143C,#FFD700,#00E5FF,#1565C0,#DC143C);background-size:300%;animation:rainbowFlow 3s linear infinite;"></div>
+    <button onclick="closeLibrary()" style="position:absolute;top:18px;right:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);font-size:18px;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;">&#10005;</button>
+
+    <!-- Profile header -->
+    <div style="display:flex;align-items:center;gap:20px;margin-bottom:28px;flex-wrap:wrap;">
+      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#DC143C,#FFD700);display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0;box-shadow:0 0 30px rgba(255,215,0,0.3);">👤</div>
+      <div style="flex:1;min-width:200px;">
+        <div id="libUserName" style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:4px;">User</div>
+        <div id="libUserEmail" style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:8px;"></div>
+        <div id="libUserBadge" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:11px;color:rgba(255,215,0,0.6);letter-spacing:1px;font-weight:700;margin-bottom:2px;">TOTAL XP</div>
+        <div id="libUserXP" style="font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:#FFD700;">0</div>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div style="display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap;">
+      <button id="libAdminBtn" onclick="window.location.href='admin.html'" style="display:none;align-items:center;gap:8px;background:linear-gradient(135deg,#FFD700,#FF6B00);border:none;color:#000;padding:11px 20px;border-radius:12px;font-weight:900;font-size:13px;cursor:pointer;">🌌 Admin Dashboard</button>
+      <button onclick="openChat('belinda')" style="background:rgba(220,20,60,0.12);border:1px solid rgba(220,20,60,0.3);color:#fff;padding:11px 18px;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;">⚡ Chat Belinda</button>
+      <button onclick="openChat('sven')" style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:rgba(0,229,255,0.9);padding:11px 18px;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;">🔧 Chat Sven</button>
+      <button onclick="shareApp()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);padding:11px 18px;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;">🔗 Share App</button>
+      <button onclick="closeLibrary();document.getElementById('tab-ai')&&document.getElementById('tab-ai').scrollIntoView({behavior:'smooth'});" style="background:linear-gradient(135deg,#DC143C,#FFD700);border:none;color:#000;padding:11px 20px;border-radius:12px;font-weight:900;font-size:13px;cursor:pointer;">⚡ Build New App</button>
+      <button onclick="logoutUser()" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.35);padding:11px 16px;border-radius:12px;font-weight:600;font-size:12px;cursor:pointer;margin-left:auto;">Sign Out</button>
+    </div>
+
+    <!-- My Apps section -->
+    <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:rgba(255,215,0,0.7);letter-spacing:1px;margin-bottom:16px;">📱 MY APPS LIBRARY</div>
+    <div id="libAppsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:28px;min-height:100px;"></div>
+
+    <!-- Quick access panel -->
+    <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:rgba(0,229,255,0.7);letter-spacing:1px;margin-bottom:16px;">⚡ QUICK ACCESS</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;">
+      <button onclick="closeLibrary();switchTab('android',document.querySelector('.tab-btn'));" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);padding:12px;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;text-align:left;">📱 Android Studio</button>
+      <button onclick="closeLibrary();switchTab('ps',document.querySelectorAll('.tab-btn')[1]);" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);padding:12px;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;text-align:left;">🎮 PlayStation</button>
+      <button onclick="closeLibrary();switchTab('apple',document.querySelectorAll('.tab-btn')[2]);" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);padding:12px;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;text-align:left;">🍎 App Store</button>
+      <button onclick="closeLibrary();openChat('belinda');" style="background:rgba(220,20,60,0.08);border:1px solid rgba(220,20,60,0.2);color:rgba(255,100,100,0.9);padding:12px;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;text-align:left;">⚡ Belinda AI</button>
+      <button onclick="closeLibrary();openChat('sven');" style="background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.15);color:rgba(0,229,255,0.8);padding:12px;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;text-align:left;">🔧 Sven AI</button>
+      <button onclick="closeLibrary();openPlayStoreModal(buildState.appName||'My App');" style="background:rgba(0,175,79,0.08);border:1px solid rgba(0,175,79,0.2);color:rgba(0,229,100,0.9);padding:12px;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;text-align:left;">▶️ Play Console</button>
+      <button onclick="closeLibrary();downloadProject();" style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.18);color:rgba(255,215,0,0.9);padding:12px;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;text-align:left;">⬇ Download Project</button>
+      <button onclick="closeLibrary();shareApp();" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);padding:12px;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;text-align:left;">🔗 Share Portal</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
