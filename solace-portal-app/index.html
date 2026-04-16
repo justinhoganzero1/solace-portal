@@ -110,6 +110,426 @@
 html{scroll-behavior:smooth;}
 body{background:var(--dark);color:#fff;font-family:'Inter',system-ui,sans-serif;overflow-x:hidden;}
 
+/* ═══════════════════════════════════════════════
+   FULL 3D HOLOGRAPHIC DESIGN SYSTEM
+═══════════════════════════════════════════════ */
+
+/* Global perspective for 3D children */
+body{perspective:1800px;}
+
+/* 3D text depth — every heading pops out of the screen */
+h1,h2,.logo-text,.section-h,.gate-title,.fh-title{
+  text-shadow:
+    0 1px 0 rgba(255,215,0,0.9),
+    0 2px 0 rgba(255,180,0,0.7),
+    0 3px 0 rgba(200,130,0,0.5),
+    0 4px 0 rgba(150,90,0,0.35),
+    0 5px 0 rgba(100,60,0,0.2),
+    0 8px 20px rgba(255,215,0,0.4),
+    0 15px 40px rgba(220,20,60,0.2),
+    2px 2px 0 rgba(0,0,0,0.8),
+    -1px -1px 0 rgba(255,255,255,0.05);
+  transform-style:preserve-3d;
+}
+h1{
+  text-shadow:
+    0 1px 0 #FFD700,
+    0 2px 0 #FFA500,
+    0 3px 0 #FF6B00,
+    0 4px 0 #CC4400,
+    0 5px 0 #882200,
+    0 6px 0 #441100,
+    0 8px 30px rgba(255,150,0,0.6),
+    0 20px 60px rgba(220,20,60,0.3),
+    4px 4px 0 rgba(0,0,0,0.9),
+    -2px -2px 0 rgba(255,255,255,0.08);
+  transform:translateZ(0) rotateX(2deg);
+}
+
+/* Orbitron font everywhere gets extrusion */
+.font-orb,[style*="Orbitron"],[style*="orbitron"],
+.logo-text,.gate-title,.fh-title,.section-tag,
+.price-title,.stat-num,.tab-btn{
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,0.9))
+         drop-shadow(0 0 20px rgba(255,215,0,0.3));
+}
+
+/* 3D card lift with perspective */
+.feature-card,.card-3d,.price-card,.dl-box,.av-card,.plat-card{
+  transform-style:preserve-3d;
+  transform:perspective(1200px) rotateX(0.5deg) translateZ(0px);
+  transition:transform 0.4s cubic-bezier(.34,1.56,.64,1),
+             box-shadow 0.4s ease,
+             border-color 0.3s ease;
+  will-change:transform;
+}
+.feature-card:hover,.card-3d:hover,.price-card:hover,.av-card:hover{
+  transform:perspective(1200px) rotateX(-1.5deg) rotateY(1deg) translateZ(20px) scale(1.01);
+  box-shadow:
+    0 60px 120px rgba(0,0,0,0.95),
+    0 0 80px rgba(255,215,0,0.18),
+    0 0 40px rgba(220,20,60,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.15),
+    0 -4px 20px rgba(0,229,255,0.08);
+}
+.plat-card:hover{
+  transform:perspective(800px) rotateX(-3deg) translateZ(12px) scale(1.04);
+}
+
+/* 3D buttons */
+.btn-3d,.chat-send,.nav-cta{
+  transform-style:preserve-3d;
+  transform:perspective(500px) translateZ(0) translateY(0);
+  transition:all 0.2s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:
+    0 6px 0 rgba(0,0,0,0.5),
+    0 8px 20px rgba(0,0,0,0.4),
+    0 0 25px rgba(255,215,0,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    inset 0 -2px 0 rgba(0,0,0,0.3) !important;
+}
+.btn-3d:hover,.chat-send:hover,.nav-cta:hover{
+  transform:perspective(500px) translateZ(8px) translateY(-3px) !important;
+  box-shadow:
+    0 12px 0 rgba(0,0,0,0.4),
+    0 16px 30px rgba(0,0,0,0.5),
+    0 0 50px rgba(255,215,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.3) !important;
+}
+.btn-3d:active,.chat-send:active{
+  transform:perspective(500px) translateZ(2px) translateY(2px) !important;
+  box-shadow:
+    0 2px 0 rgba(0,0,0,0.5),
+    0 4px 10px rgba(0,0,0,0.4),
+    inset 0 2px 4px rgba(0,0,0,0.4) !important;
+}
+
+/* 3D tab buttons */
+.tab-btn{
+  transform-style:preserve-3d;
+  transform:perspective(400px) translateZ(0);
+  box-shadow:
+    0 4px 0 rgba(0,0,0,0.6),
+    0 6px 15px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  transition:all 0.25s cubic-bezier(.34,1.56,.64,1) !important;
+}
+.tab-btn:hover{
+  transform:perspective(400px) translateZ(6px) translateY(-2px) !important;
+  box-shadow:0 10px 0 rgba(0,0,0,0.4),0 12px 25px rgba(0,229,255,0.2),inset 0 1px 0 rgba(255,255,255,0.12) !important;
+}
+.tab-btn.active{
+  transform:perspective(400px) translateZ(10px) translateY(-4px) !important;
+  box-shadow:
+    0 12px 0 rgba(0,0,0,0.35),
+    0 14px 30px rgba(255,215,0,0.3),
+    0 0 40px rgba(220,20,60,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.2) !important;
+}
+
+/* 3D nav */
+nav{
+  transform-style:preserve-3d;
+  box-shadow:
+    0 8px 60px rgba(0,0,0,0.9),
+    0 2px 0 rgba(255,215,0,0.2),
+    0 -1px 0 rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+
+/* Holographic chat messages */
+.msg.ai{
+  transform-style:preserve-3d;
+  transform:perspective(800px) translateZ(0);
+  box-shadow:
+    0 6px 25px rgba(220,20,60,0.15),
+    0 2px 8px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,100,100,0.1),
+    inset 0 -1px 0 rgba(0,0,0,0.2) !important;
+  border-left:2px solid rgba(220,20,60,0.5) !important;
+}
+.msg.user{
+  transform-style:preserve-3d;
+  transform:perspective(800px) translateZ(4px);
+  box-shadow:
+    0 6px 25px rgba(0,229,255,0.15),
+    0 2px 8px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(0,229,255,0.1) !important;
+  border-right:2px solid rgba(0,229,255,0.4) !important;
+}
+
+/* 3D input */
+.chat-input-row{
+  box-shadow:
+    0 8px 30px rgba(0,0,0,0.5),
+    0 4px 0 rgba(0,0,0,0.4),
+    inset 0 2px 10px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.06) !important;
+  transform:perspective(600px) translateZ(2px);
+}
+
+/* ═══ HOLOGRAPHIC ORB STYLES ═══ */
+.orb-container{
+  position:relative;
+  width:100%;
+  min-height:420px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  perspective:1200px;
+  transform-style:preserve-3d;
+}
+#holographicOrb{
+  position:relative;
+  width:340px;
+  height:340px;
+  border-radius:50%;
+  transform-style:preserve-3d;
+  animation:orbFloat 6s ease-in-out infinite, orbSpin 30s linear infinite;
+  cursor:pointer;
+  flex-shrink:0;
+}
+@keyframes orbFloat{
+  0%,100%{transform:translateY(0px) rotateX(5deg) rotateY(0deg);}
+  25%{transform:translateY(-18px) rotateX(3deg) rotateY(5deg);}
+  50%{transform:translateY(-28px) rotateX(1deg) rotateY(2deg);}
+  75%{transform:translateY(-12px) rotateX(4deg) rotateY(-4deg);}
+}
+@keyframes orbSpin{
+  0%{filter:hue-rotate(0deg);}
+  100%{filter:hue-rotate(360deg);}
+}
+
+/* Orb gemstone layers */
+.orb-core{
+  position:absolute;inset:0;border-radius:50%;
+  background:
+    radial-gradient(ellipse 60% 55% at 35% 30%,rgba(255,255,255,0.25) 0%,transparent 50%),
+    radial-gradient(ellipse 80% 80% at 50% 50%,
+      rgba(180,60,255,0.7) 0%,
+      rgba(60,20,180,0.8) 20%,
+      rgba(0,100,220,0.75) 35%,
+      rgba(0,200,200,0.65) 50%,
+      rgba(0,180,80,0.6) 62%,
+      rgba(180,200,0,0.7) 72%,
+      rgba(255,140,0,0.75) 82%,
+      rgba(220,20,60,0.8) 90%,
+      rgba(120,0,40,0.9) 100%
+    );
+  box-shadow:
+    inset 0 0 80px rgba(255,255,255,0.08),
+    inset 40px 40px 80px rgba(255,255,255,0.06),
+    inset -30px -30px 60px rgba(0,0,0,0.6),
+    0 0 120px rgba(130,60,255,0.6),
+    0 0 60px rgba(0,200,255,0.4),
+    0 0 200px rgba(220,20,60,0.3);
+  animation:gemPulse 4s ease-in-out infinite alternate;
+}
+@keyframes gemPulse{
+  0%{
+    box-shadow:
+      inset 0 0 80px rgba(255,255,255,0.08),
+      0 0 120px rgba(130,60,255,0.6),
+      0 0 60px rgba(0,200,255,0.4),
+      0 0 200px rgba(220,20,60,0.25);
+  }
+  100%{
+    box-shadow:
+      inset 0 0 120px rgba(255,255,255,0.12),
+      0 0 180px rgba(180,60,255,0.8),
+      0 0 90px rgba(0,229,255,0.6),
+      0 0 280px rgba(255,100,0,0.35);
+  }
+}
+
+/* Faceted gem surface */
+.orb-facets{
+  position:absolute;inset:0;border-radius:50%;
+  background:
+    conic-gradient(from 0deg,
+      transparent 0deg, rgba(255,255,255,0.07) 8deg, transparent 16deg,
+      transparent 30deg, rgba(255,255,255,0.05) 38deg, transparent 46deg,
+      transparent 60deg, rgba(255,255,255,0.09) 68deg, transparent 76deg,
+      transparent 90deg, rgba(255,255,255,0.04) 98deg, transparent 106deg,
+      transparent 120deg, rgba(255,255,255,0.08) 128deg, transparent 136deg,
+      transparent 150deg, rgba(255,255,255,0.06) 158deg, transparent 166deg,
+      transparent 180deg, rgba(255,255,255,0.07) 188deg, transparent 196deg,
+      transparent 210deg, rgba(255,255,255,0.05) 218deg, transparent 226deg,
+      transparent 240deg, rgba(255,255,255,0.09) 248deg, transparent 256deg,
+      transparent 270deg, rgba(255,255,255,0.04) 278deg, transparent 286deg,
+      transparent 300deg, rgba(255,255,255,0.08) 308deg, transparent 316deg,
+      transparent 330deg, rgba(255,255,255,0.06) 338deg, transparent 346deg,
+      transparent 360deg
+    );
+  animation:facetSpin 8s linear infinite;
+  mix-blend-mode:overlay;
+}
+@keyframes facetSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+/* Inner depth layers */
+.orb-inner{
+  position:absolute;
+  inset:12%;
+  border-radius:50%;
+  background:radial-gradient(ellipse at 40% 35%,
+    rgba(255,255,255,0.15) 0%,
+    rgba(200,120,255,0.4) 20%,
+    rgba(0,150,255,0.5) 45%,
+    rgba(0,80,40,0.6) 70%,
+    rgba(0,0,0,0.8) 100%
+  );
+  box-shadow:inset 0 0 60px rgba(0,0,0,0.9);
+  animation:innerSpin 15s linear infinite reverse;
+}
+@keyframes innerSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+/* Highlight specular */
+.orb-highlight{
+  position:absolute;
+  top:8%;left:18%;
+  width:35%;height:25%;
+  border-radius:50%;
+  background:radial-gradient(ellipse,rgba(255,255,255,0.5) 0%,transparent 70%);
+  transform:rotate(-35deg);
+  filter:blur(6px);
+  animation:hlPulse 3s ease-in-out infinite alternate;
+}
+@keyframes hlPulse{0%{opacity:0.5;}100%{opacity:0.9;}}
+.orb-highlight2{
+  position:absolute;
+  bottom:15%;right:12%;
+  width:18%;height:12%;
+  border-radius:50%;
+  background:radial-gradient(ellipse,rgba(0,229,255,0.6) 0%,transparent 70%);
+  filter:blur(8px);
+  animation:hlPulse 3s ease-in-out infinite alternate-reverse;
+}
+
+/* Orb ring */
+.orb-ring{
+  position:absolute;
+  inset:-8%;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,0.06);
+  box-shadow:
+    0 0 30px rgba(130,60,255,0.4),
+    inset 0 0 30px rgba(0,200,255,0.1);
+  animation:ringPulse 3s ease-in-out infinite alternate;
+}
+.orb-ring2{
+  position:absolute;
+  inset:-15%;
+  border-radius:50%;
+  border:1px solid rgba(130,60,255,0.12);
+  box-shadow:0 0 60px rgba(130,60,255,0.2);
+  animation:ringPulse 3s ease-in-out infinite alternate-reverse;
+}
+.orb-ring3{
+  position:absolute;
+  inset:-24%;
+  border-radius:50%;
+  border:1px solid rgba(0,229,255,0.06);
+  box-shadow:0 0 80px rgba(0,229,255,0.1);
+  animation:ringPulse 4s ease-in-out infinite alternate;
+}
+@keyframes ringPulse{
+  0%{opacity:0.4;transform:scale(1) rotate(0deg);}
+  100%{opacity:1;transform:scale(1.02) rotate(2deg);}
+}
+
+/* Orb shadow on floor */
+.orb-shadow{
+  position:absolute;
+  bottom:-40px;left:50%;
+  transform:translateX(-50%);
+  width:60%;height:20px;
+  background:radial-gradient(ellipse,rgba(130,60,255,0.4) 0%,transparent 70%);
+  filter:blur(12px);
+  animation:shadowPulse 3s ease-in-out infinite alternate;
+}
+@keyframes shadowPulse{0%{opacity:0.4;width:50%;}100%{opacity:0.8;width:65%;}}
+
+/* ═══ STAR FIELD CANVAS ═══ */
+#orbCanvas{
+  position:absolute;inset:0;border-radius:50%;
+  pointer-events:none;
+  mix-blend-mode:screen;
+}
+
+/* 3D AI builder split layout */
+.ai-builder-split{
+  display:flex;
+  gap:0;
+  min-height:500px;
+  align-items:stretch;
+}
+.ai-orb-panel{
+  width:45%;
+  min-width:320px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:linear-gradient(135deg,rgba(0,0,0,0.4),rgba(5,0,20,0.6));
+  border-right:1px solid rgba(130,60,255,0.2);
+  position:relative;
+  overflow:hidden;
+}
+.ai-orb-panel::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 80% at 50% 50%,
+    rgba(130,60,255,0.08) 0%,transparent 70%);
+  animation:panelGlow 5s ease-in-out infinite alternate;
+  pointer-events:none;
+}
+@keyframes panelGlow{
+  0%{opacity:0.5;}100%{opacity:1;}
+}
+.ai-chat-panel{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  padding:24px;
+  min-width:0;
+}
+.orb-label{
+  position:absolute;
+  bottom:16px;left:50%;
+  transform:translateX(-50%);
+  font-family:'Orbitron',sans-serif;
+  font-size:9px;letter-spacing:3px;
+  color:rgba(180,100,255,0.6);
+  text-transform:uppercase;
+  white-space:nowrap;
+  text-shadow:0 0 10px rgba(180,100,255,0.5);
+  animation:labelPulse 2s ease-in-out infinite alternate;
+}
+@keyframes labelPulse{0%{opacity:0.4;}100%{opacity:0.9;}}
+
+/* Orb AI status indicator */
+.orb-status{
+  position:absolute;top:18px;left:50%;
+  transform:translateX(-50%);
+  display:flex;align-items:center;gap:6px;
+  font-size:10px;color:rgba(0,229,255,0.7);
+  font-family:'Orbitron',sans-serif;letter-spacing:1px;
+}
+.orb-status-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#00E5FF;
+  box-shadow:0 0 8px #00E5FF;
+  animation:statusBlink 1.5s ease-in-out infinite;
+}
+@keyframes statusBlink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+
+@media(max-width:768px){
+  .ai-builder-split{flex-direction:column;}
+  .ai-orb-panel{width:100%;min-height:320px;}
+  #holographicOrb{width:240px;height:240px;}
+}
+
 /* ═══ ANIMATED HOLOGRAPHIC BACKGROUND ═══ */
 body::before{
   content:'';position:fixed;inset:0;z-index:0;
@@ -586,13 +1006,48 @@ nav{
         <div class="fh-dots"><span class="fh-dot r"></span><span class="fh-dot g"></span><span class="fh-dot b"></span></div>
         <span class="fh-title">&#9675; SOLACE AI &#8212; APP BUILDER CONSOLE</span>
       </div>
-      <div class="feature-body">
-        <div class="chat-demo" id="demoChat">
-          <div class="msg ai"><div class="msg-label">&#9889; BELINDA AI</div>Hi! I&#39;m Belinda, your AI architect. I will <strong>actually build your app</strong> — generating real Flutter code, all screen files, pubspec.yaml, and a downloadable project.<br><br>&#128204; <strong>Step 1 of 5:</strong> What is the <strong>name</strong> of your app and what does it do? <span style="opacity:0.6;font-size:11px;">(e.g. &ldquo;FitTrack &mdash; a fitness tracker app&rdquo;)</span></div>
-        </div>
-        <div class="chat-input-row">
-          <input id="demoInput" placeholder="Describe your app idea..." onkeydown="if(event.key==='Enter')sendDemo()"/>
-          <button class="chat-send" onclick="sendDemo()">BUILD &#9658;</button>
+      <div class="feature-body" style="padding:0;">
+        <div class="ai-builder-split">
+
+          <!-- LEFT: HOLOGRAPHIC ORB PANEL -->
+          <div class="ai-orb-panel">
+            <div class="orb-status">
+              <div class="orb-status-dot"></div>
+              <span id="orbStatusText">BELINDA ONLINE</span>
+            </div>
+
+            <div class="orb-container">
+              <div class="orb-ring3"></div>
+              <div class="orb-ring2"></div>
+              <div class="orb-ring"></div>
+
+              <div id="holographicOrb" onclick="orbPulse()" title="Click to activate Belinda AI">
+                <div class="orb-core"></div>
+                <div class="orb-facets"></div>
+                <div class="orb-inner"></div>
+                <canvas id="orbCanvas" width="340" height="340"></canvas>
+                <div class="orb-highlight"></div>
+                <div class="orb-highlight2"></div>
+              </div>
+
+              <div class="orb-shadow"></div>
+            </div>
+
+            <div class="orb-label">&#9672; SOLACE AI CORE &#9672;</div>
+          </div>
+
+          <!-- RIGHT: CHAT PANEL -->
+          <div class="ai-chat-panel">
+            <div style="font-family:'Orbitron',sans-serif;font-size:10px;color:rgba(255,215,0,0.5);letter-spacing:2px;margin-bottom:16px;text-shadow:0 0 10px rgba(255,215,0,0.3);">&#9675; APP BUILDER CONSOLE</div>
+            <div class="chat-demo" id="demoChat" style="flex:1;max-height:340px;">
+              <div class="msg ai"><div class="msg-label">&#9889; BELINDA AI</div>Hi! I&#39;m Belinda, your AI architect. I will <strong>actually build your app</strong> &mdash; generating real Flutter code, all screen files, pubspec.yaml, and a downloadable project.<br><br>&#128204; <strong>Step 1 of 5:</strong> What is the <strong>name</strong> of your app and what does it do? <span style="opacity:0.6;font-size:11px;">(e.g. &ldquo;FitTrack &mdash; a fitness tracker app&rdquo;)</span></div>
+            </div>
+            <div class="chat-input-row" style="margin-top:16px;">
+              <input id="demoInput" placeholder="Describe your app idea..." onkeydown="if(event.key==='Enter')sendDemo()"/>
+              <button class="chat-send" onclick="sendDemo()">BUILD &#9658;</button>
+            </div>
+          </div>
+
         </div>
       </div>
       <div class="gate" id="gate-ai">
@@ -3911,6 +4366,224 @@ function getBadgeHTML(user){
 
 // Mobile nav
 window.addEventListener('resize',function(){});
+
+// ══════════════════════════════════════════════════════
+// ── HOLOGRAPHIC ORB STAR ENGINE ──
+// ══════════════════════════════════════════════════════
+(function initOrbEngine(){
+  const canvas=document.getElementById('orbCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width=340,H=canvas.height=340;
+  const CX=W/2,CY=H/2,R=160;
+
+  // Star layers — depth-sorted: far (tiny/dim) to near (bright/large)
+  const LAYERS=[
+    {count:400,minR:0.3,maxR:0.8,minA:0.1,maxA:0.35,speed:0.003,drift:0.15,color:()=>`hsl(${Math.random()*60+200},80%,85%)`},
+    {count:280,minR:0.5,maxR:1.2,minA:0.2,maxA:0.55,speed:0.005,drift:0.25,color:()=>`hsl(${Math.random()*120+240},90%,88%)`},
+    {count:180,minR:0.8,maxR:1.8,minA:0.3,maxA:0.75,speed:0.008,drift:0.4,color:()=>`hsl(${Math.random()*180+180},100%,90%)`},
+    {count:80, minR:1.2,maxR:2.5,minA:0.5,maxA:1.0, speed:0.012,drift:0.6,color:()=>`hsl(${Math.random()*360},100%,95%)`},
+    {count:30, minR:2.0,maxR:3.5,minA:0.7,maxA:1.0, speed:0.018,drift:0.9,color:()=>`hsl(${Math.random()*60+30},100%,98%)`},
+  ];
+
+  const stars=[];
+  LAYERS.forEach(layer=>{
+    for(let i=0;i<layer.count;i++){
+      const angle=Math.random()*Math.PI*2;
+      const dist=Math.pow(Math.random(),0.7)*R*0.92;
+      stars.push({
+        x:CX+Math.cos(angle)*dist,
+        y:CY+Math.sin(angle)*dist,
+        r:layer.minR+Math.random()*(layer.maxR-layer.minR),
+        a:layer.minA+Math.random()*(layer.maxA-layer.minA),
+        baseA:layer.minA+Math.random()*(layer.maxA-layer.minA),
+        twinkleSpeed:0.02+Math.random()*0.06,
+        twinklePhase:Math.random()*Math.PI*2,
+        color:layer.color(),
+        orbitSpeed:layer.speed*(Math.random()>0.5?1:-1),
+        orbitAngle:angle,
+        orbitDist:dist,
+        drift:layer.drift,
+        vx:(Math.random()-0.5)*layer.drift*0.02,
+        vy:(Math.random()-0.5)*layer.drift*0.02,
+        life:Math.random(),
+        lifeSpeed:0.003+Math.random()*0.008,
+        lifeDir:Math.random()>0.5?1:-1,
+        layer:LAYERS.indexOf(layer),
+      });
+    }
+  });
+
+  // Nebula wisps — slow moving colour clouds inside orb
+  const wisps=[];
+  for(let i=0;i<12;i++){
+    wisps.push({
+      x:CX+(Math.random()-0.5)*R*0.8,
+      y:CY+(Math.random()-0.5)*R*0.8,
+      r:30+Math.random()*60,
+      hue:Math.random()*360,
+      a:0.04+Math.random()*0.08,
+      vx:(Math.random()-0.5)*0.2,
+      vy:(Math.random()-0.5)*0.2,
+      phase:Math.random()*Math.PI*2,
+    });
+  }
+
+  let frame=0;
+  let mouseX=0,mouseY=0;
+  let isPulsing=false;
+  let pulseProgress=0;
+
+  // Mouse parallax
+  const orbEl=document.getElementById('holographicOrb');
+  if(orbEl){
+    orbEl.addEventListener('mousemove',e=>{
+      const rect=orbEl.getBoundingClientRect();
+      mouseX=(e.clientX-rect.left-R)/R;
+      mouseY=(e.clientY-rect.top-R)/R;
+    });
+    orbEl.addEventListener('mouseleave',()=>{mouseX*=0.95;mouseY*=0.95;});
+  }
+
+  function isInsideOrb(x,y){
+    const dx=x-CX,dy=y-CY;
+    return dx*dx+dy*dy<=R*R;
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+
+    // Clip to circle
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(CX,CY,R,0,Math.PI*2);
+    ctx.clip();
+
+    // Draw nebula wisps
+    wisps.forEach(w=>{
+      w.x+=w.vx;w.y+=w.vy;
+      w.phase+=0.01;
+      // Bounce inside orb
+      const dx=w.x-CX,dy=w.y-CY;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d+w.r>R*0.9){
+        const nx=dx/d,ny=dy/d;
+        w.vx-=nx*0.05;w.vy-=ny*0.05;
+      }
+      const grad=ctx.createRadialGradient(w.x,w.y,0,w.x,w.y,w.r);
+      const alpha=w.a*(0.6+0.4*Math.sin(w.phase));
+      grad.addColorStop(0,`hsla(${w.hue+frame*0.2},90%,70%,${alpha})`);
+      grad.addColorStop(1,'transparent');
+      ctx.fillStyle=grad;
+      ctx.beginPath();
+      ctx.arc(w.x,w.y,w.r,0,Math.PI*2);
+      ctx.fill();
+    });
+
+    // Draw stars
+    stars.forEach(s=>{
+      // Orbit movement
+      s.orbitAngle+=s.orbitSpeed;
+      s.x=CX+Math.cos(s.orbitAngle)*s.orbitDist+mouseX*s.layer*2;
+      s.y=CY+Math.sin(s.orbitAngle)*s.orbitDist+mouseY*s.layer*2;
+
+      // Life cycle — vanish and reappear
+      s.life+=s.lifeSpeed*s.lifeDir;
+      if(s.life>=1){s.life=1;s.lifeDir=-1;}
+      if(s.life<=0){
+        s.life=0;s.lifeDir=1;
+        // Respawn at random position
+        const a2=Math.random()*Math.PI*2;
+        const d2=Math.pow(Math.random(),0.7)*R*0.9;
+        s.orbitAngle=a2;
+        s.orbitDist=d2;
+        s.color=LAYERS[s.layer].color();
+      }
+
+      if(!isInsideOrb(s.x,s.y))return;
+
+      // Twinkle
+      s.twinklePhase+=s.twinkleSpeed;
+      const twinkle=0.5+0.5*Math.sin(s.twinklePhase);
+      const alpha=s.baseA*s.life*twinkle;
+
+      // Draw star with bloom
+      if(s.r>1.5){
+        const bloom=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r*4);
+        bloom.addColorStop(0,s.color.replace('hsl','hsla').replace(')',`,${alpha*0.6})`));
+        bloom.addColorStop(1,'transparent');
+        ctx.fillStyle=bloom;
+        ctx.beginPath();
+        ctx.arc(s.x,s.y,s.r*4,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      // Core dot
+      ctx.globalAlpha=alpha;
+      ctx.fillStyle=s.color;
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fill();
+      ctx.globalAlpha=1;
+    });
+
+    // Pulse wave
+    if(isPulsing){
+      pulseProgress+=0.04;
+      const pw=pulseProgress*R*1.2;
+      const pa=Math.max(0,1-pulseProgress)*0.6;
+      ctx.strokeStyle=`rgba(255,255,255,${pa})`;
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      ctx.arc(CX,CY,pw,0,Math.PI*2);
+      ctx.stroke();
+      if(pulseProgress>=1){isPulsing=false;pulseProgress=0;}
+    }
+
+    ctx.restore();
+    frame++;
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+
+  // Expose pulse trigger
+  window._orbPulseInternal=function(){
+    isPulsing=true;pulseProgress=0;
+    // Flash the orb
+    const orb=document.getElementById('holographicOrb');
+    if(orb){
+      orb.style.filter='brightness(1.8) saturate(2)';
+      setTimeout(()=>orb.style.filter='',400);
+    }
+  };
+})();
+
+function orbPulse(){
+  if(window._orbPulseInternal)window._orbPulseInternal();
+  const st=document.getElementById('orbStatusText');
+  if(st){
+    st.textContent='PROCESSING...';
+    setTimeout(()=>{st.textContent=currentAvatar==='belinda'?'BELINDA ONLINE':'SVEN ONLINE';},2000);
+  }
+  // Focus the demo input
+  const inp=document.getElementById('demoInput');
+  if(inp){inp.focus();}
+}
+
+function updateOrbStatus(text){
+  const st=document.getElementById('orbStatusText');
+  if(st)st.textContent=text.toUpperCase();
+  if(window._orbPulseInternal)window._orbPulseInternal();
+}
+
+// Hook sendDemo to pulse orb on each message
+const _origSendDemo=sendDemo;
+sendDemo=function(){
+  updateOrbStatus('THINKING...');
+  setTimeout(()=>updateOrbStatus(currentAvatar==='belinda'?'BELINDA ONLINE':'SVEN ONLINE'),2500);
+  _origSendDemo.apply(this,arguments);
+};
 
 // ══ NAV CTA — context-aware click ══
 function navCtaClick(){
