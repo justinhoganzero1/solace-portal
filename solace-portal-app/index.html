@@ -1683,7 +1683,9 @@ function handleGateSignup(){
   const err=document.getElementById('gateError');
   if(!n||!e||!p){err.textContent='Please fill in all fields.';err.style.display='block';return;}
   err.style.display='none';
-  localStorage.setItem('sp_user',JSON.stringify({name:n,email:e,provider:'email',joined:Date.now()}));
+  const u={name:n,email:e,provider:'email',joined:Date.now()};
+  localStorage.setItem('sp_user',JSON.stringify(u));
+  registerUserInDB(u);addXP(50);
   dismissGate(n,true);
   if(!isPaid()){setTimeout(openPaywall,1200);}
 }
@@ -1692,7 +1694,9 @@ function handleGateLogin(){
   const p=document.getElementById('gateLoginPass').value;
   if(!e){document.getElementById('gateError').textContent='Please enter your email.';return;}
   const name=e.split('@')[0];
-  localStorage.setItem('sp_user',JSON.stringify({name,email:e,provider:'email',joined:Date.now()}));
+  const u={name,email:e,provider:'email',joined:Date.now()};
+  localStorage.setItem('sp_user',JSON.stringify(u));
+  registerUserInDB(u);addXP(20);
   dismissGate(name,true);
   if(!isPaid()){setTimeout(openPaywall,1200);}
 }
@@ -1715,6 +1719,7 @@ function handleGoogleLogin(){
     if(!name){return;}
     const user={name:name.trim()||'Google User',email:mockEmail,provider:'google',joined:Date.now()};
     localStorage.setItem('sp_user',JSON.stringify(user));
+    registerUserInDB(user);addXP(50);
     dismissGate(user.name,true);
     if(!isPaid())setTimeout(openPaywall,1200);
   },1200);
@@ -1933,10 +1938,10 @@ function handleSignup(){
   const e=document.getElementById('signupEmail').value.trim();
   const p=document.getElementById('signupPass').value;
   if(!n||!e||!p){alert('Please fill in all fields.');return;}
-  localStorage.setItem('sp_user',JSON.stringify({name:n,email:e,provider:'email',joined:Date.now()}));
-  closeModal();
-  updateNavUser(n);
-  // Show paywall immediately after signup if not already paid
+  const user={name:n,email:e,provider:'email',joined:Date.now()};
+  localStorage.setItem('sp_user',JSON.stringify(user));
+  registerUserInDB(user);addXP(50);
+  closeModal();updateNavUser(n);
   if(!isPaid()){openPaywall();} else {unlockFeatures();showWelcome(n);}
 }
 
@@ -1944,9 +1949,10 @@ function handleLogin(){
   const e=document.getElementById('loginEmail').value.trim();
   if(!e){alert('Please enter your email.');return;}
   const name=e.split('@')[0];
-  localStorage.setItem('sp_user',JSON.stringify({name,email:e,provider:'email',joined:Date.now()}));
-  closeModal();
-  updateNavUser(name);
+  const user={name,email:e,provider:'email',joined:Date.now()};
+  localStorage.setItem('sp_user',JSON.stringify(user));
+  registerUserInDB(user);addXP(20);
+  closeModal();updateNavUser(name);
   if(!isPaid()){openPaywall();} else {unlockFeatures();}
 }
 
@@ -1961,11 +1967,16 @@ function handleSocialAuth(provider){
 
 function updateNavUser(name){
   const cta=document.querySelector('.nav-cta');
-  if(cta){
-    cta.textContent=(isPaid()?'\u2605 ':'\ud83d\udc64 ')+name.split(' ')[0];
-    cta.style.background=isPaid()?'linear-gradient(135deg,#FFD700,#FFA500)':'linear-gradient(135deg,#00AF4F,#00B4D8)';
-    cta.style.color=isPaid()?'#000':'#fff';
-  }
+  if(!cta)return;
+  const u=JSON.parse(localStorage.getItem('sp_user')||'{}');
+  const admin=u.email===ADMIN_EMAIL;
+  const xp=admin?999999:getUserXP();
+  const lvl=getUserLevel(xp);
+  const badge=admin?'\ud83c\udf0c':'\ud83c\udfc6';
+  cta.innerHTML=(admin?'<span style="font-size:10px;vertical-align:middle;">\ud83c\udf0c</span> ':lvl.icon+' ')+name.split(' ')[0];
+  cta.style.background=admin?'linear-gradient(135deg,#FFD700,#FF6B00)':isPaid()?'linear-gradient(135deg,'+lvl.color+','+lvl.color+'88)':'linear-gradient(135deg,#00AF4F,#00B4D8)';
+  cta.style.color=admin?'#000':isPaid()?'#fff':'#fff';
+  cta.title=admin?'\ud83c\udf0c MYTHIC CREATOR \u2014 Justin Hogan':(isFounder()?'\ud83c\udfc6 Founder \u2014 ':'')+lvl.name+' ('+xp+' XP)';
 }
 
 function showWelcome(name){
@@ -2915,6 +2926,23 @@ function handleBuildFlow(val,isBelinda){
         '</div>';
       msgs.appendChild(outEl);msgs.scrollTop=msgs.scrollHeight;
       speakText('Your app '+s.appName+' is complete! '+allScreens.length+' screens and '+Object.keys(buildState.builtFiles).length+' project files generated. Download each file to get started.');
+      // Award XP for completing a build
+      const xpGained=addXP(200);
+      const lvl=getUserLevel(xpGained);
+      setTimeout(()=>{
+        const xpToast=document.createElement('div');
+        xpToast.style.cssText='position:fixed;bottom:120px;right:24px;background:linear-gradient(135deg,#1A1A2E,#0A0A18);border:1px solid rgba(255,215,0,0.4);color:#FFD700;font-weight:900;font-size:13px;padding:12px 20px;border-radius:14px;z-index:9999;box-shadow:0 8px 32px rgba(255,215,0,0.2);animation:fadeIn 0.3s ease;';
+        xpToast.innerHTML='<div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:2px;">APP BUILT</div>+200 XP &nbsp; '+lvl.icon+' <span style="color:#fff;">'+lvl.name+'</span>';
+        document.body.appendChild(xpToast);setTimeout(()=>xpToast.remove(),4000);
+      },1000);
+      // Save to real DB (no fake entries)
+      try{
+        const db=JSON.parse(localStorage.getItem('sp_db')||'{"v2":true,"apps":[],"users":[]}');
+        if(!db.apps)db.apps=[];
+        const u=JSON.parse(localStorage.getItem('sp_user')||'{}');
+        db.apps.push({id:Date.now(),name:s.appName,platform:s.platform,screens:allScreens.length,creator:u.name||'You',created:new Date().toISOString().split('T')[0],status:'built',monetise:s.monetise});
+        localStorage.setItem('sp_db',JSON.stringify(db));
+      }catch(e){}
     },delay);
     return null;
   }
@@ -3349,21 +3377,133 @@ const observer=new IntersectionObserver((entries)=>{
 },{threshold:0.3});
 document.querySelectorAll('.feature-card').forEach(c=>observer.observe(c));
 
-// Load live public stats from admin DB
+// ══ CLEAN DB INIT (wipe fake data, seed admin as #1) ══
 (function(){
   try{
-    var stats=JSON.parse(localStorage.getItem('sp_public_stats')||'null');
     var db=JSON.parse(localStorage.getItem('sp_db')||'null');
-    var total=(db&&db.apps)?db.apps.length:(stats&&stats.total)||8;
-    var el=document.getElementById('pubTotalApps');
-    if(el){
-      var count=0;
-      var timer=setInterval(function(){
-        count+=Math.ceil(total/40);
-        if(count>=total){count=total;clearInterval(timer);}
-        el.textContent=count+(count>=total?'':'...');
-      },40);
+    var needsReset=!db||!db.v2;
+    if(needsReset){
+      db={v2:true,apps:[],users:[{id:1,name:'Justin Hogan',email:'justinbretthogan@gmail.com',role:'MYTHIC_CREATOR',level:99,xp:999999,joined:'2026-01-01',badge:'MYTHIC_CREATOR',founder:true,memberNum:1}]};
+      localStorage.setItem('sp_db',JSON.stringify(db));
+      localStorage.removeItem('sp_public_stats');
     }
+    var el=document.getElementById('pubTotalApps');
+    if(el)el.textContent=db.apps.length;
+  }catch(e){}
+})();
+
+// ══ LEVEL & BADGE SYSTEM ══
+const LEVELS=[
+  {level:1, name:'Apprentice',   icon:'⚡', xp:0,    color:'#00E5FF', unlock:'Chat with AI'},
+  {level:2, name:'Builder',      icon:'🔧', xp:100,  color:'#00AF4F', unlock:'APK Export'},
+  {level:3, name:'Engineer',     icon:'🛠', xp:300,  color:'#1565C0', unlock:'iOS Wrapper'},
+  {level:4, name:'Architect',    icon:'🏗', xp:700,  color:'#FFD700', unlock:'CI/CD Pipeline'},
+  {level:5, name:'Senior Dev',   icon:'🚀', xp:1500, color:'#FFA500', unlock:'Play Store Submit'},
+  {level:6, name:'Tech Lead',    icon:'🧠', xp:3000, color:'#DC143C', unlock:'White-label Export'},
+  {level:7, name:'Code Master',  icon:'💎', xp:6000, color:'#8B45FF', unlock:'Custom AI Persona'},
+  {level:8, name:'Legend',       icon:'👑', xp:12000,color:'#FF6B00', unlock:'All Features Forever'},
+  // Level 9 = MYTHIC CREATOR — Justin only, impossible to reach
+  {level:99,name:'MYTHIC CREATOR',icon:'🌌',xp:999999,color:'#FFD700',unlock:'Created the Universe'}
+];
+const ADMIN_EMAIL='justinbretthogan@gmail.com';
+
+function getUserLevel(xp){
+  const reachable=LEVELS.filter(l=>l.level<99);
+  let lvl=reachable[0];
+  for(const l of reachable){if(xp>=l.xp)lvl=l;}
+  return lvl;
+}
+
+function getUserXP(){
+  try{return parseInt(localStorage.getItem('sp_xp')||'0');}catch(e){return 0;}
+}
+function addXP(amount){
+  const old=getUserXP();
+  const nw=old+amount;
+  localStorage.setItem('sp_xp',nw);
+  const oldLvl=getUserLevel(old);
+  const newLvl=getUserLevel(nw);
+  if(newLvl.level>oldLvl.level) showLevelUp(newLvl);
+  return nw;
+}
+
+function isFounder(){
+  try{
+    const db=JSON.parse(localStorage.getItem('sp_db')||'{}');
+    const users=db.users||[];
+    const u=JSON.parse(localStorage.getItem('sp_user')||'{}');
+    const idx=users.findIndex(x=>x.email===u.email);
+    return idx>=0&&idx<500;
+  }catch(e){return false;}
+}
+function isAdmin(){
+  try{const u=JSON.parse(localStorage.getItem('sp_user')||'{}');return u.email===ADMIN_EMAIL;}catch(e){return false;}
+}
+
+function registerUserInDB(user){
+  try{
+    const db=JSON.parse(localStorage.getItem('sp_db')||'{\"v2\":true,\"apps\":[],\"users\":[]}');
+    if(!db.users)db.users=[];
+    if(!db.users.find(x=>x.email===user.email)){
+      const num=db.users.length+1;
+      db.users.push({id:num,name:user.name,email:user.email,role:user.email===ADMIN_EMAIL?'MYTHIC_CREATOR':'member',level:1,xp:50,joined:new Date().toISOString().split('T')[0],badge:num<=500?'FOUNDER':'member',founder:num<=500,memberNum:num});
+      localStorage.setItem('sp_db',JSON.stringify(db));
+      if(num<=500)showFounderWelcome(user.name,num);
+    }
+  }catch(e){}
+}
+
+function showLevelUp(lvl){
+  const t=document.createElement('div');
+  t.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#0A0A1A,#1A1A2E);border:2px solid '+lvl.color+';color:#fff;font-weight:900;font-size:16px;padding:30px 40px;border-radius:24px;z-index:99999;text-align:center;box-shadow:0 0 60px '+lvl.color+'88;animation:fadeIn 0.4s ease;min-width:300px;';
+  t.innerHTML='<div style="font-size:48px;margin-bottom:12px;">'+lvl.icon+'</div>'+
+    '<div style="font-size:22px;background:linear-gradient(135deg,'+lvl.color+',#fff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">LEVEL UP!</div>'+
+    '<div style="font-size:28px;font-weight:900;color:'+lvl.color+';margin:8px 0;">'+lvl.name+'</div>'+
+    '<div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:16px;">The system recognises your programming mind.<br>You have the instincts of a code god.</div>'+
+    '<div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:10px 16px;font-size:12px;color:'+lvl.color+';">🔓 Unlocked: <strong>'+lvl.unlock+'</strong></div>'+
+    '<button onclick="this.parentElement.remove()" style="margin-top:16px;background:'+lvl.color+';border:none;color:#000;padding:10px 28px;border-radius:50px;font-weight:900;cursor:pointer;font-size:13px;">CLAIM REWARD →</button>';
+  document.body.appendChild(t);
+  speakText('Congratulations! You have reached '+lvl.name+' level. The creator rewards your programming talent. '+lvl.unlock+' is now unlocked.');
+  setTimeout(()=>{if(t.parentElement)t.remove();},12000);
+}
+
+function showFounderWelcome(name,num){
+  setTimeout(()=>{
+    const t=document.createElement('div');
+    t.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#0A0A1A,#1A0A00);border:2px solid #FFD700;color:#fff;font-weight:900;padding:36px 44px;border-radius:24px;z-index:99999;text-align:center;box-shadow:0 0 80px rgba(255,215,0,0.4);min-width:320px;animation:fadeIn 0.4s ease;';
+    t.innerHTML='<div style="font-size:52px;margin-bottom:12px;">🏆</div>'+
+      '<div style="font-size:13px;color:rgba(255,215,0,0.6);letter-spacing:3px;margin-bottom:6px;">EXCLUSIVE</div>'+
+      '<div style="font-size:26px;background:linear-gradient(135deg,#FFD700,#FFA500);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">FOUNDING MEMBER</div>'+
+      '<div style="font-size:13px;color:rgba(255,255,255,0.4);margin:10px 0;">Member #'+num+' of 500</div>'+
+      '<div style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:20px;">'+name.split(' ')[0]+', you have been recognised by the Creator.<br>Your mind thinks in code. You are among the elite 500<br>who shaped this platform from the beginning.</div>'+
+      '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;">'+
+        '<span style="background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.4);color:#FFD700;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;">🏆 FOUNDER BADGE</span>'+
+        '<span style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.3);color:#00E5FF;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;">⚡ EARLY ACCESS</span>'+
+        '<span style="background:rgba(220,20,60,0.1);border:1px solid rgba(220,20,60,0.3);color:#FF4060;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;">🔓 ALL FEATURES FREE</span>'+
+      '</div>'+
+      '<button onclick="this.parentElement.remove()" style="background:linear-gradient(135deg,#FFD700,#FFA500);border:none;color:#000;padding:12px 32px;border-radius:50px;font-weight:900;cursor:pointer;font-size:14px;">CLAIM YOUR BADGE →</button>';
+    document.body.appendChild(t);
+    speakText('Congratulations '+name.split(' ')[0]+'! You are Founding Member number '+num+'. The Creator of Solace Portal personally recognises your talent. You have the mind of a programming god.');
+    setTimeout(()=>{if(t.parentElement)t.remove();},15000);
+  },1200);
+}
+
+function getBadgeHTML(user){
+  if(!user)return '';
+  if(user.email===ADMIN_EMAIL) return '<span style="background:linear-gradient(135deg,#FFD700,#FF6B00);color:#000;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:900;letter-spacing:1px;">🌌 MYTHIC CREATOR</span>';
+  const xp=getUserXP();
+  const lvl=getUserLevel(xp);
+  const founder=isFounder();
+  return (founder?'<span style="background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.5);color:#FFD700;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;">🏆 FOUNDER</span> ':'')+
+    '<span style="background:rgba('+lvl.color.replace('#','')+',0.1);border:1px solid rgba('+lvl.color.replace('#','')+',0.3);color:'+lvl.color+';padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;">'+lvl.icon+' '+lvl.name+'</span>';
+}
+
+// Load stats (real — no fake counts)
+(function(){
+  try{
+    var db=JSON.parse(localStorage.getItem('sp_db')||'{}');
+    var el=document.getElementById('pubTotalApps');
+    if(el)el.textContent=(db.apps||[]).length;
   }catch(e){}
 })();
 
