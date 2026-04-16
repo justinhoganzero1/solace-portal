@@ -275,7 +275,17 @@ function doLogin(){
   if(e===ve&&p===vp){sessionStorage.setItem('sp_admin','1');document.getElementById('loginScreen').style.display='none';document.getElementById('adminUI').style.display='block';document.getElementById('adminName').textContent=e.split('@')[0];initAdmin();}
   else{var err=document.getElementById('loginErr');err.style.display='block';setTimeout(function(){err.style.display='none';},3000);}
 }
-function doLogout(){sessionStorage.removeItem('sp_admin');location.reload();}
+function doLogout(){
+  sessionStorage.removeItem('sp_admin');
+  // Ensure the main site still knows who is logged in
+  var existing=JSON.parse(localStorage.getItem('sp_user')||'null');
+  if(!existing){
+    localStorage.setItem('sp_user',JSON.stringify({name:'Justin Hogan',email:ADMIN_EMAIL,provider:'Creator'}));
+  }
+  // Go back to main home screen, logged in as admin
+  sessionStorage.setItem('sp_from_admin','1');
+  window.location.href='index.html';
+}
 window.addEventListener('load',function(){
   var saved=JSON.parse(localStorage.getItem('sp_db')||'null');
   if(saved)DB=saved;

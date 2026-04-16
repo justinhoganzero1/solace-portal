@@ -2664,6 +2664,12 @@ window.addEventListener('load',function(){
     history.replaceState({},'',window.location.pathname);
     showPaidWelcome();
   }
+  // Returning from admin panel — scroll to top, show welcome
+  if(sessionStorage.getItem('sp_from_admin')){
+    sessionStorage.removeItem('sp_from_admin');
+    window.scrollTo({top:0,behavior:'instant'});
+    setTimeout(()=>showTabToast('&#127756; Welcome back, Justin! You\'re logged in as Admin.','#FFD700'),600);
+  }
   const u=localStorage.getItem('sp_user');
   if(u){
     try{
@@ -5516,6 +5522,8 @@ function logoutUser(){
   const adm=document.getElementById('navAdmin');if(adm)adm.style.display='none';
   document.querySelectorAll('.gate').forEach(g=>g.style.display='flex');
   showTabToast('Logged out. See you soon!','#888');
+  // Scroll back to the top home/hero section
+  setTimeout(()=>window.scrollTo({top:0,behavior:'smooth'}),300);
 }
 
 // ══ FIX: updateNavUser — show My Apps + Admin links, make CTA open dashboard ══
