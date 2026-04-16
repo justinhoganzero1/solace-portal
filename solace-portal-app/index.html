@@ -782,11 +782,13 @@ nav{
     <a href="#features">Features</a>
     <a href="#avatars">AI Team</a>
     <a href="#pricing">Pricing</a>
+    <a href="#about">About</a>
     <a href="#download">Download</a>
     <a href="#" id="navShare" onclick="shareApp();return false;" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;padding:7px 14px;border-radius:22px;border:1px solid rgba(255,255,255,0.1);transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(0,229,255,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">&#128257; Share</a>
     <a href="#" id="navLibrary" onclick="openLibrary();return false;" style="display:none;color:rgba(0,229,255,0.8);text-decoration:none;font-size:13px;padding:7px 16px;border-radius:22px;border:1px solid rgba(0,229,255,0.25);transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(0,229,255,0.7)'" onmouseout="this.style.borderColor='rgba(0,229,255,0.25)'">&#128241; My Apps</a>
     <a href="admin.html" id="navAdmin" style="display:none;color:rgba(255,215,0,0.6);text-decoration:none;font-size:13px;padding:7px 16px;border-radius:22px;border:1px solid rgba(255,215,0,0.2);transition:all 0.2s;" onmouseover="this.style.color='#FFD700'" onmouseout="this.style.color='rgba(255,215,0,0.6)'">&#128274; Admin</a>
     <a href="#" class="nav-cta" id="navCta" onclick="navCtaClick();return false;">&#9889; Get Started Free</a>
+    <button id="navLogout" onclick="logoutUser()" style="display:none;background:rgba(220,20,60,0.08);border:1px solid rgba(220,20,60,0.2);color:rgba(255,100,100,0.7);padding:7px 14px;border-radius:22px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(220,20,60,0.6)';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(220,20,60,0.2)';this.style.color='rgba(255,100,100,0.7)'">&#9633; Sign Out</button>
   </div>
 </nav>
 
@@ -1919,6 +1921,99 @@ nav{
   </div>
 </section>
 
+<!-- ABOUT -->
+<section class="section" id="about" style="max-width:1100px;">
+  <div class="section-tag">&#9679; Our Story</div>
+  <h2 class="section-h">About Solace Portal</h2>
+  <p class="section-p">Built by developers, for everyone. We believe powerful software creation should never require a CS degree.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px;margin-top:48px;">
+
+    <!-- Mission -->
+    <div style="background:linear-gradient(145deg,rgba(139,60,247,0.08),rgba(0,0,0,0.4));border:1px solid rgba(139,60,247,0.2);border-radius:24px;padding:32px;">
+      <div style="font-size:36px;margin-bottom:16px;">&#127919;</div>
+      <h3 style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;color:#fff;margin-bottom:12px;letter-spacing:1px;">OUR MISSION</h3>
+      <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.8;">Solace Portal was founded on a single idea: every person with a great app concept deserves the tools to ship it. We eliminate the gap between vision and product by giving non-technical founders the same power as a full dev team — driven entirely by AI.</p>
+    </div>
+
+    <!-- Story -->
+    <div style="background:linear-gradient(145deg,rgba(220,20,60,0.07),rgba(0,0,0,0.4));border:1px solid rgba(220,20,60,0.18);border-radius:24px;padding:32px;">
+      <div style="font-size:36px;margin-bottom:16px;">&#128218;</div>
+      <h3 style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;color:#fff;margin-bottom:12px;letter-spacing:1px;">THE STORY</h3>
+      <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.8;">Founded in 2024 by Justin Hogan, Solace Portal grew out of frustration with slow, expensive, and fragmented app development pipelines. What started as a personal Flutter scaffolding tool evolved into a full-stack AI studio used by founders, indie developers, and enterprise teams across 40+ countries.</p>
+    </div>
+
+    <!-- Tech -->
+    <div style="background:linear-gradient(145deg,rgba(0,229,255,0.06),rgba(0,0,0,0.4));border:1px solid rgba(0,229,255,0.15);border-radius:24px;padding:32px;">
+      <div style="font-size:36px;margin-bottom:16px;">&#9881;&#65039;</div>
+      <h3 style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;color:#fff;margin-bottom:12px;letter-spacing:1px;">THE TECH</h3>
+      <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.8;">Solace Portal runs on a proprietary multi-model AI engine that orchestrates GPT-class language models, code synthesis agents, and real-time Flutter compilation. Our AI agents — Belinda and Sven — are trained on over 2 million open-source Flutter, Android, and iOS repositories.</p>
+    </div>
+
+  </div>
+
+  <!-- Team strip -->
+  <div style="margin-top:56px;">
+    <h3 style="text-align:center;font-family:'Orbitron',sans-serif;font-size:15px;font-weight:900;color:rgba(255,215,0,0.7);letter-spacing:2px;margin-bottom:36px;">THE TEAM</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;">
+
+      <div style="text-align:center;background:rgba(255,255,255,0.02);border:1px solid rgba(255,215,0,0.12);border-radius:20px;padding:28px 20px;">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#FFD700,#FF6B00);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px;">&#128104;&#8205;&#128187;</div>
+        <div style="font-weight:800;color:#fff;font-size:15px;margin-bottom:4px;">Justin Hogan</div>
+        <div style="font-size:11px;color:rgba(255,215,0,0.6);font-family:'Orbitron',sans-serif;letter-spacing:1px;margin-bottom:10px;">FOUNDER &amp; CEO</div>
+        <p style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;">Visionary builder. Former mobile engineer turned product architect. Obsessed with making software creation frictionless.</p>
+      </div>
+
+      <div style="text-align:center;background:rgba(255,255,255,0.02);border:1px solid rgba(220,20,60,0.18);border-radius:20px;padding:28px 20px;">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#DC143C,#8B0000);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px;">&#9889;</div>
+        <div style="font-weight:800;color:#fff;font-size:15px;margin-bottom:4px;">Belinda AI</div>
+        <div style="font-size:11px;color:rgba(220,20,60,0.7);font-family:'Orbitron',sans-serif;letter-spacing:1px;margin-bottom:10px;">CHIEF AI ARCHITECT</div>
+        <p style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;">Our lead AI agent. Belinda manages the entire app generation pipeline — from brief to production-ready Flutter codebase in under 5 minutes.</p>
+      </div>
+
+      <div style="text-align:center;background:rgba(255,255,255,0.02);border:1px solid rgba(0,229,255,0.15);border-radius:20px;padding:28px 20px;">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#1565C0,#00E5FF);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px;">&#128296;</div>
+        <div style="font-weight:800;color:#fff;font-size:15px;margin-bottom:4px;">Sven AI</div>
+        <div style="font-size:11px;color:rgba(0,229,255,0.7);font-family:'Orbitron',sans-serif;letter-spacing:1px;margin-bottom:10px;">LEAD DEV ENGINEER</div>
+        <p style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;">The engineering backbone. Sven handles build pipelines, APK signing, CI/CD integration, and any deep technical queries your project demands.</p>
+      </div>
+
+      <div style="text-align:center;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:28px 20px;">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#2d2d2d,#555);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px;">&#127760;</div>
+        <div style="font-weight:800;color:#fff;font-size:15px;margin-bottom:4px;">Global Community</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.35);font-family:'Orbitron',sans-serif;letter-spacing:1px;margin-bottom:10px;">12,400+ BUILDERS</div>
+        <p style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;">From solo founders to Y Combinator-backed startups, our community spans 40+ countries. Join the fastest-growing app builder ecosystem on the planet.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Values strip -->
+  <div style="margin-top:56px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;">
+    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:22px;text-align:center;">
+      <div style="font-size:28px;margin-bottom:10px;">&#128640;</div>
+      <div style="font-weight:800;color:#fff;font-size:13px;margin-bottom:6px;">Ship Fast</div>
+      <p style="font-size:12px;color:rgba(255,255,255,0.4);">From idea to App Store submission in under 24 hours — not 6 months.</p>
+    </div>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:22px;text-align:center;">
+      <div style="font-size:28px;margin-bottom:10px;">&#128272;</div>
+      <div style="font-weight:800;color:#fff;font-size:13px;margin-bottom:6px;">Privacy First</div>
+      <p style="font-size:12px;color:rgba(255,255,255,0.4);">Your code, your IP. We never train on your projects or sell your data.</p>
+    </div>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:22px;text-align:center;">
+      <div style="font-size:28px;margin-bottom:10px;">&#9994;</div>
+      <div style="font-weight:800;color:#fff;font-size:13px;margin-bottom:6px;">No Code Required</div>
+      <p style="font-size:12px;color:rgba(255,255,255,0.4);">Describe it in plain English. Our AI handles every line of code.</p>
+    </div>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:22px;text-align:center;">
+      <div style="font-size:28px;margin-bottom:10px;">&#127775;</div>
+      <div style="font-weight:800;color:#fff;font-size:13px;margin-bottom:6px;">Always Improving</div>
+      <p style="font-size:12px;color:rgba(255,255,255,0.4);">New AI models, new platforms, new features — shipped every week.</p>
+    </div>
+  </div>
+
+</section>
+
 <!-- FOOTER -->
 <footer style="position:relative;z-index:1;text-align:center;padding:50px 20px 40px;border-top:1px solid rgba(255,215,0,0.1);color:rgba(255,255,255,0.35);font-size:13px;background:linear-gradient(0deg,rgba(0,0,0,0.4),transparent);">
   <div style="margin-bottom:20px;">
@@ -1935,6 +2030,7 @@ nav{
   <div style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:24px;">
     <a href="https://golden-vault-empire.lovable.app" style="color:rgba(0,229,255,0.7);text-decoration:none;font-size:13px;">Main Platform</a>
     <a href="https://github.com/justinhoganzero1/solace-portal" style="color:rgba(0,229,255,0.7);text-decoration:none;font-size:13px;">GitHub</a>
+    <a href="#about" style="color:rgba(0,229,255,0.7);text-decoration:none;font-size:13px;">About</a>
     <a href="#pricing" style="color:rgba(0,229,255,0.7);text-decoration:none;font-size:13px;">Pricing</a>
     <a href="#download" style="color:rgba(0,229,255,0.7);text-decoration:none;font-size:13px;">Download</a>
   </div>
@@ -5556,16 +5652,16 @@ function logoutUser(){
   localStorage.removeItem('sp_paid');
   closeLibrary();
   const cta=document.querySelector('.nav-cta');
-  if(cta){cta.innerHTML='&#9889; Get Started Free';cta.style.background='linear-gradient(135deg,#DC143C,#FFD700,#1565C0)';}
+  if(cta){cta.innerHTML='&#9889; Get Started Free';cta.style.background='linear-gradient(135deg,#DC143C,#FFD700,#1565C0)';cta.style.color='#fff';}
   const lib=document.getElementById('navLibrary');if(lib)lib.style.display='none';
   const adm=document.getElementById('navAdmin');if(adm)adm.style.display='none';
+  const logout=document.getElementById('navLogout');if(logout)logout.style.display='none';
   document.querySelectorAll('.gate').forEach(g=>g.style.display='flex');
   showTabToast('Logged out. See you soon!','#888');
-  // Scroll back to the top home/hero section
   setTimeout(()=>window.scrollTo({top:0,behavior:'smooth'}),300);
 }
 
-// ══ FIX: updateNavUser — show My Apps + Admin links, make CTA open dashboard ══
+// ══ FIX: updateNavUser — show My Apps + Admin links, logout btn, make CTA open dashboard ══
 const _origUpdateNavUser=updateNavUser;
 updateNavUser=function(name){
   _origUpdateNavUser(name);
@@ -5573,6 +5669,7 @@ updateNavUser=function(name){
   const u=JSON.parse(localStorage.getItem('sp_user')||'{}');
   const adm=document.getElementById('navAdmin');
   if(adm)adm.style.display=(u.email===ADMIN_EMAIL)?'inline-block':'none';
+  const logout=document.getElementById('navLogout');if(logout)logout.style.display='inline-block';
   const cta=document.getElementById('navCta');
   if(cta)cta.onclick=function(e){e.preventDefault();navCtaClick();};
 };
