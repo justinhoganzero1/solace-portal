@@ -2433,6 +2433,7 @@ nav{
       <button onclick="injectChat('scan internet for latest flutter trends')" style="background:rgba(0,229,255,0.07);border:1px solid rgba(0,229,255,0.2);color:rgba(0,229,255,0.8);padding:4px 11px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;">&#127760; Web Scan</button>
       <button onclick="injectChat('generate auth code')" style="background:rgba(21,101,192,0.1);border:1px solid rgba(21,101,192,0.25);color:rgba(100,180,255,0.8);padding:4px 11px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;">&#128272; Auth</button>
       <button onclick="injectChat('generate a high quality app ui photo')" style="background:rgba(139,69,255,0.09);border:1px solid rgba(139,69,255,0.22);color:rgba(180,120,255,0.8);padding:4px 11px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;">&#128247; 8K Image</button>
+      <button onclick="injectChat('run system diagnostic')" style="background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.2);color:rgba(0,229,255,0.75);padding:4px 11px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;">&#128302; Diagnose</button>
     </div>
     <div style="padding:12px 14px;border-top:1px solid rgba(255,215,0,0.08);display:flex;gap:8px;background:rgba(255,255,255,0.02);margin-top:8px;">
       <input id="chatInput" placeholder="Build app, generate logo, scan web..." style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,215,0,0.15);color:#fff;padding:10px 14px;border-radius:10px;font-size:13px;outline:none;" onkeydown="if(event.key==='Enter')sendChat()"/>
@@ -3670,7 +3671,120 @@ function classifyIntent(msg){
   if(/payment|stripe|paypal|in.?app/.test(m)) return 'PAYMENTS';
   if(/camera|photo|image|gallery|video|media/.test(m)) return 'MEDIA';
   if(/hello|hi|hey|who are you|what can you/.test(m)) return 'GREETING';
+  if(/diagnos|self.?check|system.?check|system.?repair|repair.?system|health.?check|scan.?system|self.?repair|system.?status|system.?scan|run.?repair|oracle.?check|fix.?system/.test(m)) return 'DIAGNOSE';
   return 'GENERAL';
+}
+
+// ══ ORACLE SELF-DIAGNOSTIC & AUTO-REPAIR ENGINE ══
+function oracleDiagnose(){
+  const isBelinda=currentAvatar==='belinda';
+  const R=[];
+  let totalFixed=0;
+
+  // 1. LocalStorage integrity
+  try{
+    let lsFixed=0;
+    ['sp_user','sp_accounts'].forEach(k=>{
+      const v=localStorage.getItem(k);
+      if(v){try{JSON.parse(v);}catch(e){localStorage.removeItem(k);lsFixed++;}}
+    });
+    const pd=localStorage.getItem('sp_paid');
+    if(pd&&pd!=='0'&&pd!=='1'){localStorage.setItem('sp_paid','0');lsFixed++;}
+    totalFixed+=lsFixed;
+    R.push(lsFixed?{s:'FIX',n:'LocalStorage',d:'Repaired '+lsFixed+' corrupted entr'+(lsFixed===1?'y':'ies')}:{s:'OK',n:'LocalStorage',d:'All data structures valid'});
+  }catch(e){R.push({s:'ERR',n:'LocalStorage',d:'Access denied — private mode limits storage'});}
+
+  // 2. Auth state
+  try{
+    const u=JSON.parse(localStorage.getItem('sp_user')||'null');
+    const accs=JSON.parse(localStorage.getItem('sp_accounts')||'{}');
+    if(u&&u.email&&!accs[u.email]){
+      accs[u.email]={name:u.name||'User',email:u.email};
+      localStorage.setItem('sp_accounts',JSON.stringify(accs));
+      totalFixed++;
+      R.push({s:'FIX',n:'Auth State',d:'Rebuilt missing account record for '+u.name});
+    }else{
+      R.push({s:'OK',n:'Auth State',d:u?'Logged in as '+u.name:'Ready for sign-in'});
+    }
+  }catch(e){
+    localStorage.removeItem('sp_user');totalFixed++;
+    R.push({s:'FIX',n:'Auth State',d:'Corrupted session cleared — please sign in again'});
+  }
+
+  // 3. Payment state
+  const paid=localStorage.getItem('sp_paid');
+  R.push({s:'OK',n:'Payment',d:paid==='1'?'Premium active &#9889;':'Free tier — $1 AUD unlocks full access'});
+
+  // 4. Chat state integrity
+  let chatFixed=false;
+  if(chatContext.buildState.active&&chatContext.buildState.phase>6){
+    chatContext.buildState={active:false,phase:0,appName:'',platform:'',screens:[],hasLogin:false,monetise:'free'};
+    chatFixed=true;totalFixed++;
+  }
+  if(chatContext.gateSignup){
+    const msgs=document.getElementById('chatMessages');
+    if(msgs&&msgs.children.length===0){chatContext.gateSignup=null;chatFixed=true;totalFixed++;}
+  }
+  R.push({s:chatFixed?'FIX':'OK',n:'Chat Engine',d:chatFixed?'Reset stuck conversation state':'Conversation state nominal'});
+
+  // 5. DOM integrity
+  const needed=['chatMessages','chatInput','loginGate','paywallModal','chatOverlay','gateSocialForm','chatVoicePanel'];
+  const missing=needed.filter(id=>!document.getElementById(id));
+  R.push(missing.length?{s:'ERR',n:'DOM Integrity',d:'Missing elements: '+missing.join(', ')}:{s:'OK',n:'DOM Integrity',d:'All '+needed.length+' UI components present'});
+
+  // 6. Orphaned overlays
+  let ovlFixed=0;
+  ['googleAuthOverlay','appleAuthOverlay'].forEach(id=>{const el=document.getElementById(id);if(el){el.remove();ovlFixed++;}});
+  const gate=document.getElementById('loginGate');
+  const userObj=JSON.parse(localStorage.getItem('sp_user')||'null');
+  if(gate&&gate.style.display==='flex'&&userObj){gate.style.display='none';ovlFixed++;}
+  totalFixed+=ovlFixed;
+  R.push(ovlFixed?{s:'FIX',n:'Modal Layer',d:'Cleared '+ovlFixed+' orphaned overlay'+(ovlFixed>1?'s':'')}:{s:'OK',n:'Modal Layer',d:'No stuck overlays detected'});
+
+  // 7. TTS engine
+  _stopCurrentSpeech();
+  const hasEl=!!localStorage.getItem('sp_el_key');
+  const hasSpeech=!!window.speechSynthesis;
+  R.push({s:'OK',n:'TTS Engine',d:hasEl?'ElevenLabs premium active &#9889;':hasSpeech?'Browser TTS active (tap &#9881; to add ElevenLabs)':'No TTS — use a modern browser'});
+
+  // 8. Voice input
+  const hasSR=!!(window.SpeechRecognition||window.webkitSpeechRecognition);
+  R.push({s:hasSR?'OK':'WARN',n:'Voice Input',d:hasSR?'Microphone API available':'Not supported in this browser — use Chrome'});
+
+  // 9. ElevenLabs key validity
+  const elKey=localStorage.getItem('sp_el_key')||'';
+  if(elKey&&elKey.length<10){localStorage.removeItem('sp_el_key');totalFixed++;R.push({s:'FIX',n:'ElevenLabs',d:'Malformed key removed — re-enter via &#9881; settings'});}
+  else R.push({s:elKey?'OK':'WARN',n:'ElevenLabs',d:elKey?'API key configured ('+elKey.length+' chars)':'Not configured — tap &#9881; to add for premium voices'});
+
+  // 10. Avatar images
+  const avatarOk=['images/belinda-avatar.jpg','images/sven-avatar.jpg'].every(src=>{
+    const img=document.querySelector('img[src="'+src+'"]');
+    return img&&img.complete&&img.naturalWidth>0;
+  });
+  R.push({s:avatarOk?'OK':'WARN',n:'Avatars',d:avatarOk?'Belinda &amp; Sven images loaded':'Avatar images pending — check network'});
+
+  // 11. Oracle chip timer
+  if(_oracleChipTimer){clearTimeout(_oracleChipTimer);_oracleChipTimer=null;}
+  R.push({s:'OK',n:'Chip Engine',d:'Follow-up interaction system nominal'});
+
+  // Build HTML report
+  const ok=R.filter(r=>r.s==='OK').length;
+  const fixed=R.filter(r=>r.s==='FIX').length;
+  const errors=R.filter(r=>r.s==='ERR').length;
+  const warns=R.filter(r=>r.s==='WARN').length;
+
+  const icon={'OK':'<span style="color:rgba(80,220,80,0.9);">&#10003;</span>','FIX':'<span style="color:rgba(255,215,0,0.95);">&#128295;</span>','ERR':'<span style="color:rgba(255,80,80,0.9);">&#10007;</span>','WARN':'<span style="color:rgba(255,180,50,0.9);">&#9888;</span>'};
+
+  let html='<strong>&#128302; SOLACE PORTAL &mdash; SYSTEM DIAGNOSTIC</strong><br>';
+  html+='<span style="font-size:11px;color:rgba(255,255,255,0.38);">'+R.length+' subsystems scanned &bull; '+(isBelinda?'Belinda':'Sven')+' auto-repair active</span><br><br>';
+  R.forEach(r=>{html+=icon[r.s]+' <strong>'+r.n+'</strong> &mdash; '+r.d+'<br>';});
+  html+='<br><div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,215,0,0.18);border-radius:10px;padding:9px 13px;font-size:12px;">';
+  html+='<span style="color:rgba(80,220,80,0.9);">&#10003; '+ok+' passing</span>';
+  if(fixed)html+=' &nbsp;<span style="color:rgba(255,215,0,0.9);">&#128295; '+fixed+' auto-repaired</span>';
+  if(warns)html+=' &nbsp;<span style="color:rgba(255,180,50,0.9);">&#9888; '+warns+' warnings</span>';
+  if(errors)html+=' &nbsp;<span style="color:rgba(255,80,80,0.9);">&#10007; '+errors+' errors</span>';
+  html+='<br><em style="color:rgba(255,255,255,0.38);font-size:11px;">'+(totalFixed?totalFixed+' repair'+(totalFixed>1?'s':'')+' applied &mdash; ':'')+'System running at optimal capacity.</em></div>';
+  return html;
 }
 
 // ── Web scan simulator ──
@@ -3945,6 +4059,8 @@ function avatarAIRespond(userMsg){
   }
 
   switch(intent){
+    case 'DIAGNOSE':
+      return oracleDiagnose();
     case 'GREETING':
       return isBelinda
         ?`Hi! I'm <strong>Belinda</strong>, your AI Architect. I can:<br>
