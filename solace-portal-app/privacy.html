@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Privacy Policy | Solace Portal</title>
+<meta name="description" content="Privacy Policy for Solace Portal - Learn how we protect your data and privacy."/>
+<link rel="canonical" href="https://oracle-lunar.online/privacy.html"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --red:#DC143C; --red2:#FF2A5A; --gold:#FFD700; --gold2:#FFA500; --blue:#1565C0; --cyan:#00E5FF;
+  --dark:#050510; --dark2:#0A0A18;
+}
+body{
+  font-family:'Inter',sans-serif;
+  background:linear-gradient(135deg,var(--dark) 0%,#0c0c1d 50%,var(--dark2) 100%);
+  color:#fff;min-height:100vh;line-height:1.7;
+  background-attachment:fixed;
+}
+.container{max-width:900px;margin:0 auto;padding:60px 24px;}
+
+/* Header with 3D Logo */
+.header{
+  text-align:center;margin-bottom:60px;padding:40px 0;
+  border-bottom:1px solid rgba(255,215,0,0.15);
+}
+.logo-3d{
+  width:80px;height:80px;margin:0 auto 20px;
+  filter:drop-shadow(0 0 30px rgba(255,215,0,0.8)) drop-shadow(0 0 60px rgba(220,20,60,0.4));
+  animation:float3d 4s ease-in-out infinite;
+}
+.logo-3d img{width:100%;height:100%;object-fit:contain;}
+@keyframes float3d{
+  0%,100%{transform:translateY(0) rotateY(0deg);}
+  50%{transform:translateY(-8px) rotateY(3deg);}
+}
+.brand-name{
+  font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;
+  background:linear-gradient(135deg,#FFD700 0%,#FFA500 50%,#FFD700 100%);
+  background-size:200%;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  animation:goldShine 3s ease-in-out infinite;
+  letter-spacing:3px;margin-bottom:8px;
+}
+@keyframes goldShine{0%,100%{background-position:0% 50%;}50%{background-position:200% 50%;}}
+.page-title{font-size:14px;color:rgba(255,255,255,0.5);letter-spacing:2px;text-transform:uppercase;}
+
+/* Privacy Shield Icon */
+.privacy-shield{
+  width:60px;height:60px;margin:0 auto 20px;
+  background:linear-gradient(135deg,rgba(0,229,255,0.1),rgba(21,101,192,0.1));
+  border:2px solid rgba(0,229,255,0.3);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:28px;
+  box-shadow:0 0 30px rgba(0,229,255,0.2);
+}
+
+/* Content Styling */
+.content{background:rgba(255,255,255,0.02);border:1px solid rgba(255,215,0,0.1);border-radius:24px;padding:40px;}
+.section{margin-bottom:40px;}
+.section:last-child{margin-bottom:0;}
+.section h2{
+  font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:#00E5FF;
+  margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(0,229,255,0.15);
+  letter-spacing:1px;
+}
+.section h3{font-size:15px;font-weight:700;color:#FFA500;margin:24px 0 12px;}
+.section p{color:rgba(255,255,255,0.7);margin-bottom:16px;font-size:14px;}
+.section ul{margin-left:24px;margin-bottom:16px;}
+.section li{color:rgba(255,255,255,0.7);margin-bottom:8px;font-size:14px;}
+.section strong{color:#FFD700;font-weight:600;}
+.section a{color:#00E5FF;text-decoration:none;border-bottom:1px solid rgba(0,229,255,0.3);transition:all 0.2s;}
+.section a:hover{color:#FFD700;border-color:rgba(255,215,0,0.5);}
+
+/* Privacy Badges */
+.privacy-badges{
+  display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin:30px 0;
+}
+.badge{
+  background:linear-gradient(135deg,rgba(0,229,255,0.08),rgba(21,101,192,0.05));
+  border:1px solid rgba(0,229,255,0.2);border-radius:12px;
+  padding:16px 20px;text-align:center;flex:1;min-width:140px;
+}
+.badge-icon{font-size:24px;margin-bottom:8px;}
+.badge-title{font-size:12px;font-weight:700;color:#00E5FF;margin-bottom:4px;}
+.badge-desc{font-size:11px;color:rgba(255,255,255,0.5);}
+
+/* Footer */
+.footer{
+  text-align:center;margin-top:60px;padding-top:40px;
+  border-top:1px solid rgba(255,215,0,0.1);color:rgba(255,255,255,0.4);font-size:13px;
+}
+.footer a{color:rgba(255,215,0,0.6);text-decoration:none;margin:0 12px;transition:color 0.2s;}
+.footer a:hover{color:#FFD700;}
+
+/* Back button */
+.back-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,rgba(255,215,0,0.1),rgba(220,20,60,0.1));
+  border:1px solid rgba(255,215,0,0.2);color:#FFD700;
+  padding:12px 24px;border-radius:30px;font-size:13px;font-weight:600;
+  text-decoration:none;margin-bottom:30px;transition:all 0.3s;
+}
+.back-btn:hover{
+  background:linear-gradient(135deg,rgba(255,215,0,0.2),rgba(220,20,60,0.2));
+  border-color:rgba(255,215,0,0.4);transform:translateX(-4px);
+}
+
+/* Award badge */
+.award-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,rgba(200,168,75,0.1),rgba(0,0,0,0.3));
+  border:1px solid rgba(200,168,75,0.2);border-radius:50px;
+  padding:10px 20px;margin-bottom:30px;
+}
+.award-badge span{color:#C8A84B;font-size:12px;font-weight:600;}
+
+@media(max-width:768px){
+  .container{padding:40px 16px;}
+  .content{padding:24px;}
+  .brand-name{font-size:22px;}
+  .privacy-badges{flex-direction:column;align-items:center;}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="index.html" class="back-btn">&#8592; Back to Home</a>
+  
+  <div class="header">
+    <div class="logo-3d">
+      <img src="images/solace-logo-3d.png" alt="Solace Portal"/>
+    </div>
+    <div class="brand-name">SOLACE PORTAL</div>
+    <div class="page-title">Privacy Policy</div>
+  </div>
+
+  <div class="award-badge">
+    <span style="font-size:16px;">&#9733;</span>
+    <span>Solace Gold Star Award Winner 2024, 2025 & 2026</span>
+  </div>
+
+  <div class="privacy-badges">
+    <div class="badge">
+      <div class="badge-icon">&#128272;</div>
+      <div class="badge-title">Your Code</div>
+      <div class="badge-desc">We never train on your projects</div>
+    </div>
+    <div class="badge">
+      <div class="badge-icon">&#128737;</div>
+      <div class="badge-title">Encrypted</div>
+      <div class="badge-desc">Bank-level security</div>
+    </div>
+    <div class="badge">
+      <div class="badge-icon">&#127760;</div>
+      <div class="badge-title">Global</div>
+      <div class="badge-desc">GDPR compliant</div>
+    </div>
+    <div class="badge">
+      <div class="badge-icon">&#9989;</div>
+      <div class="badge-title">Transparent</div>
+      <div class="badge-desc">Clear data practices</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="section">
+      <h2>1. Our Commitment to Privacy</h2>
+      <p>At Solace Portal, we believe privacy is a fundamental right. Designed by a team of specialists over 3 years of intensive engineering, our platform is built with privacy at its core. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our AI-powered app builder.</p>
+      <p><strong>Your code is your intellectual property.</strong> We will never use your projects, prompts, or generated code to train our AI models without your explicit consent.</p>
+    </div>
+
+    <div class="section">
+      <h2>2. Information We Collect</h2>
+      <h3>2.1 Personal Information</h3>
+      <p>When you create an account, we may collect:</p>
+      <ul>
+        <li>Name and email address</li>
+        <li>Account credentials (securely hashed)</li>
+        <li>Payment information (processed securely by Stripe - we never store full card details)</li>
+        <li>Profile information you choose to provide</li>
+      </ul>
+      
+      <h3>2.2 Usage Data</h3>
+      <p>We automatically collect:</p>
+      <ul>
+        <li>IP address and device information</li>
+        <li>Browser type and operating system</li>
+        <li>Feature usage and interaction patterns</li>
+        <li>App generation metrics (anonymized)</li>
+      </ul>
+      
+      <h3>2.3 What We DON'T Collect</h3>
+      <ul>
+        <li>Your actual code or app content</li>
+        <li>Specific prompts you enter for AI generation</li>
+        <li>Personal data from minors under 13</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>3. How We Use Your Information</h2>
+      <p>We use collected data solely for:</p>
+      <ul>
+        <li><strong>Service Provision:</strong> Creating and maintaining your account, processing payments</li>
+        <li><strong>Security:</strong> Detecting fraud, abuse, and unauthorized access</li>
+        <li><strong>Improvement:</strong> Analyzing aggregated, anonymized usage to enhance our platform</li>
+        <li><strong>Communication:</strong> Sending important updates, security alerts, and optional newsletters</li>
+      </ul>
+      <p><strong>We do NOT:</strong> Sell your data to third parties, use your code for AI training, or share personal information with advertisers.</p>
+    </div>
+
+    <div class="section">
+      <h2>4. Data Storage & Security</h2>
+      <p>Your data is protected using industry-standard measures:</p>
+      <ul>
+        <li><strong>Encryption:</strong> All data in transit uses TLS 1.3. Sensitive data at rest is encrypted with AES-256</li>
+        <li><strong>Secure Infrastructure:</strong> Hosted on secure cloud infrastructure with regular security audits</li>
+        <li><strong>Access Controls:</strong> Strict internal access controls and employee background checks</li>
+        <li><strong>Regular Testing:</strong> Penetration testing and vulnerability assessments</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>5. Your Data Rights</h2>
+      <p>Depending on your location, you have rights to:</p>
+      <ul>
+        <li><strong>Access:</strong> Request a copy of your personal data</li>
+        <li><strong>Correction:</strong> Update inaccurate information</li>
+        <li><strong>Deletion:</strong> Request account deletion (subject to legal retention requirements)</li>
+        <li><strong>Portability:</strong> Export your data in a standard format</li>
+        <li><strong>Objection:</strong> Opt out of certain data processing</li>
+      </ul>
+      <p>To exercise these rights, contact us at <a href="mailto:justinbretthogan@gmail.com">justinbretthogan@gmail.com</a></p>
+    </div>
+
+    <div class="section">
+      <h2>6. Cookies & Tracking</h2>
+      <p>We use minimal cookies for:</p>
+      <ul>
+        <li>Essential session management (login state)</li>
+        <li>Anonymous analytics (Google Analytics)</li>
+        <li>Fraud prevention</li>
+      </ul>
+      <p>You can disable non-essential cookies through your browser settings.</p>
+    </div>
+
+    <div class="section">
+      <h2>7. Third-Party Services</h2>
+      <p>We integrate with trusted third parties:</p>
+      <ul>
+        <li><strong>Stripe:</strong> Payment processing (PCI DSS compliant)</li>
+        <li><strong>Google:</strong> Analytics and OAuth login</li>
+        <li><strong>Apple:</strong> Sign in with Apple</li>
+        <li><strong>Hosting Provider:</strong> Secure cloud infrastructure</li>
+      </ul>
+      <p>Each partner is vetted for privacy compliance and only receives data necessary for their specific function.</p>
+    </div>
+
+    <div class="section">
+      <h2>8. International Data Transfers</h2>
+      <p>As an Australian-based service, your data may be processed in Australia and other jurisdictions with adequate data protection laws. We ensure appropriate safeguards are in place for any international transfers.</p>
+    </div>
+
+    <div class="section">
+      <h2>9. Children's Privacy</h2>
+      <p>Solace Portal is not intended for children under 13. We do not knowingly collect data from children under 13. If we discover such data, we will delete it immediately. Parents/guardians should supervise minors aged 13-18.</p>
+    </div>
+
+    <div class="section">
+      <h2>10. Data Retention</h2>
+      <p>We retain your data:</p>
+      <ul>
+        <li>Account data: Until you delete your account or 2 years after last activity</li>
+        <li>Payment records: As required by tax laws (typically 7 years)</li>
+        <li>Logs: 90 days for security purposes</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>11. Changes to This Policy</h2>
+      <p>We may update this Privacy Policy periodically. Changes will be posted here with an updated revision date. Significant changes will be notified via email.</p>
+      <p style="margin-top:20px;color:rgba(255,255,255,0.5);font-size:13px;"><strong>Last Updated:</strong> April 16, 2026</p>
+    </div>
+
+    <div class="section">
+      <h2>12. Contact Us</h2>
+      <p>For privacy-related questions or data requests:</p>
+      <p><strong>Email:</strong> <a href="mailto:justinbretthogan@gmail.com">justinbretthogan@gmail.com</a></p>
+      <p><strong>Founder:</strong> Justin Hogan</p>
+      <p><strong>Business:</strong> Solace Portal</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>&copy; 2026 Solace Portal. Your privacy is our priority.</p>
+    <p style="margin-top:12px;">
+      <a href="index.html">Home</a> |
+      <a href="terms.html">Terms & Conditions</a> |
+      <a href="privacy.html">Privacy</a>
+    </p>
+  </div>
+</div>
+</body>
+</html>

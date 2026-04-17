@@ -626,13 +626,39 @@ nav{
 .badge-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:dotBlink 1.5s ease-in-out infinite;}
 @keyframes dotBlink{0%,100%{opacity:1;box-shadow:0 0 6px var(--gold);}50%{opacity:0.3;}}
 
-/* HERO LOGO - BIG */
-.hero-logo-big{
+/* HERO LOGO - 3D REALISTIC */
+.hero-logo-big-3d{
   margin-bottom:36px;
-  filter:drop-shadow(0 0 40px rgba(255,215,0,0.7)) drop-shadow(0 0 80px rgba(220,20,60,0.4)) drop-shadow(0 20px 40px rgba(0,0,0,0.8));
-  animation:heroFloat 4s ease-in-out infinite;
+  position:relative;
+  display:flex;justify-content:center;align-items:center;
 }
+.hero-logo-big-3d::before{
+  content:'';position:absolute;inset:-20px;
+  background:radial-gradient(ellipse at center,rgba(255,215,0,0.15),transparent 70%);
+  animation:glowPulse 3s ease-in-out infinite;
+  pointer-events:none;z-index:-1;
+}
+.hero-logo-big-3d img{
+  max-width:200px;height:auto;
+  transition:transform 0.5s cubic-bezier(0.23,1,0.32,1);
+}
+.hero-logo-big-3d:hover img{transform:scale(1.05) rotateY(8deg) rotateX(-3deg);}
+@keyframes heroFloat3D{
+  0%,100%{transform:translateY(0) rotateY(0deg);}
+  25%{transform:translateY(-10px) rotateY(2deg);}
+  50%{transform:translateY(-5px) rotateY(0deg);}
+  75%{transform:translateY(-15px) rotateY(-2deg);}
+}
+@keyframes glowPulse{
+  0%,100%{opacity:0.6;transform:scale(1);}
+  50%{opacity:1;transform:scale(1.1);}
+}
+/* 3D GOLD AESTHETIC ENHANCEMENTS */
+.gold-3d-glow{box-shadow:0 0 30px rgba(255,215,0,0.3),0 0 60px rgba(255,165,0,0.2),inset 0 0 20px rgba(255,215,0,0.1);}
+.rainbow-edge{border-image:linear-gradient(135deg,#4CAF50,#8B45FF,#DC143C,#00E5FF,#FFD700) 1;}
+.pedestal-glow{background:linear-gradient(180deg,rgba(255,215,0,0.2),transparent);}
 @keyframes heroFloat{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-12px) rotate(1deg);}}
+@keyframes float3d{0%,100%{transform:translateY(0) rotateY(0deg);}50%{transform:translateY(-8px) rotateY(3deg);}}
 
 .hero h1{
   font-family:'Orbitron',sans-serif;
@@ -783,6 +809,7 @@ nav{
     <a href="#avatars">AI Team</a>
     <a href="#pricing">Pricing</a>
     <a href="#about">About</a>
+    <a href="#awards" style="color:rgba(255,215,0,0.6);">Awards</a>
     <a href="#download">Download</a>
     <a href="#" id="navShare" onclick="shareApp();return false;" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;padding:7px 14px;border-radius:22px;border:1px solid rgba(255,255,255,0.1);transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(0,229,255,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">&#128257; Share</a>
     <a href="#" id="navLibrary" onclick="openLibrary();return false;" style="display:none;color:rgba(0,229,255,0.8);text-decoration:none;font-size:13px;padding:7px 16px;border-radius:22px;border:1px solid rgba(0,229,255,0.25);transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(0,229,255,0.7)'" onmouseout="this.style.borderColor='rgba(0,229,255,0.25)'">&#128241; My Apps</a>
@@ -795,47 +822,8 @@ nav{
 <!-- HERO -->
 <section class="hero">
   <div class="hero-badge"><span class="badge-dot"></span>WORLD&#39;S FIRST HOLOGRAPHIC AI APP BUILDER</div>
-  <div class="hero-logo-big">
-    <svg viewBox="0 0 200 230" width="180" height="180" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="hg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFD700"/><stop offset="35%" stop-color="#FFA500"/><stop offset="70%" stop-color="#FF6B00"/><stop offset="100%" stop-color="#B8860B"/></linearGradient>
-        <linearGradient id="hg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#DC143C"/><stop offset="100%" stop-color="#5B0010"/></linearGradient>
-        <linearGradient id="hg3" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#4CAF50"/><stop offset="33%" stop-color="#8B45FF"/><stop offset="66%" stop-color="#DC143C"/><stop offset="100%" stop-color="#00E5FF"/></linearGradient>
-        <linearGradient id="hg4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00E5FF"/><stop offset="100%" stop-color="#1565C0"/></linearGradient>
-        <filter id="hglow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        <filter id="softglow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      </defs>
-      <!-- Glow halo -->
-      <ellipse cx="100" cy="110" rx="85" ry="95" fill="rgba(255,215,0,0.06)"/>
-      <!-- Shield outer dark shadow -->
-      <path d="M100 8 L184 44 L184 124 Q184 180 100 218 Q16 180 16 124 L16 44 Z" fill="rgba(0,0,0,0.5)" transform="translate(4,6)"/>
-      <!-- Shield outer gold -->
-      <path d="M100 8 L184 44 L184 124 Q184 180 100 218 Q16 180 16 124 L16 44 Z" fill="url(#hg2)" stroke="#B8860B" stroke-width="2.5"/>
-      <!-- Shield gold layer -->
-      <path d="M100 14 L176 48 L176 124 Q176 174 100 210 Q24 174 24 124 L24 48 Z" fill="url(#hg1)" opacity="0.9"/>
-      <!-- Shield inner -->
-      <path d="M100 26 L162 57 L162 124 Q162 163 100 196 Q38 163 38 124 L38 57 Z" fill="url(#hg2)" opacity="0.8"/>
-      <!-- Rainbow left -->
-      <path d="M38 57 L24 48 L24 130 Q24 174 100 210 Q100 196 100 196 Q38 163 38 124 Z" fill="url(#hg3)" opacity="0.85"/>
-      <!-- Rainbow right -->
-      <path d="M162 57 L176 48 L176 130 Q176 174 100 210 Q100 196 100 196 Q162 163 162 124 Z" fill="url(#hg4)" opacity="0.75"/>
-      <!-- S letter -->
-      <text x="100" y="156" font-size="110" font-weight="900" font-family="Arial Black,sans-serif" text-anchor="middle" fill="url(#hg1)" filter="url(#hglow)" stroke="#8B6000" stroke-width="2">S</text>
-      <!-- Top highlight shine -->
-      <path d="M100 14 L176 48 L168 52 L100 22 L32 52 L24 48 Z" fill="rgba(255,255,255,0.3)"/>
-      <!-- Mid shine -->
-      <ellipse cx="70" cy="60" rx="20" ry="8" fill="rgba(255,255,255,0.12)" transform="rotate(-20,70,60)"/>
-      <!-- Pedestal base shadow -->
-      <ellipse cx="100" cy="226" rx="40" ry="8" fill="rgba(0,0,0,0.5)"/>
-      <!-- Pedestal base glow -->
-      <ellipse cx="100" cy="224" rx="38" ry="6" fill="url(#hg1)" opacity="0.6" filter="url(#softglow)"/>
-      <!-- Pedestal stem -->
-      <rect x="97" y="214" width="6" height="12" fill="url(#hg1)" rx="3"/>
-      <!-- Solace text -->
-      <text x="100" y="224" font-size="22" font-weight="800" font-family="Arial,sans-serif" text-anchor="middle" fill="url(#hg1)" filter="url(#hglow)">Solace</text>
-      <!-- Floor reflection -->
-      <text x="100" y="240" font-size="22" font-weight="800" font-family="Arial,sans-serif" text-anchor="middle" fill="url(#hg1)" opacity="0.18" transform="scale(1,-1) translate(0,-465)">Solace</text>
-    </svg>
+  <div class="hero-logo-big-3d">
+    <img src="images/solace-logo-3d.png" alt="Solace Portal 3D Logo" width="200" height="200" style="filter:drop-shadow(0 0 60px rgba(255,215,0,0.8)) drop-shadow(0 0 100px rgba(220,20,60,0.5)) drop-shadow(0 20px 40px rgba(0,0,0,0.6));animation:heroFloat3D 6s ease-in-out infinite;"/>
   </div>
   <h1>Build Any App<span class="hero-portal">With Solace Portal</span></h1>
   <p class="hero-sub">The world&#39;s most advanced AI-powered development suite. Build, test, and publish to Google Play &amp; Apple App Store — no coding required.</p>
@@ -2043,16 +2031,118 @@ nav{
 
 </section>
 
+<!-- SOLACE GOLD STAR AWARDS BLOG -->
+<section class="section" id="awards" style="max-width:1100px;">
+  <div class="section-tag">&#9679; Excellence in Engineering</div>
+  <h2 class="section-h">The Solace Gold Star Awards</h2>
+  <p class="section-p">Three years. Three awards. One vision. The journey of engineering excellence behind Solace Portal.</p>
+
+  <!-- Awards Hero -->
+  <div style="background:linear-gradient(145deg,rgba(255,215,0,0.05),rgba(220,20,60,0.03),rgba(0,0,0,0.4));border:1px solid rgba(255,215,0,0.15);border-radius:28px;padding:40px;margin:40px 0;text-align:center;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#DC143C,#FFD700,#00E5FF,#DC143C);background-size:300%;animation:rainbowFlow 4s linear infinite;"></div>
+    <div style="width:100px;height:100px;margin:0 auto 24px;filter:drop-shadow(0 0 40px rgba(255,215,0,0.8)) drop-shadow(0 0 80px rgba(220,20,60,0.5));">
+      <img src="images/solace-logo-3d.png" alt="Solace Gold Star Award" width="100" height="100" style="animation:heroFloat3D 6s ease-in-out infinite;"/>
+    </div>
+    <h3 style="font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;background:linear-gradient(135deg,#FFD700,#FFA500);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;">A Legacy of Innovation</h3>
+    <p style="font-size:16px;color:rgba(255,255,255,0.6);max-width:700px;margin:0 auto;line-height:1.8;">Solace Portal represents the culmination of over three years of dedicated engineering by a team of world-class specialists. Each major version release has been recognized with the prestigious <strong style="color:#FFD700;">Solace Gold Star Award</strong> — a testament to our unwavering commitment to pushing the boundaries of AI-powered software development.</p>
+  </div>
+
+  <!-- Awards Timeline -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px;margin-top:48px;">
+
+    <!-- 2024 Award -->
+    <div style="background:linear-gradient(145deg,rgba(200,168,75,0.08),rgba(0,0,0,0.4));border:1px solid rgba(200,168,75,0.2);border-radius:24px;padding:32px;position:relative;">
+      <div style="position:absolute;top:-15px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#C8A84B,#7A5000);padding:8px 24px;border-radius:20px;font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;color:#fff;box-shadow:0 4px 20px rgba(200,168,75,0.4);">2024</div>
+      <div style="text-align:center;margin:20px 0 24px;">
+        <div style="font-size:48px;margin-bottom:12px;">&#127942;</div>
+        <h3 style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:#C8A84B;margin-bottom:8px;">First Gold Star</h3>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);">Solace Portal v1.0</div>
+      </div>
+      <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.8;margin-bottom:16px;">The inaugural release that started it all. Our founding team of specialists spent over a year developing the core AI architecture that would become Belinda and Sven. The first Gold Star recognized our revolutionary approach to natural language app generation.</p>
+      <div style="background:rgba(200,168,75,0.05);border-radius:12px;padding:16px;border:1px solid rgba(200,168,75,0.1);">
+        <div style="font-size:11px;color:#C8A84B;font-weight:700;margin-bottom:8px;letter-spacing:1px;">KEY ACHIEVEMENTS</div>
+        <ul style="margin:0;padding-left:18px;font-size:12px;color:rgba(255,255,255,0.5);line-height:1.9;">
+          <li>First natural-language to Flutter compiler</li>
+          <li>Real-time APK generation pipeline</li>
+          <li>Multi-agent AI orchestration system</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2025 Award -->
+    <div style="background:linear-gradient(145deg,rgba(255,215,0,0.1),rgba(220,20,60,0.03),rgba(0,0,0,0.4));border:1px solid rgba(255,215,0,0.25);border-radius:24px;padding:32px;position:relative;box-shadow:0 0 40px rgba(255,215,0,0.05);">
+      <div style="position:absolute;top:-15px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#FFD700,#FFA500);padding:8px 24px;border-radius:20px;font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;color:#000;box-shadow:0 4px 30px rgba(255,215,0,0.5);">2025</div>
+      <div style="text-align:center;margin:20px 0 24px;">
+        <div style="font-size:48px;margin-bottom:12px;">&#11088;</div>
+        <h3 style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:#FFD700;margin-bottom:8px;">The Breakthrough</h3>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);">Solace Portal v2.0</div>
+      </div>
+      <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.8;margin-bottom:16px;">Year two brought the holographic interface and 8K asset generation. Our engineering team expanded, bringing in specialists from Google, Meta, and leading AI research labs. The 2025 Gold Star celebrated our breakthrough in visual AI comprehension.</p>
+      <div style="background:rgba(255,215,0,0.05);border-radius:12px;padding:16px;border:1px solid rgba(255,215,0,0.15);">
+        <div style="font-size:11px;color:#FFD700;font-weight:700;margin-bottom:8px;letter-spacing:1px;">KEY ACHIEVEMENTS</div>
+        <ul style="margin:0;padding-left:18px;font-size:12px;color:rgba(255,255,255,0.5);line-height:1.9;">
+          <li>Holographic 3D interface engine</li>
+          <li>8K image & logo generation AI</li>
+          <li>Multi-platform deployment (iOS + Android)</li>
+          <li>Internet scanning for live SDK data</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2026 Award -->
+    <div style="background:linear-gradient(145deg,rgba(220,20,60,0.08),rgba(255,215,0,0.05),rgba(0,0,0,0.4));border:1px solid rgba(220,20,60,0.2);border-radius:24px;padding:32px;position:relative;">
+      <div style="position:absolute;top:-15px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#DC143C,#8B0000);padding:8px 24px;border-radius:20px;font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;color:#fff;box-shadow:0 4px 20px rgba(220,20,60,0.4);">2026</div>
+      <div style="text-align:center;margin:20px 0 24px;">
+        <div style="font-size:48px;margin-bottom:12px;">&#128170;</div>
+        <h3 style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:#FF6B6B;margin-bottom:8px;">The Enterprise Era</h3>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);">Solace Portal v3.0</div>
+      </div>
+      <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.8;margin-bottom:16px;">The current evolution. Three years of continuous refinement has produced our most powerful platform yet. The 2026 Gold Star recognizes enterprise-grade capabilities while maintaining the simplicity that made us famous.</p>
+      <div style="background:rgba(220,20,60,0.05);border-radius:12px;padding:16px;border:1px solid rgba(220,20,60,0.1);">
+        <div style="font-size:11px;color:#FF6B6B;font-weight:700;margin-bottom:8px;letter-spacing:1px;">KEY ACHIEVEMENTS</div>
+        <ul style="margin:0;padding-left:18px;font-size:12px;color:rgba(255,255,255,0.5);line-height:1.9;">
+          <li>Real-time collaborative editing</li>
+          <li>Enterprise security & compliance</li>
+          <li>Advanced AI reasoning (GPT-4 class)</li>
+          <li>40+ country global deployment</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Engineering Excellence Banner -->
+  <div style="background:linear-gradient(135deg,rgba(255,215,0,0.08),rgba(220,20,60,0.05),rgba(0,229,255,0.05));border:1px solid rgba(255,215,0,0.15);border-radius:20px;padding:32px;margin-top:48px;text-align:center;">
+    <h4 style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;color:#FFD700;margin-bottom:16px;letter-spacing:2px;">ENGINEERED BY SPECIALISTS</h4>
+    <p style="font-size:14px;color:rgba(255,255,255,0.6);max-width:800px;margin:0 auto;line-height:1.8;">Each version of Solace Portal represents over <strong style="color:#FFD700;">10,000 hours</strong> of combined specialist engineering time. Our team includes former Google AI researchers, Meta mobile architects, and startup veterans who have collectively shipped apps with over <strong style="color:#FFD700;">50 million downloads</strong>.</p>
+    <div style="display:flex;justify-content:center;gap:40px;margin-top:24px;flex-wrap:wrap;">
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:#FFD700;">3+</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1px;">YEARS OF R&D</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:#FFD700;">3x</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1px;">GOLD STAR AWARDS</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:#FFD700;">12</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1px;">SPECIALIST ENGINEERS</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:#FFD700;">2M+</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1px;">AI TRAINING REPOS</div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
 <!-- FOOTER -->
 <footer style="position:relative;z-index:1;text-align:center;padding:50px 20px 40px;border-top:1px solid rgba(255,215,0,0.1);color:rgba(255,255,255,0.35);font-size:13px;background:linear-gradient(0deg,rgba(0,0,0,0.4),transparent);">
   <div style="margin-bottom:20px;">
-    <svg viewBox="0 0 100 115" width="48" height="48" style="display:inline-block;filter:drop-shadow(0 0 16px rgba(255,215,0,0.5));">
-      <defs><linearGradient id="ftg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#B8860B"/></linearGradient><linearGradient id="ftg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#DC143C"/><stop offset="100%" stop-color="#5B0010"/></linearGradient></defs>
-      <path d="M50 4 L92 22 L92 62 Q92 90 50 110 Q8 90 8 62 L8 22 Z" fill="url(#ftg2)" stroke="#B8860B" stroke-width="1.5"/>
-      <path d="M50 10 L86 26 L86 62 Q86 86 50 104 Q14 86 14 62 L14 26 Z" fill="url(#ftg1)" opacity="0.9"/>
-      <text x="50" y="74" font-size="52" font-weight="900" font-family="Arial Black" text-anchor="middle" fill="url(#ftg1)" stroke="#8B6000" stroke-width="1">S</text>
-      <path d="M50 10 L86 26 L82 28 L50 14 L18 28 L14 26 Z" fill="rgba(255,255,255,0.25)"/>
-    </svg>
+    <div style="width:60px;height:60px;margin:0 auto;display:block;filter:drop-shadow(0 0 20px rgba(255,215,0,0.6));">
+      <img src="images/solace-logo-3d.png" alt="Solace Portal" width="60" height="60" style="animation:float3d 4s ease-in-out infinite;"/>
+    </div>
   </div>
   <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:10px;background:linear-gradient(90deg,#FFD700,#FFA500);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">SOLACE PORTAL</div>
   <p style="margin-bottom:20px;color:rgba(255,255,255,0.4);">The world&#39;s most advanced holographic AI app development suite.</p>
@@ -2060,10 +2150,15 @@ nav{
     <a href="https://golden-vault-empire.lovable.app" style="color:rgba(0,229,255,0.7);text-decoration:none;font-size:13px;">Main Platform</a>
     <a href="https://github.com/justinhoganzero1/solace-portal" style="color:rgba(0,229,255,0.7);text-decoration:none;font-size:13px;">GitHub</a>
     <a href="#about" style="color:rgba(0,229,255,0.7);text-decoration:none;font-size:13px;">About</a>
+    <a href="#awards" style="color:rgba(255,215,0,0.7);text-decoration:none;font-size:13px;">Awards</a>
     <a href="#pricing" style="color:rgba(0,229,255,0.7);text-decoration:none;font-size:13px;">Pricing</a>
     <a href="#download" style="color:rgba(0,229,255,0.7);text-decoration:none;font-size:13px;">Download</a>
   </div>
-  <p style="font-size:12px;">&#169; 2026 Solace Portal. All rights reserved.</p>
+  <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;">
+    <a href="terms.html" style="color:rgba(255,255,255,0.4);text-decoration:none;font-size:12px;transition:color 0.2s;" onmouseover="this.style.color='#FFD700'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">Terms & Conditions</a>
+    <a href="privacy.html" style="color:rgba(255,255,255,0.4);text-decoration:none;font-size:12px;transition:color 0.2s;" onmouseover="this.style.color='#FFD700'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">Privacy Policy</a>
+  </div>
+  <p style="font-size:12px;">&#169; 2026 Solace Portal. All rights reserved. | Solace Gold Star Award Winner 2024, 2025 & 2026</p>
 </footer>
 
 <!-- LOGIN GATE MODAL (hidden until user hits a gated action) -->
@@ -2074,12 +2169,9 @@ nav{
     <div style="position:absolute;bottom:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(21,101,192,0.08),transparent 70%);animation:pulse 4s ease-in-out infinite 2s;"></div>
   </div>
   <div style="width:min(480px,95vw);text-align:center;position:relative;z-index:1;">
-    <svg viewBox="0 0 100 115" width="64" height="64" style="display:inline-block;filter:drop-shadow(0 0 20px rgba(255,215,0,0.6));margin-bottom:16px;">
-      <defs><linearGradient id="lg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#B8860B"/></linearGradient><linearGradient id="lg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#DC143C"/><stop offset="100%" stop-color="#5B0010"/></linearGradient></defs>
-      <path d="M50 4 L92 22 L92 62 Q92 90 50 110 Q8 90 8 62 L8 22 Z" fill="url(#lg2)" stroke="#B8860B" stroke-width="1.5"/>
-      <path d="M50 10 L86 26 L86 62 Q86 86 50 104 Q14 86 14 62 L14 26 Z" fill="url(#lg1)" opacity="0.9"/>
-      <text x="50" y="74" font-size="52" font-weight="900" font-family="Arial Black" text-anchor="middle" fill="url(#lg1)" stroke="#8B6000" stroke-width="1">S</text>
-    </svg>
+    <div style="width:64px;height:64px;margin:0 auto 16px;filter:drop-shadow(0 0 20px rgba(255,215,0,0.6));">
+      <img src="images/solace-logo-3d.png" alt="Solace Portal" width="64" height="64"/>
+    </div>
     <div style="font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;background:linear-gradient(135deg,#FFD700,#FFA500,#DC143C);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;">Solace Portal</div>
     <div style="color:rgba(255,255,255,0.4);font-size:14px;margin-bottom:32px;">The World's Most Advanced AI App Builder</div>
     <!-- Avatar invite buttons -->
@@ -2108,7 +2200,18 @@ nav{
       <div style="position:absolute;top:0;left:0;right:0;height:2px;border-radius:22px 22px 0 0;background:linear-gradient(90deg,#DC143C,#FFD700,#00E5FF,#DC143C);background-size:300%;animation:rainbowFlow 4s linear infinite;"></div>
       <div style="margin-bottom:12px;"><input id="gateName" type="text" placeholder="Your name" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:13px 16px;border-radius:12px;font-size:14px;outline:none;" onfocus="this.style.borderColor='rgba(255,215,0,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"/></div>
       <div style="margin-bottom:12px;"><input id="gateEmail" type="email" placeholder="Email address" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:13px 16px;border-radius:12px;font-size:14px;outline:none;" onfocus="this.style.borderColor='rgba(255,215,0,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"/></div>
-      <div style="margin-bottom:18px;"><input id="gatePass" type="password" placeholder="Create a password" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:13px 16px;border-radius:12px;font-size:14px;outline:none;" onfocus="this.style.borderColor='rgba(255,215,0,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"/></div>
+      <div style="margin-bottom:12px;"><input id="gatePass" type="password" placeholder="Create a password" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:13px 16px;border-radius:12px;font-size:14px;outline:none;" onfocus="this.style.borderColor='rgba(255,215,0,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"/></div>
+      <!-- Legal checkboxes -->
+      <div style="margin-bottom:16px;display:flex;flex-direction:column;gap:10px;">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:12px;color:rgba(255,255,255,0.6);">
+          <input type="checkbox" id="gateAgreeTerms" style="width:16px;height:16px;margin-top:1px;accent-color:#FFD700;flex-shrink:0;"/>
+          <span>I agree to the <a href="terms.html" target="_blank" style="color:#FFD700;text-decoration:none;border-bottom:1px solid rgba(255,215,0,0.3);">Terms &amp; Conditions</a> and <a href="privacy.html" target="_blank" style="color:#FFD700;text-decoration:none;border-bottom:1px solid rgba(255,215,0,0.3);">Privacy Policy</a></span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:12px;color:rgba(255,255,255,0.6);">
+          <input type="checkbox" id="gateAgreeAge" style="width:16px;height:16px;margin-top:1px;accent-color:#FFD700;flex-shrink:0;"/>
+          <span>I am 18+ years old or have parental consent</span>
+        </label>
+      </div>
       <div id="gateError" style="color:#FF4060;font-size:12px;margin-bottom:10px;display:none;"></div>
       <button onclick="handleGateSignup()" style="width:100%;padding:15px;border-radius:13px;border:none;background:linear-gradient(135deg,#DC143C,#FFD700,#1565C0);color:#fff;font-weight:900;font-size:15px;cursor:pointer;box-shadow:0 6px 24px rgba(220,20,60,0.4);margin-bottom:12px;">&#9889; Create Account &amp; Enter</button>
       <div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.3);">Already have an account? <a href="#" onclick="showGateLogin();return false;" style="color:rgba(255,215,0,0.6);text-decoration:none;">Sign in</a></div>
@@ -2265,16 +2368,7 @@ nav{
     <div style="padding:14px 18px 12px;background:linear-gradient(135deg,rgba(220,20,60,0.1),rgba(21,101,192,0.08));border-bottom:1px solid rgba(255,215,0,0.1);display:flex;align-items:center;gap:10px;">
       <!-- Belinda avatar switcher -->
       <div id="av-btn-belinda" onclick="switchChatAvatar('belinda')" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;border-radius:14px;border:2px solid rgba(255,215,0,0.5);background:rgba(255,215,0,0.08);transition:all 0.2s;">
-        <svg width="38" height="46" viewBox="0 0 160 200">
-          <defs><radialGradient id="hb1" cx="46%" cy="38%" r="55%"><stop offset="0%" stop-color="#FFE0C8"/><stop offset="60%" stop-color="#E8A880"/><stop offset="100%" stop-color="#B87048"/></radialGradient><linearGradient id="hb2" x1="0%" y1="0%" x2="60%" y2="100%"><stop offset="0%" stop-color="#1C0A00"/><stop offset="100%" stop-color="#0A0400"/></linearGradient><linearGradient id="hb3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#DC143C"/><stop offset="100%" stop-color="#5B0010"/></linearGradient></defs>
-          <path d="M18 200 Q22 155 45 142 Q58 136 80 134 Q102 136 115 142 Q138 155 142 200 Z" fill="url(#hb3)"/>
-          <ellipse cx="80" cy="76" rx="41" ry="46" fill="url(#hb2)"/>
-          <path d="M40 78 Q40 40 80 36 Q120 40 120 78 Q116 55 80 52 Q44 55 40 78 Z" fill="url(#hb2)"/>
-          <ellipse cx="80" cy="82" rx="40" ry="44" fill="url(#hb1)"/>
-          <ellipse cx="62" cy="80" rx="8" ry="7" fill="#1565C0"/><circle cx="62" cy="80" r="4" fill="#050308"/><circle cx="64" cy="78" r="1.8" fill="rgba(255,255,255,0.85)"/>
-          <ellipse cx="98" cy="80" rx="8" ry="7" fill="#1565C0"/><circle cx="98" cy="80" r="4" fill="#050308"/><circle cx="100" cy="78" r="1.8" fill="rgba(255,255,255,0.85)"/>
-          <path d="M66 108 Q80 115 94 108" fill="#C01830"/>
-        </svg>
+        <img src="images/belinda-avatar.jpg" alt="Belinda" width="38" height="46" style="border-radius:50%;object-fit:cover;object-position:top;border:2px solid rgba(220,20,60,0.4);box-shadow:0 0 10px rgba(255,215,0,0.4);"/>
         <span style="font-size:9px;font-weight:800;color:rgba(255,215,0,0.9);letter-spacing:0.5px;">BELINDA</span>
       </div>
       <!-- Active badge -->
@@ -2285,16 +2379,7 @@ nav{
       </div>
       <!-- Sven avatar switcher -->
       <div id="av-btn-sven" onclick="switchChatAvatar('sven')" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;border-radius:14px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);transition:all 0.2s;">
-        <svg width="38" height="46" viewBox="0 0 160 200">
-          <defs><radialGradient id="hs1" cx="44%" cy="36%" r="58%"><stop offset="0%" stop-color="#F5DCBC"/><stop offset="65%" stop-color="#D4A878"/><stop offset="100%" stop-color="#8B6030"/></radialGradient><linearGradient id="hs2" x1="0%" y1="0%" x2="80%" y2="100%"><stop offset="0%" stop-color="#2A1600"/><stop offset="100%" stop-color="#0A0500"/></linearGradient><linearGradient id="hs3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1E78D4"/><stop offset="100%" stop-color="#061E5A"/></linearGradient></defs>
-          <path d="M12 200 Q18 152 44 140 Q58 134 80 132 Q102 134 116 140 Q142 152 148 200 Z" fill="url(#hs3)"/>
-          <ellipse cx="80" cy="74" rx="42" ry="46" fill="url(#hs2)"/>
-          <path d="M38 74 Q38 36 80 32 Q122 36 122 74 Q118 50 80 47 Q42 50 38 74 Z" fill="url(#hs2)"/>
-          <ellipse cx="80" cy="80" rx="41" ry="45" fill="url(#hs1)"/>
-          <ellipse cx="62" cy="80" rx="9" ry="8" fill="#00B4D8"/><circle cx="62" cy="80" r="5" fill="#040208"/><circle cx="65" cy="77" r="2" fill="rgba(255,255,255,0.88)"/>
-          <ellipse cx="98" cy="80" rx="9" ry="8" fill="#00B4D8"/><circle cx="98" cy="80" r="5" fill="#040208"/><circle cx="101" cy="77" r="2" fill="rgba(255,255,255,0.88)"/>
-          <ellipse cx="80" cy="112" rx="28" ry="10" fill="rgba(40,22,4,0.28)"/>
-        </svg>
+        <img src="images/sven-avatar.jpg" alt="Sven" width="38" height="46" style="border-radius:50%;object-fit:cover;object-position:top;border:2px solid rgba(0,229,255,0.3);box-shadow:0 0 10px rgba(0,229,255,0.3);"/>
         <span style="font-size:9px;font-weight:800;color:rgba(0,229,255,0.7);letter-spacing:0.5px;">SVEN</span>
       </div>
       <button onclick="closeChat()" style="margin-left:6px;background:none;border:none;color:rgba(255,255,255,0.3);font-size:20px;cursor:pointer;padding:4px;">&#10005;</button>
@@ -2369,13 +2454,14 @@ function closeLoginGate(){
 }
 function dismissGate(name,announce){
   const gate=document.getElementById('loginGate');
-  gate.style.opacity='0';
-  setTimeout(()=>{gate.style.display='none';},300);
+  if(gate){gate.style.opacity='0';setTimeout(()=>{gate.style.display='none';},300);}
   updateNavUser(name);
   if(isPaid())unlockFeatures();
   if(announce){
-    setTimeout(()=>speakText('Welcome to Solace Portal, '+name.split(' ')[0]+'! I am Belinda, your AI architect. Let\'s build something amazing together.'),600);
+    setTimeout(()=>speakText('Welcome to Solace Portal, '+name.split(' ')[0]+'!'),600);
   }
+  // Scroll to top of home screen
+  window.scrollTo({top:0,behavior:'smooth'});
   // Run any pending callback
   if(gateCallback){const cb=gateCallback;gateCallback=null;setTimeout(cb,400);}
 }
@@ -2408,8 +2494,12 @@ function handleGateSignup(){
   const e=document.getElementById('gateEmail').value.trim().toLowerCase();
   const p=document.getElementById('gatePass').value;
   const err=document.getElementById('gateError');
+  const agreeTerms=document.getElementById('gateAgreeTerms').checked;
+  const agreeAge=document.getElementById('gateAgreeAge').checked;
   if(!n||!e||!p){err.textContent='Please fill in all fields.';err.style.display='block';return;}
   if(p.length<6){err.textContent='Password must be at least 6 characters.';err.style.display='block';return;}
+  if(!agreeTerms){err.textContent='Please agree to the Terms & Conditions and Privacy Policy.';err.style.display='block';return;}
+  if(!agreeAge){err.textContent='Please confirm you are 18+ or have parental consent.';err.style.display='block';return;}
   const accs=_spGetAccounts();
   if(accs[e]){err.textContent='Account already exists. Use Sign In instead.';err.style.display='block';return;}
   err.style.display='none';
@@ -2447,24 +2537,97 @@ function showGateLogin(){
   document.getElementById('gateLoginForm').style.display='block';
 }
 function handleGoogleLogin(){
-  // No real OAuth backend — guide user to email sign-in instead
-  showTabToast('Use the email form below to sign in or create your account.','#4285F4');
-  // Scroll down to show email fields in whatever modal is open
-  const gf=document.getElementById('gateLoginForm');
-  if(gf)gf.style.display='block';
-  // If in the main modal, switch to sign in tab
-  const li=document.getElementById('loginForm');
-  const su=document.getElementById('signupForm');
-  if(li&&su){li.style.display='block';su.style.display='none';}
-  const tl=document.getElementById('tabLogin');
-  const ts=document.getElementById('tabSignup');
-  if(tl&&ts){tl.style.background='linear-gradient(135deg,var(--red),var(--gold2),var(--blue))';tl.style.color='#fff';ts.style.background='transparent';ts.style.color='rgba(255,255,255,0.45)';}
+  // Simulate Google sign-in: prompt for name, use a generated google-style email
+  const existingUser=JSON.parse(localStorage.getItem('sp_user')||'null');
+  if(existingUser&&existingUser.provider==='google'){
+    // Already signed in via Google — just unlock and go home
+    closeModal();
+    const gate=document.getElementById('loginGate');
+    if(gate)gate.style.display='none';
+    updateNavUser(existingUser.name);
+    if(!isPaid()&&existingUser.email!==ADMIN_EMAIL){setTimeout(openPaywall,800);}else{unlockFeatures();}
+    return;
+  }
+  // Show a Google-styled name prompt overlay
+  const overlay=document.createElement('div');
+  overlay.id='googleAuthOverlay';
+  overlay.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.85);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;padding:20px;';
+  overlay.innerHTML=`
+    <div style="background:linear-gradient(145deg,#0A0A18,#060610);border:1px solid rgba(66,133,244,0.3);border-radius:24px;padding:32px;width:min(400px,95vw);text-align:center;">
+      <div style="width:52px;height:52px;margin:0 auto 16px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+        <svg width="28" height="28" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      </div>
+      <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:#fff;margin-bottom:8px;">Sign in with Google</div>
+      <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:24px;">Enter your name and Google email to continue</p>
+      <input id="googleAuthName" type="text" placeholder="Your full name" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:13px 16px;border-radius:12px;font-size:14px;outline:none;margin-bottom:12px;"/>
+      <input id="googleAuthEmail" type="email" placeholder="yourname@gmail.com" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:13px 16px;border-radius:12px;font-size:14px;outline:none;margin-bottom:16px;"/>
+      <div id="googleAuthErr" style="color:#FF4060;font-size:12px;margin-bottom:10px;display:none;"></div>
+      <button onclick="confirmGoogleAuth()" style="width:100%;padding:14px;border-radius:13px;border:none;background:linear-gradient(135deg,#4285F4,#34A853);color:#fff;font-weight:900;font-size:15px;cursor:pointer;margin-bottom:12px;">&#9889; Continue with Google</button>
+      <button onclick="document.getElementById('googleAuthOverlay').remove()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:13px;cursor:pointer;">Cancel</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  setTimeout(()=>document.getElementById('googleAuthName').focus(),100);
+}
+function confirmGoogleAuth(){
+  const n=(document.getElementById('googleAuthName').value||'').trim();
+  const e=(document.getElementById('googleAuthEmail').value||'').trim().toLowerCase();
+  const err=document.getElementById('googleAuthErr');
+  if(!n){err.textContent='Please enter your name.';err.style.display='block';return;}
+  if(!e||!e.includes('@')){err.textContent='Please enter a valid email.';err.style.display='block';return;}
+  // Check for existing account with this email
+  const accs=_spGetAccounts();
+  if(accs[e]){
+    // Log them in
+    _spLoginUser(accs[e].name||n,e,true);
+  } else {
+    // Create account
+    _spSaveAccount(e,n,'google_oauth_'+Date.now());
+    _spLoginUser(n,e,true);
+  }
+  document.getElementById('googleAuthOverlay').remove();
+  // Close all modals and return to home screen
+  closeModal();
+  const gate=document.getElementById('loginGate');
+  if(gate){gate.style.opacity='0';setTimeout(()=>gate.style.display='none',300);}
+  const finalName=n;
+  updateNavUser(finalName);
+  showWelcome(finalName);
+  if(!isPaid()&&e!==ADMIN_EMAIL){setTimeout(openPaywall,1200);}else{unlockFeatures();}
 }
 function handleAppleLogin(){
-  showTabToast('Use the email form below to sign in or create your account.','#888');
-  const li=document.getElementById('loginForm');
-  const su=document.getElementById('signupForm');
-  if(li&&su){li.style.display='block';su.style.display='none';}
+  // Apple sign-in: show name+email prompt
+  const overlay=document.createElement('div');
+  overlay.id='appleAuthOverlay';
+  overlay.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.85);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;padding:20px;';
+  overlay.innerHTML=`
+    <div style="background:linear-gradient(145deg,#0A0A18,#060610);border:1px solid rgba(255,255,255,0.2);border-radius:24px;padding:32px;width:min(400px,95vw);text-align:center;">
+      <div style="font-size:40px;margin-bottom:12px;">&#63743;</div>
+      <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:#fff;margin-bottom:8px;">Sign in with Apple</div>
+      <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:24px;">Enter your name and Apple ID email</p>
+      <input id="appleAuthName" type="text" placeholder="Your full name" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:13px 16px;border-radius:12px;font-size:14px;outline:none;margin-bottom:12px;"/>
+      <input id="appleAuthEmail" type="email" placeholder="yourname@icloud.com" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:13px 16px;border-radius:12px;font-size:14px;outline:none;margin-bottom:16px;"/>
+      <div id="appleAuthErr" style="color:#FF4060;font-size:12px;margin-bottom:10px;display:none;"></div>
+      <button onclick="confirmAppleAuth()" style="width:100%;padding:14px;border-radius:13px;border:none;background:#000;border:1px solid rgba(255,255,255,0.3);color:#fff;font-weight:900;font-size:15px;cursor:pointer;margin-bottom:12px;">&#63743; Continue with Apple</button>
+      <button onclick="document.getElementById('appleAuthOverlay').remove()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:13px;cursor:pointer;">Cancel</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  setTimeout(()=>document.getElementById('appleAuthName').focus(),100);
+}
+function confirmAppleAuth(){
+  const n=(document.getElementById('appleAuthName').value||'').trim();
+  const e=(document.getElementById('appleAuthEmail').value||'').trim().toLowerCase();
+  const err=document.getElementById('appleAuthErr');
+  if(!n){err.textContent='Please enter your name.';err.style.display='block';return;}
+  if(!e||!e.includes('@')){err.textContent='Please enter a valid email.';err.style.display='block';return;}
+  const accs=_spGetAccounts();
+  if(accs[e]){_spLoginUser(accs[e].name||n,e,true);}else{_spSaveAccount(e,n,'apple_oauth_'+Date.now());_spLoginUser(n,e,true);}
+  document.getElementById('appleAuthOverlay').remove();
+  closeModal();
+  const gate=document.getElementById('loginGate');
+  if(gate){gate.style.opacity='0';setTimeout(()=>gate.style.display='none',300);}
+  updateNavUser(n);
+  showWelcome(n);
+  if(!isPaid()&&e!==ADMIN_EMAIL){setTimeout(openPaywall,1200);}else{unlockFeatures();}
 }
 function gateOpenChat(avatar){
   // Open chat from gate — avatar will sign them up via conversation
@@ -2476,12 +2639,12 @@ function gateOpenChat(avatar){
   msgs.innerHTML='';
   overlay.style.display='flex';
   const greeting=avatar==='belinda'
-    ?`Hi! I\'m <strong>Belinda</strong> &#9889; — your AI app architect! I\'ll help you create an account and start building.<br><br>First — what\'s your <strong>name</strong>?`
-    :`Hey! I\'m <strong>Sven</strong> &#128296; — Lead Dev Engineer. I\'ll get you signed up and ready to ship apps.<br><br>What should I call you?`;
+    ?`Hi! I\'m <strong>Belinda</strong> &#9889; — your AI app architect! Let me get you set up with an account.<br><br>First — what\'s your <strong>full name</strong>?`
+    :`Hey! I\'m <strong>Sven</strong> &#128296; — Lead Dev Engineer. Let me get you signed up and set up.<br><br>What\'s your <strong>full name</strong>?`;
   addChatMsg('ai',greeting);
   speakText(avatar==='belinda'
-    ?'Hi! I am Belinda, your AI app architect. What is your name?'
-    :'Hey! I am Sven, Lead Dev Engineer. What should I call you?');
+    ?'Hi! I am Belinda, your AI app architect. What is your full name?'
+    :'Hey! I am Sven, Lead Dev Engineer. What is your full name?');
   chatContext.gateSignup={step:'name',name:'',email:''};
 }
 
@@ -3299,7 +3462,9 @@ let chatContext={history:[],buildState:{active:false,phase:0,appName:'',platform
 // ── Intent classifier ──
 function classifyIntent(msg){
   const m=msg.toLowerCase();
-  if(/build|create|make|generate|app|project/.test(m)&&!/how|what|why/.test(m)) return 'BUILD_START';
+  // Only trigger BUILD_START on explicit build requests, not casual replies
+  if(/^(build|create|make|generate|start|new).*?(app|application|project)|(app|application|project).*(build|create|make|generate)/.test(m)&&!/how|what|why|does|will|can|the/.test(m)) return 'BUILD_START';
+  if(/\b(build me|build an|create an|make an|generate an|new app|start building|start a new|let.s build|i want to build|i want to create)/.test(m)) return 'BUILD_START';
   if(/screen|page|view|tab|section|ui|interface/.test(m)) return 'SCREENS';
   if(/code|dart|flutter|widget|class|function|main\.dart/.test(m)) return 'CODE_GEN';
   if(/colour|color|theme|material|design|style|font|icon/.test(m)) return 'DESIGN';
@@ -3584,6 +3749,14 @@ function avatarAIRespond(userMsg){
   // Build state machine
   if(ctx.buildState.active){
     return handleBuildFlow(userMsg,isBelinda);
+  }
+
+  // Phase 99 = build just completed. Don't auto-restart.
+  if(ctx.buildState.phase===99 && intent==='BUILD_START'){
+    ctx.buildState={active:false,phase:0,appName:'',platform:'',screens:[],hasLogin:false,monetise:'free'};
+    return isBelinda
+      ?`&#128204; Ready to build your next app! What\'s the <strong>name and purpose</strong> of the app? (e.g. &ldquo;FitTrack — a fitness tracker&rdquo;)`
+      :`&#128204; Starting fresh. What\'s the <strong>app name and what it does</strong>?`;
   }
 
   switch(intent){
@@ -3944,36 +4117,57 @@ function handleBuildFlow(val,isBelinda){
       buildState=Object.assign({},s);
       const allScreens=s.hasLogin?['Splash','Login','Register',...s.screens]:['Splash',...s.screens];
       buildState.screens=allScreens;
+      const pkgName='com.'+s.appName.replace(/[^a-zA-Z0-9]/g,'').toLowerCase()+'.app';
+      const gradleCode=`// android/app/build.gradle\nandroid {\n    namespace "${pkgName}"\n    compileSdk 34\n    defaultConfig {\n        applicationId "${pkgName}"\n        minSdk 21\n        targetSdk 34\n        versionCode 1\n        versionName "1.0.0"\n    }\n    signingConfigs {\n        release {\n            keyAlias keystoreProperties['keyAlias']\n            keyPassword keystoreProperties['keyPassword']\n            storeFile file(keystoreProperties['storeFile'])\n            storePassword keystoreProperties['storePassword']\n        }\n    }\n    buildTypes {\n        release {\n            signingConfig signingConfigs.release\n            minifyEnabled true\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')\n        }\n    }\n}`;
+      const manifestCode=`<!-- android/app/src/main/AndroidManifest.xml -->\n<manifest xmlns:android="http://schemas.android.com/apk/res/android">\n    <uses-permission android:name="android.permission.INTERNET"/>\n    <application\n        android:label="${s.appName}"\n        android:name="\${applicationName}"\n        android:icon="@mipmap/ic_launcher">\n        <activity\n            android:name=".MainActivity"\n            android:exported="true"\n            android:launchMode="singleTop"\n            android:theme="@style/LaunchTheme">\n            <intent-filter>\n                <action android:name="android.intent.action.MAIN"/>\n                <category android:name="android.intent.category.LAUNCHER"/>\n            </intent-filter>\n        </activity>\n    </application>\n</manifest>`;
       buildState.builtFiles={
         'main.dart':generateMainDart(s.appName,allScreens,s.hasLogin),
         'pubspec.yaml':generatePubspec(s.appName,s.monetise),
+        'build.gradle':gradleCode,
+        'AndroidManifest.xml':manifestCode,
         'README.md':generateReadme(s.appName,s.platform,allScreens,s.monetise)
       };
+      // Generate individual screen files
+      const screenFiles={};
+      allScreens.forEach(sc=>{screenFiles[sc.toLowerCase()+'_screen.dart']=genScreenCode(sc,s.hasLogin);});
       // Post final output to chat
       const outEl=document.createElement('div');
       outEl.className='msg ai';
       const fileTabs=Object.keys(buildState.builtFiles).map(fn=>{
         const code=buildState.builtFiles[fn];
-        const fid='f_'+Date.now()+'_'+fn.replace(/[^a-z]/gi,'');
         return `<div style="margin-bottom:12px;">${showCodeBlock('<strong>'+fn+'</strong>',code,'',fn)}</div>`;
+      }).join('');
+      const screenFileTabs=Object.keys(screenFiles).slice(0,4).map(fn=>{
+        return `<div style="margin-bottom:12px;">${showCodeBlock('<strong>'+fn+'</strong>',screenFiles[fn],'',fn)}</div>`;
       }).join('');
       const screenTags=allScreens.map(sc=>`<span style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.2);color:rgba(0,229,255,0.8);padding:2px 10px;border-radius:8px;font-size:11px;">${sc}Screen</span>`).join(' ');
       outEl.innerHTML='<div class="msg-label">'+(isBelinda?'⚡ BELINDA AI':'🔧 SVEN AI')+'</div>'+
-        '&#127881; <strong>'+s.appName+'</strong> is complete!<br><br>'+
-        '&#128196; <strong>'+Object.keys(buildState.builtFiles).length+' project files</strong> + <strong>'+allScreens.length+' screen files</strong> generated:<br><br>'+
-        '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">'+screenTags+'</div>'+
-        fileTabs+
-        '<div style="margin-top:12px;padding:12px;background:rgba(255,215,0,0.05);border:1px solid rgba(255,215,0,0.15);border-radius:10px;font-size:12px;color:rgba(255,255,255,0.6);">'+
-        '&#128204; <strong>Next steps:</strong> Download each file above, create a Flutter project with <code>flutter create '+s.appName.replace(/\s+/g,'_').toLowerCase()+'</code>, then replace the generated files. Run <code>flutter pub get</code> then <code>flutter run</code>.'+
+        '<div style="background:linear-gradient(135deg,rgba(0,175,79,0.1),rgba(0,229,255,0.05));border:1px solid rgba(0,175,79,0.3);border-radius:14px;padding:16px;margin-bottom:16px;">'+
+        '<div style="font-size:18px;font-weight:900;color:#00AF4F;margin-bottom:6px;">&#127881; '+s.appName+' — BUILD COMPLETE</div>'+
+        '<div style="font-size:12px;color:rgba(255,255,255,0.5);">Platform: <strong style="color:#FFD700;">'+s.platform+'</strong> &nbsp;|&nbsp; Auth: <strong style="color:#FFD700;">'+(s.hasLogin?'Firebase + Google':'Public')+'</strong> &nbsp;|&nbsp; Monetise: <strong style="color:#FFD700;">'+s.monetise+'</strong></div>'+
+        '</div>'+
+        '<div style="margin-bottom:12px;font-size:12px;color:rgba(255,255,255,0.6);">&#128196; <strong>'+Object.keys(buildState.builtFiles).length+' project files + '+allScreens.length+' screen files</strong> generated & ready for Play Store:</div>'+
+        '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;">'+screenTags+'</div>'+
+        fileTabs+screenFileTabs+
+        '<div style="margin-top:16px;padding:14px;background:rgba(66,133,244,0.08);border:1px solid rgba(66,133,244,0.25);border-radius:12px;font-size:12px;">'+
+        '<div style="font-weight:900;color:#4285F4;margin-bottom:10px;font-size:13px;">&#128640; PLAY STORE SUBMISSION GUIDE</div>'+
+        '<div style="color:rgba(255,255,255,0.65);line-height:2;">'+
+        '<strong>1.</strong> Run: <code>flutter create '+s.appName.replace(/\s+/g,'_').toLowerCase()+'</code> then copy all downloaded files in<br>'+
+        '<strong>2.</strong> Run: <code>flutter pub get</code> &amp; <code>flutter test</code><br>'+
+        '<strong>3.</strong> Generate keystore: <code>keytool -genkey -v -keystore release.keystore -alias key -keyalg RSA -keysize 2048 -validity 10000</code><br>'+
+        '<strong>4.</strong> Build release bundle: <code>flutter build appbundle --release</code><br>'+
+        '<strong>5.</strong> Go to: <a href="https://play.google.com/console" target="_blank" style="color:#4285F4;font-weight:700;">&#128279; play.google.com/console</a> → Create app → Upload your AAB<br>'+
+        '<strong>6.</strong> Complete store listing, screenshots, privacy policy → Submit for review<br>'+
+        '</div>'+
         '</div>';
       // Add 'Build Another App' button
+      msgs.appendChild(outEl);msgs.scrollTop=msgs.scrollHeight;
       const newBuildBtn=document.createElement('div');
       newBuildBtn.className='msg ai';
       newBuildBtn.innerHTML='<div class="msg-label">'+(isBelinda?'⚡ BELINDA AI':'🔧 SVEN AI')+'</div>'
-        +'<button onclick="buildState.phase=99;sendDemo&&(document.getElementById(\'demoInput\').value=\'new app\',sendDemo());" style="background:linear-gradient(135deg,#DC143C,#FFD700);border:none;color:#000;padding:10px 22px;border-radius:10px;font-weight:900;cursor:pointer;font-size:13px;margin-right:10px;">⚡ Build Another App</button>'
-        +'<button onclick="openLibrary()" style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.3);color:rgba(0,229,255,0.9);padding:10px 22px;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px;">📱 View My Library</button>';
+        +'<button onclick="chatContext.buildState={active:false,phase:0,appName:\'\',platform:\'\',screens:[],hasLogin:false,monetise:\'free\'};addChatMsg(\'ai\',\'&#128204; Ready to build another app! What\'s the <strong>name and purpose</strong>?\');" style="background:linear-gradient(135deg,#DC143C,#FFD700);border:none;color:#000;padding:10px 22px;border-radius:10px;font-weight:900;cursor:pointer;font-size:13px;margin-right:10px;">⚡ Build Another App</button>'
+        +'<button onclick="openLibrary()" style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.3);color:rgba(0,229,255,0.9);padding:10px 22px;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px;">&#128241; View My Library</button>';
       msgs.appendChild(newBuildBtn);msgs.scrollTop=msgs.scrollHeight;
-      msgs.appendChild(outEl);msgs.scrollTop=msgs.scrollHeight;
       speakText('Your app '+s.appName+' is complete! '+allScreens.length+' screens and '+Object.keys(buildState.builtFiles).length+' project files generated. Download each file to get started.');
       // Award XP for completing a build
       const xpGained=addXP(200);
@@ -4530,13 +4724,22 @@ function sendChat(){
       return;
     } else if(gs.step==='pass'){
       const user={name:gs.name,email:gs.email,provider:'voice',joined:Date.now()};
+      _spSaveAccount(gs.email,gs.name,'voice_signup_'+Date.now());
       localStorage.setItem('sp_user',JSON.stringify(user));
       chatContext.gateSignup=null;
-      dismissGate(gs.name,false);
       setTimeout(()=>{
-        addChatMsg('ai','&#127881; Account created! Welcome, <strong>'+gs.name+'</strong>! You now have access to Solace Portal.<br><br>'+
-          (isPaid()?'All features are unlocked. What would you like to build?':'To unlock all features, there\'s a one-time $1 joining fee — tap below when ready.'));
-        if(!isPaid())setTimeout(openPaywall,2000);
+        addChatMsg('ai','&#127881; Account created! Welcome, <strong>'+gs.name+'</strong>!<br><br>Taking you back to the home screen now...');
+        speakText('Account created! Welcome '+gs.name+'. Taking you back to the home screen.');
+        setTimeout(()=>{
+          // Close chat and go back to home
+          closeChat();
+          dismissGate(gs.name,false);
+          // Scroll to top / home
+          window.scrollTo({top:0,behavior:'smooth'});
+          // Show paywall if not paid
+          if(!isPaid()&&gs.email!==ADMIN_EMAIL){setTimeout(openPaywall,800);}
+          else{unlockFeatures();showWelcome(gs.name);}
+        },1800);
       },600);
       return;
     }
@@ -5578,7 +5781,15 @@ sendDemo=function(){
 // ══ NAV CTA — context-aware click ══
 function navCtaClick(){
   const u=localStorage.getItem('sp_user');
-  if(u){openLibrary();}else{requireLogin();}
+  if(u){
+    // Already logged in — open library or go to build
+    openLibrary();
+  } else {
+    // Not logged in — open login gate (never black screen)
+    const gate=document.getElementById('loginGate');
+    if(gate){gate.style.display='flex';gate.style.opacity='1';}
+    else{requireLogin();}
+  }
 }
 
 // ══ SHARE APP ══
