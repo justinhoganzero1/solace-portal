@@ -2162,13 +2162,13 @@ nav{
 </footer>
 
 <!-- LOGIN GATE MODAL (hidden until user hits a gated action) -->
-<div id="loginGate" style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.88);backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;flex-direction:column;padding:20px;">
+<div id="loginGate" style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.88);backdrop-filter:blur(20px);display:none;align-items:flex-start;justify-content:center;flex-direction:column;padding:20px;overflow-y:auto;">
   <button onclick="closeLoginGate()" style="position:absolute;top:20px;right:24px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;line-height:1;">&#215;</button>
   <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none;">
     <div style="position:absolute;top:-200px;left:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(220,20,60,0.08),transparent 70%);animation:pulse 4s ease-in-out infinite;"></div>
     <div style="position:absolute;bottom:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(21,101,192,0.08),transparent 70%);animation:pulse 4s ease-in-out infinite 2s;"></div>
   </div>
-  <div style="width:min(480px,95vw);text-align:center;position:relative;z-index:1;">
+  <div style="width:min(480px,95vw);text-align:center;position:relative;z-index:1;margin:auto;padding:20px 0;">
     <div style="width:64px;height:64px;margin:0 auto 16px;filter:drop-shadow(0 0 20px rgba(255,215,0,0.6));">
       <img src="images/solace-logo-3d.png" alt="Solace Portal" width="64" height="64"/>
     </div>
@@ -4781,19 +4781,16 @@ function sendChat(){
         const pwBox=document.createElement('div');
         pwBox.className='msg ai';
         pwBox.id='chatPasswordBox';
-        pwBox.innerHTML=`
-          <div class="msg-label">${currentAvatar==='belinda'?'⚡ BELINDA AI':'🔧 SVEN AI'}</div>
-          <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,215,0,0.2);border-radius:12px;padding:14px;margin-top:6px;">
-            <label style="font-size:11px;color:rgba(255,215,0,0.7);font-weight:700;letter-spacing:1px;display:block;margin-bottom:8px;">CREATE PASSWORD</label>
-            <div style="position:relative;">
-              <input id="chatPassInput" type="password" placeholder="Min. 6 characters" autocomplete="new-password"
-                style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:11px 44px 11px 14px;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box;"
-                onfocus="this.style.borderColor='rgba(255,215,0,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.15)'">
-              <button type="button" onclick="(function(){const i=document.getElementById('chatPassInput');const b=this;i.type=i.type==='password'?'text':'password';b.textContent=i.type==='password'?'\u{1F441}':'\u{1F648}'}).call(this)"
-                style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:rgba(255,255,255,0.4);padding:0;line-height:1;">&#128065;</button>
-            </div>
-            <button onclick="submitChatPassword()" style="margin-top:10px;width:100%;background:linear-gradient(135deg,#DC143C,#FFD700);border:none;color:#000;padding:11px;border-radius:10px;font-weight:900;cursor:pointer;font-size:13px;">&#9889; Set Password &amp; Create Account</button>
-          </div>`;
+        const lbl=currentAvatar==='belinda'?'&#9889; BELINDA AI':'&#128296; SVEN AI';
+        pwBox.innerHTML='<div class="msg-label">'+lbl+'</div>'
+          +'<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,215,0,0.2);border-radius:12px;padding:14px;margin-top:6px;">'
+          +'<label style="font-size:11px;color:rgba(255,215,0,0.7);font-weight:700;letter-spacing:1px;display:block;margin-bottom:8px;">CREATE PASSWORD</label>'
+          +'<div style="position:relative;">'
+          +'<input id="chatPassInput" type="password" placeholder="Min. 6 characters" autocomplete="new-password" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:11px 44px 11px 14px;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box;" onfocus="this.style.borderColor=\'rgba(255,215,0,0.5)\'" onblur="this.style.borderColor=\'rgba(255,255,255,0.15)\'">'
+          +'<button type="button" id="chatPassEye" onclick="var i=document.getElementById(\'chatPassInput\');i.type=i.type===\'password\'?\'text\':\'password\';this.textContent=i.type===\'password\'?\'&#128065;\':\'&#128584;\'" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:rgba(255,255,255,0.4);padding:0;line-height:1;">&#128065;</button>'
+          +'</div>'
+          +'<button onclick="submitChatPassword()" style="margin-top:10px;width:100%;background:linear-gradient(135deg,#DC143C,#FFD700);border:none;color:#000;padding:11px;border-radius:10px;font-weight:900;cursor:pointer;font-size:13px;">&#9889; Set Password &amp; Create Account</button>'
+          +'</div>';
         msgs.appendChild(pwBox);msgs.scrollTop=msgs.scrollHeight;
       },600);
       return;
