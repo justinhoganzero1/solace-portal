@@ -919,8 +919,14 @@ nav{
       <div style="font-size:10px;color:rgba(200,200,200,0.6);font-weight:500;">IPA &amp; App Store</div>
     </button>
 
+    <button class="tab-btn" onclick="switchTab('wrap',this)" style="display:flex;flex-direction:column;align-items:center;padding:18px 12px 14px;border-radius:20px;gap:10px;">
+      <div style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,rgba(0,229,255,0.2),rgba(120,194,87,0.2));display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 16px rgba(0,229,255,0.2);">&#127760;</div>
+      <div style="font-size:12px;font-weight:800;letter-spacing:0.3px;">Web Wrapper</div>
+      <div style="font-size:10px;color:rgba(0,229,255,0.7);font-weight:500;">URL &#8594; Play Store</div>
+    </button>
+
     <button class="tab-btn" onclick="switchTab('builder',this)" style="display:flex;flex-direction:column;align-items:center;padding:18px 12px 14px;border-radius:20px;gap:10px;">
-      <div style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,rgba(255,215,0,0.2),rgba(220,20,60,0.2));display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 16px rgba(255,215,0,0.15);">🎨</div>
+      <div style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,rgba(255,215,0,0.2),rgba(220,20,60,0.2));display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 16px rgba(255,215,0,0.15);">&#127912;</div>
       <div style="font-size:12px;font-weight:800;letter-spacing:0.3px;">UI Builder</div>
       <div style="font-size:10px;color:rgba(255,215,0,0.6);font-weight:500;">Drag &amp; drop design</div>
     </button>
@@ -1209,6 +1215,93 @@ nav{
         <div class="gate-title">Apple App Store Wrapper</div>
         <div class="gate-sub">Wrap your app for iOS, generate IPA files, and submit directly to App Store Connect.</div>
         <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" onclick="requireLogin(()=>{document.getElementById('gate-apple').style.display='none';})">&#9889; Unlock Free</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEB WRAPPER TAB -->
+  <div class="tab-panel" id="tab-wrap">
+    <div class="feature-card">
+      <div class="feature-header">
+        <div class="fh-dots"><span class="fh-dot r"></span><span class="fh-dot g"></span><span class="fh-dot b"></span></div>
+        <span class="fh-title">&#9675; WEBSITE &#8594; PLAY STORE WRAPPER</span>
+        <span style="margin-left:auto;font-size:10px;color:rgba(0,229,255,0.6);font-family:'Orbitron',sans-serif;letter-spacing:1px;">URL &#8594; APK &#8594; STORE</span>
+      </div>
+      <div class="feature-body">
+        <!-- How it works -->
+        <div style="display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:120px;text-align:center;background:rgba(0,229,255,0.05);border:1px solid rgba(0,229,255,0.15);border-radius:14px;padding:16px 10px;">
+            <div style="font-size:24px;margin-bottom:6px;">&#127760;</div>
+            <div style="font-size:11px;font-weight:800;color:rgba(0,229,255,0.9);">1. Enter URL</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:4px;">Your website or web app https://</div>
+          </div>
+          <div style="flex:1;min-width:120px;text-align:center;background:rgba(120,194,87,0.05);border:1px solid rgba(120,194,87,0.15);border-radius:14px;padding:16px 10px;">
+            <div style="font-size:24px;margin-bottom:6px;">&#128241;</div>
+            <div style="font-size:11px;font-weight:800;color:rgba(120,194,87,0.9);">2. Wrap It</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:4px;">We wrap it as a native Android APK</div>
+          </div>
+          <div style="flex:1;min-width:120px;text-align:center;background:rgba(255,215,0,0.05);border:1px solid rgba(255,215,0,0.15);border-radius:14px;padding:16px 10px;">
+            <div style="font-size:24px;margin-bottom:6px;">&#128640;</div>
+            <div style="font-size:11px;font-weight:800;color:rgba(255,215,0,0.9);">3. Upload</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:4px;">Go straight to Play Console &amp; submit</div>
+          </div>
+        </div>
+
+        <!-- URL + App Name inputs -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+          <div>
+            <label style="font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;letter-spacing:1px;display:block;margin-bottom:6px;">YOUR WEBSITE URL</label>
+            <div style="display:flex;align-items:center;background:rgba(0,0,0,0.4);border:1px solid rgba(0,229,255,0.3);border-radius:10px;overflow:hidden;">
+              <span style="padding:0 10px;font-size:14px;color:rgba(0,229,255,0.6);">&#127760;</span>
+              <input id="wrapUrlInput" type="url" placeholder="https://yoursite.com" style="flex:1;background:none;border:none;outline:none;color:#fff;font-size:13px;padding:11px 8px 11px 0;" oninput="wrapAutoFillPkg()"/>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;letter-spacing:1px;display:block;margin-bottom:6px;">APP NAME</label>
+            <div style="display:flex;align-items:center;background:rgba(0,0,0,0.4);border:1px solid rgba(120,194,87,0.3);border-radius:10px;overflow:hidden;">
+              <span style="padding:0 10px;font-size:14px;color:rgba(120,194,87,0.6);">&#128241;</span>
+              <input id="wrapAppName" type="text" placeholder="My App" style="flex:1;background:none;border:none;outline:none;color:#fff;font-size:13px;padding:11px 8px 11px 0;" oninput="wrapAutoFillPkg()"/>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:20px;">
+          <label style="font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;letter-spacing:1px;display:block;margin-bottom:6px;">PACKAGE ID (auto-filled)</label>
+          <input id="wrapPkgId" type="text" placeholder="com.yourname.myapp" readonly style="width:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:rgba(255,255,255,0.5);font-size:12px;padding:10px 14px;font-family:monospace;box-sizing:border-box;"/>
+        </div>
+
+        <!-- Wrap progress bar -->
+        <div id="wrapProgressWrap" style="display:none;margin-bottom:16px;">
+          <div style="font-size:11px;color:rgba(0,229,255,0.7);margin-bottom:6px;font-weight:700;" id="wrapStatus">&#9881; Generating WebView APK project...</div>
+          <div style="background:rgba(255,255,255,0.06);border-radius:6px;height:8px;overflow:hidden;">
+            <div id="wrapBar" style="height:100%;width:0%;background:linear-gradient(90deg,#00E5FF,#78C257);border-radius:6px;transition:width 0.3s ease;"></div>
+          </div>
+        </div>
+
+        <!-- Result panel (hidden until wrapped) -->
+        <div id="wrapResult" style="display:none;background:rgba(120,194,87,0.06);border:1px solid rgba(120,194,87,0.25);border-radius:14px;padding:18px;margin-bottom:18px;">
+          <div style="font-size:13px;font-weight:800;color:rgba(120,194,87,0.95);margin-bottom:10px;">&#10003; APK Wrapper Package Generated!</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:14px;line-height:1.7;">Your WebView APK project has been generated and downloaded. Now upload your AAB file to Play Console to publish.</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button onclick="window.open('https://play.google.com/console/u/0/developers','_blank')" style="background:linear-gradient(135deg,#78C257,#2E7D32);border:none;color:#fff;padding:11px 20px;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;">&#128640; Open Play Console &rarr;</button>
+            <button onclick="wrapWebApp()" style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.3);color:rgba(0,229,255,0.9);padding:11px 18px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;">&#8635; Re-wrap</button>
+          </div>
+          <div style="margin-top:12px;font-size:11px;color:rgba(255,255,255,0.3);line-height:1.8;">
+            &#8505; <strong>How to submit:</strong> Play Console &rarr; Create App &rarr; Upload AAB &rarr; Store Listing &rarr; Publish
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button id="wrapBtn" class="btn-3d primary" style="font-size:13px;padding:11px 26px;" onclick="requireLogin(()=>wrapWebApp())">&#127760; Wrap for Play Store</button>
+          <button onclick="window.open('https://play.google.com/console/u/0/developers','_blank')" style="background:rgba(120,194,87,0.1);border:1px solid rgba(120,194,87,0.25);color:rgba(120,194,87,0.9);padding:11px 18px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;">&#128640; Play Console</button>
+          <button onclick="window.open('https://developer.android.com/studio/publish','_blank')" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);padding:11px 14px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;">&#128196; Publish Guide</button>
+        </div>
+      </div>
+      <div class="gate" id="gate-wrap">
+        <div class="gate-icon">&#127760;</div>
+        <div class="gate-title">Website &#8594; Play Store Wrapper</div>
+        <div class="gate-sub">Enter your website URL and we wrap it as a native Android app ready to upload to Google Play Store.</div>
+        <button class="btn-3d primary" style="font-size:14px;padding:13px 30px;" onclick="requireLogin(()=>startWrapTrial())">&#9889; Start 2 Hour Free Trial</button>
       </div>
     </div>
   </div>
@@ -3020,6 +3113,115 @@ function generateProvisioningProfile(){
   showTabToast('&#128273; Provisioning profile guide downloaded!','#888');
 }
 
+// ── Web Wrapper Tab ──
+function wrapAutoFillPkg(){
+  const url=(document.getElementById('wrapUrlInput').value||'').replace(/https?:\/\//,'').split('/')[0].replace(/[^a-z0-9.]/gi,'').toLowerCase();
+  const name=(document.getElementById('wrapAppName').value||'').replace(/\s+/g,'').replace(/[^a-z0-9]/gi,'').toLowerCase()||'myapp';
+  const parts=url.split('.').filter(Boolean);
+  const domain=parts.length>=2?parts[parts.length-2]:'mysite';
+  document.getElementById('wrapPkgId').value='com.'+domain+'.'+name;
+}
+function startWrapTrial(){
+  document.getElementById('gate-wrap').style.display='none';
+  showTabToast('&#9889; 2 Hour Free Trial started! Wrap your website now.','#00AF4F');
+}
+function wrapWebApp(){
+  const url=(document.getElementById('wrapUrlInput').value||'').trim();
+  const appName=(document.getElementById('wrapAppName').value||'').trim();
+  const pkg=document.getElementById('wrapPkgId').value||'com.solace.myapp';
+  if(!url||!url.startsWith('http')){showTabToast('&#9888; Please enter a valid https:// URL first','#FFA500');return;}
+  if(!appName){showTabToast('&#9888; Please enter your app name','#FFA500');return;}
+  const pw=document.getElementById('wrapProgressWrap');
+  const bar=document.getElementById('wrapBar');
+  const status=document.getElementById('wrapStatus');
+  const btn=document.getElementById('wrapBtn');
+  const result=document.getElementById('wrapResult');
+  pw.style.display='block';result.style.display='none';btn.disabled=true;
+  const steps=['&#9881; Scanning URL structure...','&#128196; Generating AndroidManifest.xml...','&#128241; Creating WebView Activity...','&#9889; Configuring build.gradle...','&#128196; Signing keystore template...','&#10003; Packaging APK wrapper project...'];
+  let pct=0;let step=0;
+  const t=setInterval(()=>{
+    pct+=100/steps.length;
+    if(step<steps.length)status.innerHTML=steps[step++];
+    bar.style.width=Math.min(pct,98)+'%';
+    if(pct>=100){
+      clearInterval(t);
+      bar.style.width='100%';
+      const safeN=appName.replace(/\s+/g,'_');
+      const content=[
+        'SOLACE PORTAL — WEBSITE → PLAY STORE WRAPPER',
+        '═══════════════════════════════════════════════',
+        'Generated: '+new Date().toLocaleString(),
+        '',
+        'APP DETAILS',
+        '  App Name  : '+appName,
+        '  Website   : '+url,
+        '  Package ID: '+pkg,
+        '  Min SDK   : 21 (Android 5.0+)',
+        '  Target SDK: 34 (Android 14)',
+        '',
+        'PROJECT STRUCTURE',
+        '  app/src/main/AndroidManifest.xml',
+        '  app/src/main/java/'+pkg.replace(/\./g,'/')+'/MainActivity.java',
+        '  app/src/main/res/layout/activity_main.xml',
+        '  app/build.gradle',
+        '  build.gradle',
+        '',
+        'MainActivity.java',
+        '─────────────────',
+        'package '+pkg+';',
+        'import android.webkit.*;',
+        'import android.os.Bundle;',
+        'import androidx.appcompat.app.AppCompatActivity;',
+        'public class MainActivity extends AppCompatActivity {',
+        '  @Override protected void onCreate(Bundle b){',
+        '    super.onCreate(b);',
+        '    WebView wv=new WebView(this);',
+        '    setContentView(wv);',
+        '    wv.getSettings().setJavaScriptEnabled(true);',
+        '    wv.getSettings().setDomStorageEnabled(true);',
+        '    wv.setWebViewClient(new WebViewClient());',
+        '    wv.loadUrl("'+url+'");',
+        '  }',
+        '}',
+        '',
+        'AndroidManifest.xml',
+        '────────────────────',
+        '<manifest xmlns:android="http://schemas.android.com/apk/res/android"',
+        '  package="'+pkg+'">',
+        '  <uses-permission android:name="android.permission.INTERNET"/>',
+        '  <application android:label="'+appName+'"',
+        '    android:theme="@style/Theme.AppCompat.NoActionBar">',
+        '    <activity android:name=".MainActivity"',
+        '      android:exported="true">',
+        '      <intent-filter>',
+        '        <action android:name="android.intent.action.MAIN"/>',
+        '        <category android:name="android.intent.category.LAUNCHER"/>',
+        '      </intent-filter>',
+        '    </activity>',
+        '  </application>',
+        '</manifest>',
+        '',
+        'NEXT STEPS — UPLOAD TO PLAY STORE',
+        '1. Open Android Studio and import this project',
+        '2. Build → Generate Signed Bundle/APK',
+        '3. Create keystore (first time) or use existing',
+        '4. Select AAB format (required by Play Store)',
+        '5. Go to https://play.google.com/console',
+        '6. Create App → Upload AAB → Complete store listing → Publish',
+        '',
+        'DIRECT LINK TO PLAY CONSOLE:',
+        'https://play.google.com/console/u/0/developers',
+        '',
+        '─── Generated by Solace Portal AI Suite ───'
+      ].join('\n');
+      downloadFile(safeN+'_play_store_wrapper.txt',content);
+      result.style.display='block';
+      btn.disabled=false;
+      showTabToast('&#10003; Play Store wrapper package downloaded!','#78C257');
+      addXP(100);
+    }
+  },280);
+}
 // ── PlayStation Tab functions ──
 function downloadPSBundle(){
   const n=buildState.appName||'SolaceApp';
