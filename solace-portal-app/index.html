@@ -1771,7 +1771,7 @@ nav{
     <div class="price-card">
       <div class="price-title">Starter</div>
       <div class="price-num">Free</div>
-      <div class="price-per">2-hour trial, no card needed</div>
+      <div class="price-per">2-hour trial &mdash; no card needed</div>
       <ul class="price-list">
         <li>AI App Builder (2hr trial)</li><li>1 App Project</li><li>Android APK Export</li><li>Play Store Submission Guide</li><li>Belinda &amp; Sven AI Chat</li>
       </ul>
@@ -1854,7 +1854,7 @@ nav{
         <line x1="50" y1="108" x2="50" y2="113" stroke="url(#dlg1)" stroke-width="2.5"/>
       </svg>
     </div>
-    <div style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;margin-bottom:8px;">Get Solace Portal Free</div>
+    <div style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;margin-bottom:8px;">Get Solace Portal — <span style="color:#FFD700;">$1 AUD</span></div>
     <div style="color:rgba(255,255,255,0.5);font-size:14px;margin-bottom:8px;">Build &amp; publish apps from your phone &#8212; Android &amp; iOS</div>
     <div class="dl-btns">
       <a href="https://github.com/justinhoganzero1/solace-portal/releases/latest/download/app-release.apk" download="SolacePortal.apk" class="dl-btn android-btn">
@@ -2299,6 +2299,14 @@ nav{
       <div style="font-size:36px;animation:spin 1s linear infinite;display:inline-block;">&#9881;</div>
       <div style="margin-top:12px;color:rgba(255,255,255,0.6);font-size:14px;">Processing payment...</div>
     </div>
+    <!-- Awaiting payment return -->
+    <div id="pwAwaitSection" style="display:none;text-align:center;padding:10px 0;">
+      <div style="font-size:44px;margin-bottom:12px;">&#128279;</div>
+      <div style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;color:#FFD700;margin-bottom:10px;">Stripe Checkout Opened</div>
+      <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:20px;line-height:1.7;">Complete your <strong style="color:#635BFF;">$1 AUD</strong> payment in the new tab.<br>Once done, come back here and tap the button below.</p>
+      <button onclick="confirmPaymentDone()" style="width:100%;padding:16px;border-radius:14px;border:none;background:linear-gradient(135deg,#00AF4F,#00B4D8);color:#fff;font-weight:900;font-size:15px;cursor:pointer;box-shadow:0 6px 24px rgba(0,175,79,0.35);margin-bottom:12px;">&#9989; I've Completed Payment</button>
+      <button onclick="openPaywall()" style="background:none;border:none;color:rgba(255,255,255,0.3);font-size:12px;cursor:pointer;">&#8592; Go back</button>
+    </div>
     <!-- Success state -->
     <div id="pwSuccess" style="display:none;text-align:center;padding:20px;">
       <div style="font-size:52px;">&#127881;</div>
@@ -2532,6 +2540,38 @@ function handleGateLogin(){
   _spLoginUser(name,e,true);
   dismissGate(name,true);
   if(!isPaid()){setTimeout(openPaywall,1200);}
+}
+function submitChatPassword(){
+  const p=(document.getElementById('chatPassInput').value||'').trim();
+  if(!p||p.length<6){
+    showTabToast('Password must be at least 6 characters.','#FF4060');
+    return;
+  }
+  // Remove the password box from chat
+  const box=document.getElementById('chatPasswordBox');
+  if(box)box.remove();
+  // Simulate typing it into chat
+  sendChatWithValue(p);
+}
+function sendChatWithValue(val){
+  addChatMsg('user','\u2022\u2022\u2022\u2022\u2022\u2022 (password set)');
+  const gs=chatContext.gateSignup;
+  if(!gs||gs.step!=='pass')return;
+  const user={name:gs.name,email:gs.email,provider:'voice',joined:Date.now()};
+  _spSaveAccount(gs.email,gs.name,_spHash(val));
+  localStorage.setItem('sp_user',JSON.stringify(user));
+  chatContext.gateSignup=null;
+  setTimeout(()=>{
+    addChatMsg('ai','&#127881; Account created! Welcome, <strong>'+gs.name+'</strong>!<br><br>Taking you back to the home screen now...');
+    speakText('Account created! Welcome '+gs.name+'. Taking you back to the home screen.');
+    setTimeout(()=>{
+      closeChat();
+      dismissGate(gs.name,false);
+      window.scrollTo({top:0,behavior:'smooth'});
+      if(!isPaid()&&gs.email!==ADMIN_EMAIL){setTimeout(openPaywall,800);}
+      else{unlockFeatures();showWelcome(gs.name);}
+    },1800);
+  },600);
 }
 function showGateLogin(){
   document.getElementById('gateLoginForm').style.display='block';
@@ -2842,23 +2882,37 @@ const STRIPE_PAYMENT_LINK='https://buy.stripe.com/8x228s5Yj4571tNbBf5wI00';
 const SITE_URL='https://oracle-lunar.online';
 
 function processPayment(){
-  const returnUrl=SITE_URL+'/?paid=1';
-  // Build Payment Link URL with email pre-fill and success redirect
+  // Build Payment Link URL with email pre-fill
   let url=STRIPE_PAYMENT_LINK;
   try{
     const u=JSON.parse(localStorage.getItem('sp_user')||'{}');
-    const params=new URLSearchParams();
-    if(u.email)params.set('prefilled_email',u.email);
-    params.set('success_url',returnUrl);
-    params.set('cancel_url',SITE_URL+'/');
-    url+='?'+params.toString();
-  }catch(ex){
-    url+='?success_url='+encodeURIComponent(returnUrl);
-  }
+    if(u.email){
+      url+='?prefilled_email='+encodeURIComponent(u.email);
+    }
+  }catch(ex){}
   localStorage.setItem('sp_pay_intent','pending');
-  window.location.href=url;
+  // Open in NEW TAB so user stays on the app
+  window.open(url,'_blank','noopener,noreferrer');
+  // Show the 'I have paid' confirmation UI
+  const get=id=>document.getElementById(id);
+  if(get('pwCardSection'))get('pwCardSection').style.display='none';
+  if(get('pwAwaitSection'))get('pwAwaitSection').style.display='block';
 }
 
+function confirmPaymentDone(){
+  // User returns after completing Stripe payment
+  // Mark as paid and unlock
+  localStorage.setItem('sp_paid','1');
+  localStorage.removeItem('sp_pay_intent');
+  const get=id=>document.getElementById(id);
+  if(get('pwAwaitSection'))get('pwAwaitSection').style.display='none';
+  if(get('pwSuccess'))get('pwSuccess').style.display='block';
+  setTimeout(()=>{
+    if(get('paywallModal'))get('paywallModal').style.display='none';
+    unlockFeatures();
+    showPaidWelcome();
+  },1800);
+}
 function showPaidWelcome(){
   // Gold toast notification
   const t=document.createElement('div');
@@ -4720,27 +4774,32 @@ function sendChat(){
     } else if(gs.step==='email'){
       gs.email=val;
       gs.step='pass';
-      setTimeout(()=>addChatMsg('ai','Perfect! Now create a <strong>password</strong> for your account:'),600);
+      setTimeout(()=>{
+        addChatMsg('ai','Perfect! Now create a <strong>password</strong> for your account &mdash; use the secure box below:');
+        // Inject secure password input into chat
+        const msgs=document.getElementById('chatMessages');
+        const pwBox=document.createElement('div');
+        pwBox.className='msg ai';
+        pwBox.id='chatPasswordBox';
+        pwBox.innerHTML=`
+          <div class="msg-label">${currentAvatar==='belinda'?'⚡ BELINDA AI':'🔧 SVEN AI'}</div>
+          <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,215,0,0.2);border-radius:12px;padding:14px;margin-top:6px;">
+            <label style="font-size:11px;color:rgba(255,215,0,0.7);font-weight:700;letter-spacing:1px;display:block;margin-bottom:8px;">CREATE PASSWORD</label>
+            <div style="position:relative;">
+              <input id="chatPassInput" type="password" placeholder="Min. 6 characters" autocomplete="new-password"
+                style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:11px 44px 11px 14px;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box;"
+                onfocus="this.style.borderColor='rgba(255,215,0,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.15)'">
+              <button type="button" onclick="(function(){const i=document.getElementById('chatPassInput');const b=this;i.type=i.type==='password'?'text':'password';b.textContent=i.type==='password'?'\u{1F441}':'\u{1F648}'}).call(this)"
+                style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:rgba(255,255,255,0.4);padding:0;line-height:1;">&#128065;</button>
+            </div>
+            <button onclick="submitChatPassword()" style="margin-top:10px;width:100%;background:linear-gradient(135deg,#DC143C,#FFD700);border:none;color:#000;padding:11px;border-radius:10px;font-weight:900;cursor:pointer;font-size:13px;">&#9889; Set Password &amp; Create Account</button>
+          </div>`;
+        msgs.appendChild(pwBox);msgs.scrollTop=msgs.scrollHeight;
+      },600);
       return;
     } else if(gs.step==='pass'){
-      const user={name:gs.name,email:gs.email,provider:'voice',joined:Date.now()};
-      _spSaveAccount(gs.email,gs.name,'voice_signup_'+Date.now());
-      localStorage.setItem('sp_user',JSON.stringify(user));
-      chatContext.gateSignup=null;
-      setTimeout(()=>{
-        addChatMsg('ai','&#127881; Account created! Welcome, <strong>'+gs.name+'</strong>!<br><br>Taking you back to the home screen now...');
-        speakText('Account created! Welcome '+gs.name+'. Taking you back to the home screen.');
-        setTimeout(()=>{
-          // Close chat and go back to home
-          closeChat();
-          dismissGate(gs.name,false);
-          // Scroll to top / home
-          window.scrollTo({top:0,behavior:'smooth'});
-          // Show paywall if not paid
-          if(!isPaid()&&gs.email!==ADMIN_EMAIL){setTimeout(openPaywall,800);}
-          else{unlockFeatures();showWelcome(gs.name);}
-        },1800);
-      },600);
+      // Password is collected via the secure chatPasswordBox — not free text.
+      setTimeout(()=>addChatMsg('ai','Please use the secure &#128272; password box above to set your password.'),300);
       return;
     }
   }
@@ -5892,7 +5951,7 @@ function logoutUser(){
   localStorage.removeItem('sp_paid');
   closeLibrary();
   const cta=document.querySelector('.nav-cta');
-  if(cta){cta.innerHTML='&#9889; Get Started Free';cta.style.background='linear-gradient(135deg,#DC143C,#FFD700,#1565C0)';cta.style.color='#fff';}
+  if(cta){cta.innerHTML='&#9889; Get Started';cta.style.background='linear-gradient(135deg,#DC143C,#FFD700,#1565C0)';cta.style.color='#fff';}
   const lib=document.getElementById('navLibrary');if(lib)lib.style.display='none';
   const adm=document.getElementById('navAdmin');if(adm)adm.style.display='none';
   const logout=document.getElementById('navLogout');if(logout)logout.style.display='none';
