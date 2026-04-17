@@ -2216,6 +2216,17 @@ nav{
       <button onclick="handleGateSignup()" style="width:100%;padding:15px;border-radius:13px;border:none;background:linear-gradient(135deg,#DC143C,#FFD700,#1565C0);color:#fff;font-weight:900;font-size:15px;cursor:pointer;box-shadow:0 6px 24px rgba(220,20,60,0.4);margin-bottom:12px;">&#9889; Create Account &amp; Enter</button>
       <div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.3);">Already have an account? <a href="#" onclick="showGateLogin();return false;" style="color:rgba(255,215,0,0.6);text-decoration:none;">Sign in</a></div>
     </div>
+    <!-- Social auth panel (shown when Google/Apple clicked) -->
+    <div id="gateSocialForm" style="display:none;background:linear-gradient(145deg,#0A0A18,#060610);border:1px solid rgba(66,133,244,0.3);border-radius:22px;padding:28px;margin-top:14px;">
+      <div id="gateSocialIcon" style="font-size:32px;margin-bottom:8px;">&#128295;</div>
+      <div id="gateSocialTitle" style="font-family:'Orbitron',sans-serif;font-size:17px;font-weight:900;color:#fff;margin-bottom:6px;">Sign in with Google</div>
+      <p style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:18px;">Enter your name and email to continue</p>
+      <div style="margin-bottom:12px;"><input id="socialAuthName" type="text" placeholder="Your full name" autocomplete="name" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:13px 16px;border-radius:12px;font-size:14px;outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='rgba(66,133,244,0.6)'" onblur="this.style.borderColor='rgba(255,255,255,0.15)'"/></div>
+      <div style="margin-bottom:16px;"><input id="socialAuthEmail" type="email" placeholder="yourname@email.com" autocomplete="email" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:13px 16px;border-radius:12px;font-size:14px;outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='rgba(66,133,244,0.6)'" onblur="this.style.borderColor='rgba(255,255,255,0.15)'"/></div>
+      <div id="socialAuthErr" style="color:#FF4060;font-size:12px;margin-bottom:10px;display:none;"></div>
+      <button id="socialAuthBtn" onclick="confirmSocialAuth()" style="width:100%;padding:14px;border-radius:13px;border:none;background:linear-gradient(135deg,#4285F4,#34A853);color:#fff;font-weight:900;font-size:15px;cursor:pointer;margin-bottom:12px;">&#9889; Continue</button>
+      <button onclick="closeSocialAuthPanel()" style="background:none;border:none;color:rgba(255,255,255,0.35);font-size:13px;cursor:pointer;">&#8592; Back</button>
+    </div>
     <!-- Login form (hidden by default) -->
     <div id="gateLoginForm" style="display:none;background:linear-gradient(145deg,#0A0A18,#060610);border:1px solid rgba(255,215,0,0.15);border-radius:22px;padding:28px;margin-top:14px;">
       <div style="margin-bottom:12px;"><input id="gateLoginEmail" type="email" placeholder="Email address" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:13px 16px;border-radius:12px;font-size:14px;outline:none;" onfocus="this.style.borderColor='rgba(255,215,0,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"/></div>
@@ -2576,98 +2587,78 @@ function sendChatWithValue(val){
 function showGateLogin(){
   document.getElementById('gateLoginForm').style.display='block';
 }
+let _socialAuthProvider='google';
+function _openSocialPanel(provider){
+  _socialAuthProvider=provider;
+  const icon=document.getElementById('gateSocialIcon');
+  const title=document.getElementById('gateSocialTitle');
+  const btn=document.getElementById('socialAuthBtn');
+  const border=document.getElementById('gateSocialForm');
+  if(provider==='google'){
+    if(icon)icon.innerHTML='<svg width="32" height="32" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>';
+    if(title)title.textContent='Sign in with Google';
+    if(btn)btn.style.background='linear-gradient(135deg,#4285F4,#34A853)';
+    if(border)border.style.borderColor='rgba(66,133,244,0.35)';
+  } else {
+    if(icon)icon.innerHTML='&#63743;';
+    if(title)title.textContent='Sign in with Apple';
+    if(btn)btn.style.background='linear-gradient(135deg,#1a1a1a,#3a3a3a)';
+    if(border)border.style.borderColor='rgba(255,255,255,0.25)';
+  }
+  const err=document.getElementById('socialAuthErr');
+  if(err){err.textContent='';err.style.display='none';}
+  const nm=document.getElementById('socialAuthName');if(nm)nm.value='';
+  const em=document.getElementById('socialAuthEmail');if(em)em.value='';
+  if(document.getElementById('gateSocialForm'))document.getElementById('gateSocialForm').style.display='block';
+  setTimeout(()=>{const nm=document.getElementById('socialAuthName');if(nm)nm.focus();},100);
+}
 function handleGoogleLogin(){
-  // Simulate Google sign-in: prompt for name, use a generated google-style email
-  const existingUser=JSON.parse(localStorage.getItem('sp_user')||'null');
-  if(existingUser&&existingUser.provider==='google'){
-    // Already signed in via Google — just unlock and go home
-    closeModal();
+  const existing=JSON.parse(localStorage.getItem('sp_user')||'null');
+  if(existing&&existing.provider==='google'&&existing.name){
     const gate=document.getElementById('loginGate');
     if(gate)gate.style.display='none';
-    updateNavUser(existingUser.name);
-    if(!isPaid()&&existingUser.email!==ADMIN_EMAIL){setTimeout(openPaywall,800);}else{unlockFeatures();}
+    updateNavUser(existing.name);
+    if(!isPaid()&&existing.email!==ADMIN_EMAIL){setTimeout(openPaywall,800);}else{unlockFeatures();}
+    showWelcome(existing.name);
     return;
   }
-  // Show a Google-styled name prompt overlay
-  const overlay=document.createElement('div');
-  overlay.id='googleAuthOverlay';
-  overlay.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.85);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;padding:20px;';
-  overlay.innerHTML=`
-    <div style="background:linear-gradient(145deg,#0A0A18,#060610);border:1px solid rgba(66,133,244,0.3);border-radius:24px;padding:32px;width:min(400px,95vw);text-align:center;">
-      <div style="width:52px;height:52px;margin:0 auto 16px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;">
-        <svg width="28" height="28" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-      </div>
-      <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:#fff;margin-bottom:8px;">Sign in with Google</div>
-      <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:24px;">Enter your name and Google email to continue</p>
-      <input id="googleAuthName" type="text" placeholder="Your full name" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:13px 16px;border-radius:12px;font-size:14px;outline:none;margin-bottom:12px;"/>
-      <input id="googleAuthEmail" type="email" placeholder="yourname@gmail.com" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:13px 16px;border-radius:12px;font-size:14px;outline:none;margin-bottom:16px;"/>
-      <div id="googleAuthErr" style="color:#FF4060;font-size:12px;margin-bottom:10px;display:none;"></div>
-      <button onclick="confirmGoogleAuth()" style="width:100%;padding:14px;border-radius:13px;border:none;background:linear-gradient(135deg,#4285F4,#34A853);color:#fff;font-weight:900;font-size:15px;cursor:pointer;margin-bottom:12px;">&#9889; Continue with Google</button>
-      <button onclick="document.getElementById('googleAuthOverlay').remove()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:13px;cursor:pointer;">Cancel</button>
-    </div>`;
-  document.body.appendChild(overlay);
-  setTimeout(()=>document.getElementById('googleAuthName').focus(),100);
-}
-function confirmGoogleAuth(){
-  const n=(document.getElementById('googleAuthName').value||'').trim();
-  const e=(document.getElementById('googleAuthEmail').value||'').trim().toLowerCase();
-  const err=document.getElementById('googleAuthErr');
-  if(!n){err.textContent='Please enter your name.';err.style.display='block';return;}
-  if(!e||!e.includes('@')){err.textContent='Please enter a valid email.';err.style.display='block';return;}
-  // Check for existing account with this email
-  const accs=_spGetAccounts();
-  if(accs[e]){
-    // Log them in
-    _spLoginUser(accs[e].name||n,e,true);
-  } else {
-    // Create account
-    _spSaveAccount(e,n,'google_oauth_'+Date.now());
-    _spLoginUser(n,e,true);
-  }
-  document.getElementById('googleAuthOverlay').remove();
-  // Close all modals and return to home screen
-  closeModal();
-  const gate=document.getElementById('loginGate');
-  if(gate){gate.style.opacity='0';setTimeout(()=>gate.style.display='none',300);}
-  const finalName=n;
-  updateNavUser(finalName);
-  showWelcome(finalName);
-  if(!isPaid()&&e!==ADMIN_EMAIL){setTimeout(openPaywall,1200);}else{unlockFeatures();}
+  _openSocialPanel('google');
 }
 function handleAppleLogin(){
-  // Apple sign-in: show name+email prompt
-  const overlay=document.createElement('div');
-  overlay.id='appleAuthOverlay';
-  overlay.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.85);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;padding:20px;';
-  overlay.innerHTML=`
-    <div style="background:linear-gradient(145deg,#0A0A18,#060610);border:1px solid rgba(255,255,255,0.2);border-radius:24px;padding:32px;width:min(400px,95vw);text-align:center;">
-      <div style="font-size:40px;margin-bottom:12px;">&#63743;</div>
-      <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:#fff;margin-bottom:8px;">Sign in with Apple</div>
-      <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:24px;">Enter your name and Apple ID email</p>
-      <input id="appleAuthName" type="text" placeholder="Your full name" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:13px 16px;border-radius:12px;font-size:14px;outline:none;margin-bottom:12px;"/>
-      <input id="appleAuthEmail" type="email" placeholder="yourname@icloud.com" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:13px 16px;border-radius:12px;font-size:14px;outline:none;margin-bottom:16px;"/>
-      <div id="appleAuthErr" style="color:#FF4060;font-size:12px;margin-bottom:10px;display:none;"></div>
-      <button onclick="confirmAppleAuth()" style="width:100%;padding:14px;border-radius:13px;border:none;background:#000;border:1px solid rgba(255,255,255,0.3);color:#fff;font-weight:900;font-size:15px;cursor:pointer;margin-bottom:12px;">&#63743; Continue with Apple</button>
-      <button onclick="document.getElementById('appleAuthOverlay').remove()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:13px;cursor:pointer;">Cancel</button>
-    </div>`;
-  document.body.appendChild(overlay);
-  setTimeout(()=>document.getElementById('appleAuthName').focus(),100);
+  const existing=JSON.parse(localStorage.getItem('sp_user')||'null');
+  if(existing&&existing.provider==='apple'&&existing.name){
+    const gate=document.getElementById('loginGate');
+    if(gate)gate.style.display='none';
+    updateNavUser(existing.name);
+    if(!isPaid()&&existing.email!==ADMIN_EMAIL){setTimeout(openPaywall,800);}else{unlockFeatures();}
+    showWelcome(existing.name);
+    return;
+  }
+  _openSocialPanel('apple');
 }
-function confirmAppleAuth(){
-  const n=(document.getElementById('appleAuthName').value||'').trim();
-  const e=(document.getElementById('appleAuthEmail').value||'').trim().toLowerCase();
-  const err=document.getElementById('appleAuthErr');
+function confirmSocialAuth(){
+  const n=(document.getElementById('socialAuthName').value||'').trim();
+  const e=(document.getElementById('socialAuthEmail').value||'').trim().toLowerCase();
+  const err=document.getElementById('socialAuthErr');
   if(!n){err.textContent='Please enter your name.';err.style.display='block';return;}
   if(!e||!e.includes('@')){err.textContent='Please enter a valid email.';err.style.display='block';return;}
+  err.style.display='none';
   const accs=_spGetAccounts();
-  if(accs[e]){_spLoginUser(accs[e].name||n,e,true);}else{_spSaveAccount(e,n,'apple_oauth_'+Date.now());_spLoginUser(n,e,true);}
-  document.getElementById('appleAuthOverlay').remove();
-  closeModal();
+  const tag=_socialAuthProvider+'_oauth_'+Date.now();
+  if(accs[e]){_spLoginUser(accs[e].name||n,e,true);}
+  else{_spSaveAccount(e,n,tag);_spLoginUser(n,e,true);}
+  // Store provider
+  try{const u=JSON.parse(localStorage.getItem('sp_user')||'{}');u.provider=_socialAuthProvider;localStorage.setItem('sp_user',JSON.stringify(u));}catch(ex){}
   const gate=document.getElementById('loginGate');
-  if(gate){gate.style.opacity='0';setTimeout(()=>gate.style.display='none',300);}
+  if(gate)gate.style.display='none';
+  closeModal();
   updateNavUser(n);
   showWelcome(n);
   if(!isPaid()&&e!==ADMIN_EMAIL){setTimeout(openPaywall,1200);}else{unlockFeatures();}
+}
+function closeSocialAuthPanel(){
+  const f=document.getElementById('gateSocialForm');
+  if(f)f.style.display='none';
 }
 function gateOpenChat(avatar){
   // Open chat from gate — avatar will sign them up via conversation
