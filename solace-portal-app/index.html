@@ -2401,7 +2401,29 @@ nav{
         <img src="images/sven-avatar.jpg" alt="Sven" width="38" height="46" style="border-radius:50%;object-fit:cover;object-position:top;border:2px solid rgba(0,229,255,0.3);box-shadow:0 0 10px rgba(0,229,255,0.3);"/>
         <span style="font-size:9px;font-weight:800;color:rgba(0,229,255,0.7);letter-spacing:0.5px;">SVEN</span>
       </div>
-      <button onclick="closeChat()" style="margin-left:6px;background:none;border:none;color:rgba(255,255,255,0.3);font-size:20px;cursor:pointer;padding:4px;">&#10005;</button>
+      <button onclick="toggleVoicePanel()" title="Voice Settings" style="margin-left:4px;background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.2);color:rgba(255,215,0,0.7);font-size:15px;cursor:pointer;padding:5px 9px;border-radius:9px;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,215,0,0.15)'" onmouseout="this.style.background='rgba(255,215,0,0.07)'">&#9881;</button>
+      <button onclick="closeChat()" style="margin-left:4px;background:none;border:none;color:rgba(255,255,255,0.3);font-size:20px;cursor:pointer;padding:4px;">&#10005;</button>
+    </div>
+    <!-- ElevenLabs Voice Settings Panel -->
+    <div id="chatVoicePanel" style="display:none;padding:16px 18px 14px;border-bottom:1px solid rgba(255,215,0,0.12);background:linear-gradient(135deg,rgba(10,10,24,0.98),rgba(6,6,16,0.98));">
+      <div style="font-family:'Orbitron',sans-serif;font-size:11px;font-weight:900;color:#FFD700;margin-bottom:13px;letter-spacing:1.2px;">&#9881; ELEVENLABS PREMIUM VOICES</div>
+      <div style="margin-bottom:10px;">
+        <div style="font-size:10px;color:rgba(255,255,255,0.45);font-weight:700;letter-spacing:0.8px;margin-bottom:5px;">API KEY <span style="color:rgba(255,60,60,0.7);">(secrets)</span></div>
+        <div style="position:relative;">
+          <input id="elKeyInput" type="password" placeholder="Paste your ElevenLabs API key..." autocomplete="off" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,215,0,0.25);color:#fff;padding:9px 40px 9px 12px;border-radius:9px;font-size:12px;outline:none;box-sizing:border-box;font-family:monospace;"/>
+          <button type="button" onclick="var i=document.getElementById('elKeyInput');i.type=i.type==='password'?'text':'password'" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:rgba(255,255,255,0.35);line-height:1;">&#128065;</button>
+        </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <div style="font-size:10px;color:rgba(255,255,255,0.45);font-weight:700;letter-spacing:0.8px;margin-bottom:5px;">SELECT VOICE &mdash; 30 PREMIUM</div>
+        <select id="elVoiceSelect" style="width:100%;background:rgba(20,20,40,0.98);border:1px solid rgba(255,215,0,0.2);color:#fff;padding:9px 12px;border-radius:9px;font-size:12px;outline:none;cursor:pointer;"></select>
+      </div>
+      <div style="display:flex;gap:7px;">
+        <button onclick="testElVoice()" style="flex:1;padding:9px 6px;border-radius:9px;border:1px solid rgba(0,229,255,0.3);background:rgba(0,229,255,0.07);color:rgba(0,229,255,0.9);font-weight:800;font-size:11px;cursor:pointer;">&#9654; Test</button>
+        <button onclick="saveElVoiceSettings()" style="flex:2;padding:9px 6px;border-radius:9px;border:none;background:linear-gradient(135deg,#DC143C,#FFD700);color:#000;font-weight:900;font-size:11px;cursor:pointer;">&#9889; Save Settings</button>
+        <button onclick="document.getElementById('chatVoicePanel').style.display='none'" style="flex:1;padding:9px 6px;border-radius:9px;border:1px solid rgba(255,255,255,0.1);background:none;color:rgba(255,255,255,0.35);font-weight:700;font-size:11px;cursor:pointer;">&#10005; Close</button>
+      </div>
+      <div id="elVoiceStatus" style="font-size:11px;color:rgba(0,229,255,0.8);margin-top:8px;display:none;text-align:center;padding:4px 0;"></div>
     </div>
     <div id="chatMessages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;"></div>
     <!-- Quick action chips -->
@@ -2680,22 +2702,140 @@ function gateOpenChat(avatar){
 }
 
 // ══ WEB SPEECH API — TTS (Text to Speech) ══
-let ttsEnabled=true;
-function speakText(text){
-  if(!ttsEnabled||!window.speechSynthesis)return;
+// ══ ELEVENLABS TTS ENGINE ══
+const ELEVEN_VOICES=[
+  {id:'21m00Tcm4TlvDq8ikWAM',name:'Rachel',desc:'Calm \u00b7 Female \u00b7 American'},
+  {id:'29vD33N1BoQ1agpkZzSj',name:'Drew',desc:'Conversational \u00b7 Male \u00b7 American'},
+  {id:'2EiwWnXFnvU5JabPnv8n',name:'Clyde',desc:'War Veteran \u00b7 Male \u00b7 American'},
+  {id:'5Q0t7uMcjvnagumLfvZi',name:'Paul',desc:'Authoritative \u00b7 Male \u00b7 American'},
+  {id:'AZnzlk1XvdvUeBnXmlld',name:'Domi',desc:'Confident \u00b7 Female \u00b7 American'},
+  {id:'CYw3kZ78EXOmR38RoqFG',name:'Dave',desc:'Essex \u00b7 Male \u00b7 British'},
+  {id:'D38z5RcWu1voky8WS1ja',name:'Fin',desc:'Sailor \u00b7 Male \u00b7 Irish'},
+  {id:'EXAVITQu4vr4xnSDxMaL',name:'Bella',desc:'Soft \u00b7 Female \u00b7 American'},
+  {id:'ErXwobaYiN019PkySvjV',name:'Antoni',desc:'Well-rounded \u00b7 Male \u00b7 American'},
+  {id:'GBv7mTt0atIp3Br8iCZE',name:'Thomas',desc:'Calm \u00b7 Male \u00b7 American'},
+  {id:'IKne3meq5aSn9XLyUdCD',name:'Charlie',desc:'Casual \u00b7 Male \u00b7 Australian'},
+  {id:'LcfcDJNUP1GQjkzn1xUU',name:'Emily',desc:'Calm \u00b7 Female \u00b7 American'},
+  {id:'MF3mGyEYCl7XYWbV9V6O',name:'Elli',desc:'Emotional \u00b7 Female \u00b7 American'},
+  {id:'N2lVS1w4EtoT3dr4eOWO',name:'Callum',desc:'Intense \u00b7 Male \u00b7 Transatlantic'},
+  {id:'ODq5zmih8GrVes37Dy39',name:'Patrick',desc:'Authoritative \u00b7 Male \u00b7 American'},
+  {id:'SOYHLrjzK2X1ezoPC6cr',name:'Harry',desc:'Anxious \u00b7 Male \u00b7 American'},
+  {id:'TX3LPaxmHKxFdv7VOQHJ',name:'Liam',desc:'Calm \u00b7 Male \u00b7 American'},
+  {id:'ThT5KcBeYPX3keUQqHPh',name:'Dorothy',desc:'Pleasant \u00b7 Female \u00b7 British'},
+  {id:'TxGEqnHWrfWFTfGW9XjX',name:'Josh',desc:'Deep \u00b7 Male \u00b7 American'},
+  {id:'VR6AewLTigWG4xSOukaG',name:'Arnold',desc:'Crisp \u00b7 Male \u00b7 American'},
+  {id:'XB0fDUnXU5powFXDhCwa',name:'Charlotte',desc:'Seductive \u00b7 Female \u00b7 Swedish'},
+  {id:'Xb7hH8MSUJpSbSDYk0k2',name:'Alice',desc:'Confident \u00b7 Female \u00b7 British'},
+  {id:'XrExE9yKIg1WjnnlVkGX',name:'Matilda',desc:'Warm \u00b7 Female \u00b7 American'},
+  {id:'ZQe5CZNOzWyzPSCn5a3c',name:'James',desc:'Calm \u00b7 Male \u00b7 Australian'},
+  {id:'bVMeCyTHy58xNoL34h3p',name:'Jeremy',desc:'Excited \u00b7 Male \u00b7 Irish-American'},
+  {id:'flq6f7UT2E5GU5HvOTMr',name:'Michael',desc:'Calm \u00b7 Male \u00b7 American'},
+  {id:'g5CIjZEefAph4nQFvHAz',name:'Ethan',desc:'Whisper \u00b7 Male \u00b7 American'},
+  {id:'jsCqWAovK2LkecY7zXl4',name:'Gigi',desc:'Playful \u00b7 Female \u00b7 American'},
+  {id:'jTd6QvItHOSEFHOcNeFw',name:'Freya',desc:'Dramatic \u00b7 Female \u00b7 American'},
+  {id:'pMsXgVXv3BLzUgSXRplE',name:'Serena',desc:'Pleasant \u00b7 Female \u00b7 American'}
+];
+// Populate voice <select> on first open
+function _populateVoiceSelect(){
+  const sel=document.getElementById('elVoiceSelect');
+  if(!sel||sel.options.length>1)return;
+  ELEVEN_VOICES.forEach(v=>{
+    const opt=document.createElement('option');
+    opt.value=v.id;
+    opt.textContent=v.name+' — '+v.desc;
+    sel.appendChild(opt);
+  });
+  const saved=localStorage.getItem('sp_el_voice');
+  if(saved)sel.value=saved;
+}
+function toggleVoicePanel(){
+  const p=document.getElementById('chatVoicePanel');
+  const isHidden=p.style.display==='none';
+  p.style.display=isHidden?'block':'none';
+  if(isHidden){
+    _populateVoiceSelect();
+    const ki=document.getElementById('elKeyInput');
+    if(ki){ki.value=localStorage.getItem('sp_el_key')||'';}
+    const st=document.getElementById('elVoiceStatus');
+    if(st)st.style.display='none';
+  }
+}
+let _elAudio=null;let _elStopTimer=null;
+function _stopCurrentSpeech(){
+  if(_elAudio){try{_elAudio.pause();}catch(e){}; _elAudio=null;}
+  if(_elStopTimer){clearTimeout(_elStopTimer);_elStopTimer=null;}
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+}
+async function speakWithElevenLabs(text,voiceId,apiKey){
+  _stopCurrentSpeech();
+  try{
+    const resp=await fetch('https://api.elevenlabs.io/v1/text-to-speech/'+voiceId,{
+      method:'POST',
+      headers:{'xi-api-key':apiKey,'Content-Type':'application/json','Accept':'audio/mpeg'},
+      body:JSON.stringify({text:text.substring(0,500),model_id:'eleven_monolingual_v1',voice_settings:{stability:0.5,similarity_boost:0.75}})
+    });
+    if(!resp.ok){console.warn('ElevenLabs error:',resp.status);return false;}
+    const blob=await resp.blob();
+    const url=URL.createObjectURL(blob);
+    _elAudio=new Audio(url);
+    _elAudio.onended=()=>{URL.revokeObjectURL(url);_elAudio=null;if(_elStopTimer){clearTimeout(_elStopTimer);_elStopTimer=null;}};
+    _elAudio.play();
+    _elStopTimer=setTimeout(()=>{if(_elAudio){_elAudio.pause();_elAudio=null;}URL.revokeObjectURL(url);},20000);
+    return true;
+  }catch(ex){console.warn('ElevenLabs TTS failed:',ex);return false;}
+}
+function _fallbackSpeak(plain){
+  if(!window.speechSynthesis)return;
   window.speechSynthesis.cancel();
-  const plain=text.replace(/<[^>]+>/g,'').replace(/&[a-z]+;/gi,'').substring(0,300);
   const utt=new SpeechSynthesisUtterance(plain);
-  utt.rate=1.0;utt.pitch=1.0;utt.volume=1.0;
-  // Pick voice by avatar
   const voices=window.speechSynthesis.getVoices();
   const isBelinda=currentAvatar==='belinda';
   const preferred=voices.find(v=>isBelinda
     ?(v.name.includes('Female')||v.name.includes('Samantha')||v.name.includes('Google UK English Female')||v.name.includes('Zira'))
     :(v.name.includes('Male')||v.name.includes('Daniel')||v.name.includes('Google UK English Male')||v.name.includes('David')));
   if(preferred)utt.voice=preferred;
-  utt.pitch=isBelinda?1.1:0.9;
+  utt.rate=1.0;utt.pitch=isBelinda?1.1:0.9;utt.volume=1.0;
+  const stopFallback=setTimeout(()=>window.speechSynthesis.cancel(),20000);
+  utt.onend=()=>clearTimeout(stopFallback);
   window.speechSynthesis.speak(utt);
+}
+async function testElVoice(){
+  const apiKey=(document.getElementById('elKeyInput').value||'').trim();
+  const voiceId=document.getElementById('elVoiceSelect').value;
+  const st=document.getElementById('elVoiceStatus');
+  if(!apiKey){st.textContent='Please enter your API key first.';st.style.color='rgba(255,100,100,0.9)';st.style.display='block';return;}
+  if(!voiceId){st.textContent='Please select a voice.';st.style.color='rgba(255,100,100,0.9)';st.style.display='block';return;}
+  st.textContent='Playing test audio...';st.style.color='rgba(0,229,255,0.8)';st.style.display='block';
+  const voice=ELEVEN_VOICES.find(v=>v.id===voiceId);
+  const testText='Hello! I am '+(voice?voice.name:'your AI assistant')+', ready to help you build amazing apps with Solace Portal.';
+  const ok=await speakWithElevenLabs(testText,voiceId,apiKey);
+  if(ok){st.textContent='Voice test successful!';st.style.color='rgba(80,220,80,0.9)';}
+  else{st.textContent='Error. Check your API key is valid and has credits.';st.style.color='rgba(255,100,100,0.9)';}
+}
+function saveElVoiceSettings(){
+  const apiKey=(document.getElementById('elKeyInput').value||'').trim();
+  const voiceId=document.getElementById('elVoiceSelect').value;
+  const st=document.getElementById('elVoiceStatus');
+  if(apiKey)localStorage.setItem('sp_el_key',apiKey);
+  else localStorage.removeItem('sp_el_key');
+  if(voiceId)localStorage.setItem('sp_el_voice',voiceId);
+  st.textContent=apiKey?'Settings saved! ElevenLabs voices active.':'API key cleared. Using browser voice.';
+  st.style.color=apiKey?'rgba(80,220,80,0.9)':'rgba(255,200,50,0.9)';
+  st.style.display='block';
+  setTimeout(()=>{if(st)st.style.display='none';},3000);
+}
+let ttsEnabled=true;
+function speakText(text){
+  if(!ttsEnabled)return;
+  const plain=text.replace(/<[^>]+>/g,'').replace(/&[^;]+;/g,' ').replace(/\s+/g,' ').trim().substring(0,500);
+  if(!plain)return;
+  const apiKey=localStorage.getItem('sp_el_key')||'';
+  const voiceId=localStorage.getItem('sp_el_voice')||ELEVEN_VOICES[0].id;
+  if(apiKey){
+    speakWithElevenLabs(plain,voiceId,apiKey).then(ok=>{if(!ok)_fallbackSpeak(plain);});
+    return;
+  }
+  _fallbackSpeak(plain);
 }
 
 // ══ WEB SPEECH API — STT (Speech to Text) ══
@@ -4739,15 +4879,69 @@ function _doOpenChat(avatar){
 function closeChat(){document.getElementById('chatOverlay').style.display='none';}
 document.getElementById('chatOverlay').addEventListener('click',function(e){if(e.target===this)closeChat();});
 
+// ══ ORACLE FOLLOW-UP CHIP SYSTEM ══
+let _oracleChipTimer=null;
+const _OFU=[
+  {k:['build','create','make','app','project'],o:['Start building now &#128640;','What platforms do you support?','Show me an example app']},
+  {k:['play store','google play','store','publish','submit','release'],o:['How do I submit to Play Store?','What files do I need?','Start a build first']},
+  {k:['flutter','dart','widget','screen','code'],o:['Generate the Flutter code','Add another screen','Explain the architecture']},
+  {k:['price','cost','dollar','pay','free','trial','join'],o:['Join for $1 AUD &#9889;','What does $1 include?','Start free trial first']},
+  {k:['auth','login','sign','password','account'],o:['Add login to my app','Generate auth code','How does sign-in work?']},
+  {k:['belinda','sven','ai','oracle','you'],o:['Tell me what you can build','Switch to Sven &#128296;','Give me a demo']},
+  {k:['logo','design','ui','image','photo'],o:['Generate a logo now','Design my app UI','Create 8K app mockup']},
+  {k:['hello','hi','hey','start','begin'],o:['Build me an app &#128241;','How does Solace Portal work?','What makes it special?']},
+];
+const _OFU_DEFAULT=[['Build me an app &#128641;','How much does it cost?','What can you build?'],['Tell me about the AI builders','Join Solace Portal — $1 AUD','How fast can you build an app?']];
+function _getOFU(html){
+  const t=(html||'').toLowerCase().replace(/<[^>]+>/g,'');
+  for(const f of _OFU){if(f.k.some(k=>t.includes(k)))return f.o;}
+  return _OFU_DEFAULT[Math.round(Date.now()/10000)%_OFU_DEFAULT.length];
+}
+function _renderOFU(html){
+  if(chatContext.gateSignup||chatContext.buildState.active)return;
+  document.querySelectorAll('.oracle-chips').forEach(c=>c.remove());
+  const msgs=document.getElementById('chatMessages');
+  if(!msgs)return;
+  const bar=document.createElement('div');
+  bar.className='oracle-chips';
+  bar.style.cssText='display:flex;gap:6px;flex-wrap:wrap;padding:2px 0 6px 0;';
+  _getOFU(html).forEach(opt=>{
+    const b=document.createElement('button');
+    b.innerHTML=opt;
+    b.style.cssText='background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.22);color:rgba(255,215,0,0.85);padding:5px 13px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background 0.15s;';
+    b.onmouseover=()=>{b.style.background='rgba(255,215,0,0.18)';b.style.borderColor='rgba(255,215,0,0.5)';}
+    b.onmouseout=()=>{b.style.background='rgba(255,215,0,0.07)';b.style.borderColor='rgba(255,215,0,0.22)';}
+    b.onclick=()=>{
+      document.querySelectorAll('.oracle-chips').forEach(c=>c.remove());
+      const clean=opt.replace(/<[^>]+>/g,'').trim();
+      addChatMsg('user',clean);
+      setTimeout(()=>{
+        const r=avatarAIRespond(clean);
+        if(r)addChatMsg('ai',r);
+      },400);
+    };
+    bar.appendChild(b);
+  });
+  msgs.appendChild(bar);
+  msgs.scrollTop=msgs.scrollHeight;
+}
 function addChatMsg(type,html){
+  // Clear chips when user sends a new message
+  if(type==='user'){
+    document.querySelectorAll('.oracle-chips').forEach(c=>c.remove());
+    _stopCurrentSpeech();
+  }
   const msgs=document.getElementById('chatMessages');
   const d=document.createElement('div');
   d.className='msg '+type;
-  const label=type==='ai'?(currentAvatar==='belinda'?'⚡ BELINDA AI':'🔧 SVEN AI'):'YOU';
+  const label=type==='ai'?(currentAvatar==='belinda'?'&#9889; BELINDA AI':'&#128296; SVEN AI'):'YOU';
   d.innerHTML='<div class="msg-label">'+label+'</div>'+(html||'');
   msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
-  // Speak AI messages aloud
-  if(type==='ai')speakText(html||'');
+  if(type==='ai'){
+    speakText(html||'');
+    if(_oracleChipTimer)clearTimeout(_oracleChipTimer);
+    _oracleChipTimer=setTimeout(()=>_renderOFU(html||''),3200);
+  }
 }
 
 function sendChat(){
